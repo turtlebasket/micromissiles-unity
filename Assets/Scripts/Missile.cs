@@ -73,6 +73,10 @@ public class Missile : Agent
 
     private void OnTriggerEnter(Collider other)
     {
+
+        if(other.gameObject.name == "Floor") {
+            this.MarkAsMiss();
+        }
         // Check if the collision is with another Agent
         Agent otherAgent = other.gameObject.GetComponentInParent<Agent>();
         if (otherAgent != null && otherAgent.GetComponent<Target>() != null)
@@ -83,7 +87,7 @@ public class Missile : Agent
             if (Random.value <= killProbability)
             {
                 // Set green for hit
-                markerObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0, 0.5f);
+                markerObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0, 0.15f);
                 // Mark both this agent and the other agent as hit
                 this.MarkAsHit();
                 otherAgent.MarkAsHit();
@@ -91,9 +95,9 @@ public class Missile : Agent
             }
             else {
                 // Set red for miss
-                markerObject.GetComponent<Renderer>().material.color = new Color(1, 0, 0, 0.5f);
+                markerObject.GetComponent<Renderer>().material.color = new Color(1, 0, 0, 0.15f);
                 this.MarkAsMiss();
-                otherAgent.MarkAsMiss();
+                //otherAgent.MarkAsMiss();
                 
             }
         }

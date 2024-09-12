@@ -11,7 +11,6 @@ public abstract class Agent : MonoBehaviour
         INITIALIZED,
         READY,
         BOOST,
-
         MIDCOURSE,
         TERMINAL,
         TERMINATED

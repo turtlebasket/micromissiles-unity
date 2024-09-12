@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Micromissile : Missile
 {
-    [SerializeField] private float navigationGain = 10f; // Typically 3-5
+    [SerializeField] private float navigationGain = 5f; // Typically 3-5
     [SerializeField] private bool _showDebugVectors = true;
 
     private Vector3 _previousLOS;
@@ -83,10 +83,10 @@ public class Micromissile : Missile
         if (_target != null)
         {
             // Line of sight
-            Debug.DrawLine(transform.position, _target.transform.position, Color.white);
+            Debug.DrawLine(transform.position, _target.transform.position, new Color(1, 1, 1, 0.15f));
 
             // Velocity vector
-            Debug.DrawRay(transform.position, GetVelocity()*0.01f, Color.blue);
+            Debug.DrawRay(transform.position, GetVelocity()*0.01f, new Color(0, 0, 1, 0.15f));
 
             // Acceleration input
             Debug.DrawRay(transform.position, _accelerationCommand*1f, Color.green);
