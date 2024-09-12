@@ -1,0 +1,130 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Missile : Agent
+{
+
+    protected double _sensorUpdateTime = 0.0;
+
+    [SerializeField]
+    private Vector3 _boostAcceleration;
+    // Return whether a target can be assigned to the missile.
+    public override bool IsAssignable() {
+        bool assignable = !HasLaunched() && !HasAssignedTarget();
+        return assignable;
+    }
+
+    // Assign the given target to the missile.    
+    public override void AssignTarget(Agent target) {
+        base.AssignTarget(target);
+    }
+
+
+    // Unassign the target from the missile.
+    public override void UnassignTarget() {
+        base.UnassignTarget();
+    }
+
+    protected override void UpdateReady(double deltaTime) {
+        Vector3 accelerationInput = Vector3.zero;
+        Vector3 acceleration = CalculateAcceleration(accelerationInput);
+        GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
+    }
+
+    protected override void UpdateBoost(double deltaTime)
+    {
+        // The missile only accelerates along its roll axis (forward in Unity)
+        Vector3 rollAxis = transform.forward;
+
+        // Calculate boost acceleration
+        float boostAcceleration = StaticConfig.boostConfig.boostAcceleration * Physics.gravity.magnitude;
+        Vector3 accelerationInput = boostAcceleration * rollAxis;
+
+        // Calculate the total acceleration
+        Vector3 acceleration = CalculateAcceleration(accelerationInput);
+
+        // Apply the acceleration force
+        GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
+        _boostAcceleration = acceleration;
+    }
+    protected override void UpdateMidCourse(double deltaTime) {
+
+    }
+
+    protected Vector3 CalculateAcceleration(Vector3 accelerationInput, bool compensateForGravity = true)
+    {
+        Vector3 gravity = Physics.gravity;
+        if (compensateForGravity)
+        {
+            Vector3 gravityProjection = CalculateGravityProjectionOnPitchAndYaw();
+            accelerationInput -= gravityProjection;
+        }
+
+        Vector3 airDrag = CalculateDrag();
+        Vector3 liftInducedDrag = CalculateLiftInducedDrag(accelerationInput);
+        Vector3 dragAcceleration = -(airDrag + liftInducedDrag);
+
+        // Project the drag acceleration onto the forward direction
+        Vector3 dragAccelerationAlongRoll = Vector3.Dot(dragAcceleration, transform.forward) * transform.forward;
+
+        return accelerationInput + gravity + dragAccelerationAlongRoll;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check if the collision is with another Agent
+        Agent otherAgent = other.gameObject.GetComponentInParent<Agent>();
+        if (otherAgent != null && otherAgent.GetComponent<Target>() != null)
+        {
+            // Check kill probability before marking as hit
+            float killProbability = StaticConfig.hitConfig.killProbability;
+            if (Random.value <= killProbability)
+            {
+                // Mark both this agent and the other agent as hit
+                this.MarkAsHit();
+                otherAgent.MarkAsHit();
+            }
+        }
+    }
+
+    protected float CalculateMaxAcceleration()
+    {
+        float maxReferenceAcceleration = StaticConfig.accelerationConfig.maxReferenceAcceleration * Physics.gravity.magnitude;
+        float referenceSpeed = StaticConfig.accelerationConfig.referenceSpeed;
+        return Mathf.Pow(GetComponent<Rigidbody>().velocity.magnitude / referenceSpeed, 2) * maxReferenceAcceleration;
+    }
+    protected Vector3 CalculateGravityProjectionOnPitchAndYaw()
+    {
+        Vector3 gravity = Physics.gravity;
+        Vector3 pitchAxis = transform.right;
+        Vector3 yawAxis = transform.up;
+
+        // Project the gravity onto the pitch and yaw axes
+        float gravityProjectionPitchCoefficient = Vector3.Dot(gravity, pitchAxis);
+        float gravityProjectionYawCoefficient = Vector3.Dot(gravity, yawAxis);
+
+        // Return the sum of the projections
+        return gravityProjectionPitchCoefficient * pitchAxis + 
+               gravityProjectionYawCoefficient * yawAxis;
+    }
+
+    private Vector3 CalculateDrag()
+    {
+        float dragCoefficient = StaticConfig.liftDragConfig.dragCoefficient;
+        float crossSectionalArea = StaticConfig.bodyConfig.crossSectionalArea;
+        float mass = StaticConfig.bodyConfig.mass;
+        float dynamicPressure = (float)GetDynamicPressure();
+        float dragForce = dragCoefficient * dynamicPressure * crossSectionalArea;
+        return dragForce / mass * Vector3.one;
+    }
+
+    private Vector3 CalculateLiftInducedDrag(Vector3 accelerationInput)
+    {
+        Vector3 principalAxes = transform.forward;
+        float liftAcceleration = Vector3.Dot(accelerationInput, principalAxes);
+        float liftDragRatio = StaticConfig.liftDragConfig.liftDragRatio;
+        return Mathf.Abs(liftAcceleration / liftDragRatio) * Vector3.one;
+    }
+
+}
