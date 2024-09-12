@@ -1,44 +1,46 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // The threat assignment class assigns missiles to the targets based
 // on the threat level of the targets.
-public class ThreatAssignment : Assignment
+public class ThreatAssignment : IAssignment
 {
     // Assign a target to each missile that has not been assigned a target yet.
-    public override void Assign(List<Agent> missiles, List<Agent> targets)
+    public IEnumerable<IAssignment.AssignmentItem> Assign(List<Agent> missiles, List<Agent> targets)
     {
-        List<int> assignableMissileIndices = GetAssignableMissileIndices(missiles);
+
+        List<IAssignment.AssignmentItem> assignments = new List<IAssignment.AssignmentItem>();
+
+        List<int> assignableMissileIndices = IAssignment.GetAssignableMissileIndices(missiles);
         if (assignableMissileIndices.Count == 0)
         {
-            return;
+            return assignments;
         }
 
-        List<int> activeTargetIndices = GetActiveTargetIndices(targets);
+        List<int> activeTargetIndices = IAssignment.GetActiveTargetIndices(targets);
         if (activeTargetIndices.Count == 0)
         {
-            return;
+            return assignments;
         }
 
-        Vector3 missilesMeanPosition = CalculateMeanPosition(missiles);
-        List<ThreatInfo> threatInfos = CalculateThreatLevels(targets, activeTargetIndices, missilesMeanPosition);
+        Vector3 positionToDefend = Vector3.zero;
+        List<ThreatInfo> threatInfos = CalculateThreatLevels(targets, activeTargetIndices, positionToDefend);
         
         foreach (int missileIndex in assignableMissileIndices)
         {
+            if (missiles[missileIndex].HasAssignedTarget()) continue;
             if (threatInfos.Count == 0) break;
 
             ThreatInfo highestThreat = threatInfos[0];
-            missileToTargetAssignments.AddFirst(new AssignmentItem(missileIndex, highestThreat.TargetIndex));
+            assignments.Add(new IAssignment.AssignmentItem(missileIndex, highestThreat.TargetIndex));
             threatInfos.RemoveAt(0);
         }
+        return assignments;
     }
 
-    private Vector3 CalculateMeanPosition(List<Agent> agents)
-    {
-        return agents.Aggregate(Vector3.zero, (sum, agent) => sum + agent.transform.position) / agents.Count;
-    }
 
     private List<ThreatInfo> CalculateThreatLevels(List<Agent> targets, List<int> activeTargetIndices, Vector3 missilesMeanPosition)
     {

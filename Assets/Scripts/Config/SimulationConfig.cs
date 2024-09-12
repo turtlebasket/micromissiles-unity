@@ -40,7 +40,22 @@ public class AgentConfig
     public DynamicConfig dynamic_config;
     public PlottingConfig plotting_config;
     public SubmunitionsConfig submunitions_config;
-    public string prefabName;
+
+    public static AgentConfig FromSubmunitionAgentConfig(SubmunitionAgentConfig submunitionConfig)
+    {
+        return new AgentConfig
+        {
+            missile_type = submunitionConfig.missile_type,
+            initial_state = submunitionConfig.initial_state,
+            standard_deviation = submunitionConfig.standard_deviation,
+            dynamic_config = submunitionConfig.dynamic_config,
+            plotting_config = submunitionConfig.plotting_config,
+            
+            // Set other fields as needed, using default values if not present in SubmunitionAgentConfig
+            target_type = TargetType.DRONE, // Or another default value
+            submunitions_config = null // Or a default value if needed
+        };
+    }
 }
 
 [System.Serializable]
@@ -88,7 +103,6 @@ public class SubmunitionAgentConfig
     public StandardDeviation standard_deviation;
     public DynamicConfig dynamic_config;
     public PlottingConfig plotting_config;
-    public string prefabName;
 }
 
 [System.Serializable]
@@ -115,7 +129,8 @@ public enum MissileType
 
 public enum TargetType
 {
-    DRONE
+    DRONE,
+    MISSILE
 }
 
 public enum ConfigColor

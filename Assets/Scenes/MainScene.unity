@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84f2990fd69b0284ca96912cbe968b62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationConfig: {fileID: 11400000, guid: b7e9e8f13e8db0f47a33344c45790f20, type: 2}
+  simulationConfig: {fileID: 11400000, guid: 6d7c61b7d025c9b49b3410fd1195a525, type: 2}
 --- !u!4 &253946927
 Transform:
   m_ObjectHideFlags: 0

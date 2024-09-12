@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class Micromissile : Missile
 {
-    [SerializeField] private float navigationGain = 5f; // Typically 3-5
-    [SerializeField] private bool _showDebugVectors = true;
+    [SerializeField] private float _navigationGain = 5f; // Typically 3-5
 
     private Vector3 _previousLOS;
     private Vector3 _accelerationCommand;
     private float _lastUpdateTime;
+    private double _elapsedTime = 0;
     protected override void UpdateMidCourse(double deltaTime)
     {
+        _elapsedTime += deltaTime;
         Vector3 accelerationInput = Vector3.zero;
         if (HasAssignedTarget())
         {
@@ -19,13 +20,14 @@ public class Micromissile : Missile
             // TODO: Implement target model update logic
 
             // Correct the state of the target model at the sensor frequency
-            float sensorUpdatePeriod = 1f / _dynamicConfig.sensor_config.frequency;
-            if (_elapsedTime - _sensorUpdateTime >= sensorUpdatePeriod)
+            float sensorUpdatePeriod = 1f / _agentConfig.dynamic_config.sensor_config.frequency;
+            if (_elapsedTime - _lastUpdateTime >= sensorUpdatePeriod)
             {
                 // TODO: Implement guidance filter to estimate state from sensor output
                 // For now, we'll use the target's actual state
                 // targetModel.SetState(_target.GetState());
-                _sensorUpdateTime = (float)_elapsedTime;
+                _lastUpdateTime = (float)_elapsedTime;
+                _elapsedTime = 0;
             }
 
             // Sense the target
@@ -43,11 +45,6 @@ public class Micromissile : Missile
         Vector3 acceleration = CalculateAcceleration(accelerationInput, compensateForGravity: true);
         GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
 
-        if (_showDebugVectors)
-        {
-            DrawDebugVectors();
-        }
-
 
     }
     private Vector3 CalculateAccelerationCommand(SensorOutput sensorOutput)
@@ -61,7 +58,7 @@ public class Micromissile : Missile
         float closing_velocity = -sensorOutput.velocity.range; // Negative because closing velocity is opposite to range rate
 
         // Navigation gain (adjust as needed)
-        float N = navigationGain;
+        float N = _navigationGain;
 
         // Calculate acceleration commands in azimuth and elevation planes
         float acc_az = N * closing_velocity * los_rate_az;
@@ -78,27 +75,14 @@ public class Micromissile : Missile
         _accelerationCommand = accelerationCommand;
         return accelerationCommand;
     }
-    private void DrawDebugVectors()
+
+    protected override void DrawDebugVectors()
     {
-        if (_target != null)
+        base.DrawDebugVectors();
+        if (_accelerationCommand != null)
         {
-            // Line of sight
-            Debug.DrawLine(transform.position, _target.transform.position, new Color(1, 1, 1, 0.15f));
-
-            // Velocity vector
-            Debug.DrawRay(transform.position, GetVelocity()*0.01f, new Color(0, 0, 1, 0.15f));
-
-            // Acceleration input
-            Debug.DrawRay(transform.position, _accelerationCommand*1f, Color.green);
-
-            // Current forward direction
-            Debug.DrawRay(transform.position, transform.forward * 5f, Color.yellow);
-
-            // Pitch axis (right)
-            Debug.DrawRay(transform.position, transform.right * 5f, Color.red);
-
-            // Yaw axis (up)
-            Debug.DrawRay(transform.position, transform.up * 5f, Color.magenta);
+            Debug.DrawRay(transform.position, _accelerationCommand * 1f, Color.green);
         }
     }
+
 }

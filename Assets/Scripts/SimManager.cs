@@ -1,92 +1,126 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SimManager : MonoBehaviour
 {
+
+    // Singleton instance
+    public static SimManager Instance { get; private set; }
+
+
     [SerializeField]
     public SimulationConfig simulationConfig;
 
     
-    private List<Missile> missiles = new List<Missile>();
-    private List<Target> targets = new List<Target>();
-    private float currentTime = 0f;
+    private List<Missile> _missiles = new List<Missile>();
+    private HashSet<Target> _unassignedTargets = new HashSet<Target>();
+    private HashSet<Target> _targets = new HashSet<Target>();
+    private float _elapsedSimulationTime = 0f;
     private float endTime = 100f; // Set an appropriate end time
     private bool simulationRunning = false;
 
-    private Assignment _assignment;
+    private IAssignment _assignmentScheme;
 
+    public double GetElapsedSimulationTime()
+    {
+        return _elapsedSimulationTime;
+    }
+
+    void Awake()
+    {
+        // Ensure only one instance of SimManager exists
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start() {
         // Slow down time by simulationConfig.timeScale
-        Time.timeScale = simulationConfig.timeScale;
-        Time.fixedDeltaTime = Time.timeScale * 0.02f;
-        Time.maximumDeltaTime = Time.timeScale * 0.15f;
-        InitializeSimulation();
-        simulationRunning = true;
+        if(Instance == this) {
+            Time.timeScale = simulationConfig.timeScale;
+            Time.fixedDeltaTime = Time.timeScale * 0.02f;
+            Time.maximumDeltaTime = Time.timeScale * 0.15f;
+            InitializeSimulation();
+            simulationRunning = true;
+        }
     }
     
     private void InitializeSimulation() 
     {
+        List<Missile> missiles = new List<Missile>();
         // Create missiles based on config
         foreach (var swarmConfig in simulationConfig.missile_swarm_configs)
         {
             for (int i = 0; i < swarmConfig.num_agents; i++) {
                 var missile = CreateMissile(swarmConfig.agent_config);
-                missiles.Add(missile);
             }
         }
 
+        List<Target> targets = new List<Target>();
         // Create targets based on config
         foreach (var swarmConfig in simulationConfig.target_swarm_configs)
         {
             for (int i = 0; i < swarmConfig.num_agents; i++) {
                 var target = CreateTarget(swarmConfig.agent_config);
-                targets.Add(target);
+
             }
         }
 
-        _assignment = new ThreatAssignment();
+        _assignmentScheme = new ThreatAssignment();
         // Perform initial assignment
-        AssignMissilesToTargets();
     }
 
-    private void AssignMissilesToTargets()
+    public void AssignMissilesToTargets()
     {
-        // Convert Missile and Target lists to Agent lists
-        List<Agent> missileAgents = new List<Agent>(missiles.ConvertAll(m => m as Agent));
-        List<Agent> targetAgents =  new List<Agent>(targets.ConvertAll(t => t as Agent));
+        AssignMissilesToTargets(_missiles);
+    }
 
+    public void AssignMissilesToTargets(List<Missile> missilesToAssign)
+    {
+        
+        // Convert Missile and Target lists to Agent lists
+        List<Agent> missileAgents = new List<Agent>(missilesToAssign.ConvertAll(m => m as Agent));
+        // Convert Target list to Agent list, excluding already assigned targets
+        List<Agent> targetAgents = _unassignedTargets.ToList<Agent>();
+        
         // Perform the assignment
-        _assignment.Assign(missileAgents, targetAgents);
+        IEnumerable<IAssignment.AssignmentItem> assignments = _assignmentScheme.Assign(missileAgents, targetAgents);
 
         // Apply the assignments to the missiles
-        foreach (var assignment in _assignment.Assignments)
+        foreach (var assignment in assignments)
         {
-            Missile missile = missiles[assignment.MissileIndex];
-            Target target = targets[assignment.TargetIndex];
-            missile.AssignTarget(target);
-            Debug.Log($"Missile {missile.name} assigned to target {target.name}");  
+            if (assignment.MissileIndex < missilesToAssign.Count)
+            {
+                Missile missile = missilesToAssign[assignment.MissileIndex];
+                Target target = _targets.ElementAt(assignment.TargetIndex);
+                missile.AssignTarget(target);
+                Debug.Log($"Missile {missile.name} assigned to target {target.name}");
+                _unassignedTargets.Remove(target);
+            }
         }
     }
 
-    private Missile CreateMissile(AgentConfig config)
+    public Missile CreateMissile(AgentConfig config)
     {
-        // Load the missile prefab from Resources
-        GameObject missilePrefab = Resources.Load<GameObject>($"Prefabs/{config.prefabName}");
-        if (missilePrefab == null)
+        string prefabName = config.missile_type switch
         {
-            Debug.LogError($"Missile prefab '{config.prefabName}' not found in Resources/Prefabs folder.");
-            return null;
-        }
+            MissileType.HYDRA_70 => "Hydra70",
+            MissileType.MICROMISSILE => "Micromissile",
+            _ => "Hydra70"
+        };
 
-        // Apply noise to the initial position
-        Vector3 noiseOffset = Utilities.GenerateRandomNoise(config.standard_deviation.position);
-        Vector3 noisyPosition = config.initial_state.position + noiseOffset;
+        GameObject missileObject = CreateAgent(config, prefabName);
+        if (missileObject == null) return null;
 
-        // Instantiate the missile with the noisy position
-        GameObject missileObject = Instantiate(missilePrefab, noisyPosition, Quaternion.Euler(config.initial_state.rotation));
-
+        // Missile-specific logic
         switch(config.dynamic_config.sensor_config.type) {
             case SensorType.IDEAL:
                 missileObject.AddComponent<IdealSensor>();
@@ -96,91 +130,100 @@ public class SimManager : MonoBehaviour
                 break;
         }   
 
-        // Set initial velocity
-        Rigidbody missileRigidbody = missileObject.GetComponent<Rigidbody>();
-        // Apply noise to the initial velocity
-        Vector3 velocityNoise = Utilities.GenerateRandomNoise(config.standard_deviation.velocity);
-        Vector3 noisyVelocity = config.initial_state.velocity + velocityNoise;
-        missileRigidbody.velocity = noisyVelocity;
+        // Missile missile = missileObject.GetComponent<Missile>();
+        // if (missile == null)
+        // {
+        //     Debug.LogError($"Missile component not found on prefab '{prefabName}'.");
+        //     Destroy(missileObject);
+        //     return null;
+        // }
 
-
-        Missile missile = missileObject.GetComponent<Missile>();
-        missile.SetAgentConfig(config);
-        if (missile == null)
-        {
-            Debug.LogError($"Missile component not found on prefab '{config.prefabName}'.");
-            Destroy(missileObject);
-            return null;
-        }
-
-        // Initialize missile properties
-        //missile.Initialize(config);
-
-        return missile;
+        // missile.SetAgentConfig(config);
+        _missiles.Add(missileObject.GetComponent<Missile>());
+        // Assign a unique and simple target ID
+        int missileId = _missiles.Count;
+        missileObject.name = $"{config.missile_type}_Missile_{missileId}";    
+        return missileObject.GetComponent<Missile>();
     }
+
     private Target CreateTarget(AgentConfig config)
     {
-        // Load the target prefab from Resources
-        GameObject targetPrefab = Resources.Load<GameObject>($"Prefabs/{config.prefabName}");
-        if (targetPrefab == null)
+        string prefabName = config.target_type switch
         {
-            Debug.LogError($"Target prefab '{config.prefabName}' not found in Resources/Prefabs folder.");
+            TargetType.DRONE => "DroneTarget",
+            TargetType.MISSILE => "MissileTarget",
+            _ => throw new System.ArgumentException($"Unsupported target type: {config.target_type}")
+        };
+        GameObject targetObject = CreateAgent(config, prefabName);
+        if (targetObject == null) return null;
+
+        // Target target = targetObject.GetComponent<Target>();
+        // if (target == null)
+        // {
+        //     Debug.LogError($"Target component not found on prefab '{config.prefabName}'.");
+        //     Destroy(targetObject);
+        //     return null;
+        // }
+
+        // target.SetAgentConfig(config);
+        _targets.Add(targetObject.GetComponent<Target>());
+        _unassignedTargets.Add(targetObject.GetComponent<Target>());
+        // Assign a unique and simple target ID
+        int targetId = _targets.Count;
+        targetObject.name = $"{config.target_type}_Target_{targetId}";
+        return targetObject.GetComponent<Target>();
+    }
+
+    public GameObject CreateAgent(AgentConfig config, string prefabName)
+    {
+        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
+        if (prefab == null)
+        {
+            Debug.LogError($"Prefab '{prefabName}' not found in Resources/Prefabs folder.");
             return null;
         }
 
-        // Apply noise to the initial position
         Vector3 noiseOffset = Utilities.GenerateRandomNoise(config.standard_deviation.position);
         Vector3 noisyPosition = config.initial_state.position + noiseOffset;
 
-        // Instantiate the target with the noisy position
-        GameObject targetObject = Instantiate(targetPrefab, noisyPosition, Quaternion.Euler(config.initial_state.rotation));
+        GameObject agentObject = Instantiate(prefab, noisyPosition, Quaternion.Euler(config.initial_state.rotation));
 
-        // Set initial velocity with noise
-        Rigidbody targetRigidbody = targetObject.GetComponent<Rigidbody>();
+        Rigidbody agentRigidbody = agentObject.GetComponent<Rigidbody>();
         Vector3 velocityNoise = Utilities.GenerateRandomNoise(config.standard_deviation.velocity);
         Vector3 noisyVelocity = config.initial_state.velocity + velocityNoise;
-        targetRigidbody.velocity = noisyVelocity;
+        agentRigidbody.velocity = noisyVelocity;
 
-        Target target = targetObject.GetComponent<Target>();
-        target.SetAgentConfig(config);
+        agentObject.GetComponent<Agent>().SetAgentConfig(config);
 
-        if (target == null)
-        {
-            Debug.LogError($"Target component not found on prefab '{config.prefabName}'.");
-            Destroy(targetObject);
-            return null;
-        }
+        return agentObject;
+    }   
 
-        // Initialize target properties
-        //target.Initialize(config);
 
-        return target;
-    }
 
     private void RestartSimulation()
     {
         // Reset simulation time
-        currentTime = 0f;
+        _elapsedSimulationTime = 0f;
         simulationRunning = true;
 
         // Clear existing missiles and targets
-        foreach (var missile in missiles)
+        foreach (var missile in _missiles)
         {
             if (missile != null)
             {
                 Destroy(missile.gameObject);
             }
         }
-        missiles.Clear();
+        _missiles.Clear();
 
-        foreach (var target in targets)
+        foreach (var target in _targets)
         {
             if (target != null)
             {
                 Destroy(target.gameObject);
             }
         }
-        targets.Clear();
+        _targets.Clear();
 
         InitializeSimulation();
     }
@@ -189,7 +232,7 @@ public class SimManager : MonoBehaviour
     {
         // Check if all missiles have terminated
         bool allMissilesTerminated = true;
-        foreach (var missile in missiles)
+        foreach (var missile in _missiles)
         {
             if (missile != null && !missile.IsHit() && !missile.IsMiss())
             {
@@ -203,11 +246,11 @@ public class SimManager : MonoBehaviour
             RestartSimulation();
         }
 
-        if (simulationRunning && currentTime < endTime)
+        if (simulationRunning && _elapsedSimulationTime < endTime)
         {
-            currentTime += Time.deltaTime;
+            _elapsedSimulationTime += Time.deltaTime;
         }
-        else if (currentTime >= endTime)
+        else if (_elapsedSimulationTime >= endTime)
         {
             simulationRunning = false;
             Debug.Log("Simulation completed.");

@@ -16,19 +16,33 @@ public abstract class Agent : MonoBehaviour
         TERMINATED
     }
 
-    protected double _elapsedTime = 0;
     
     [SerializeField]
-    protected FlightPhase _flightPhase = FlightPhase.INITIALIZED;
+    private FlightPhase _flightPhase = FlightPhase.INITIALIZED;
 
     [SerializeField]
     protected Agent _target;
     protected bool _isHit = false;
     protected bool _isMiss = false;
 
-    protected DynamicConfig _dynamicConfig;
+    protected AgentConfig _agentConfig;
+
+    protected double _timeSinceLaunch = 0;
+    protected double _timeInPhase = 0;
+
     [SerializeField]
     public StaticConfig StaticConfig;
+
+    public void SetFlightPhase(FlightPhase flightPhase) {
+        Debug.Log($"Setting flight phase to {flightPhase} at time {SimManager.Instance.GetElapsedSimulationTime()}");
+        _timeInPhase = 0;
+        _flightPhase = flightPhase;
+    }
+
+    public FlightPhase GetFlightPhase() {
+        return _flightPhase;
+    }
+
 
     public bool HasLaunched() {
         return (_flightPhase != FlightPhase.INITIALIZED) && (_flightPhase != FlightPhase.READY);
@@ -39,7 +53,7 @@ public abstract class Agent : MonoBehaviour
     }
 
     public virtual void SetAgentConfig(AgentConfig config) {
-        _dynamicConfig = config.dynamic_config;
+        _agentConfig = config;
     }
 
     public virtual bool IsAssignable() {
@@ -118,21 +132,28 @@ public abstract class Agent : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        _elapsedTime = 0;
         _flightPhase = FlightPhase.READY;
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        var launch_time = _dynamicConfig.launch_config.launch_time;
+        _timeSinceLaunch += Time.deltaTime;
+        _timeInPhase += Time.deltaTime;
+
+        var launch_time = _agentConfig.dynamic_config.launch_config.launch_time;
         var boost_time = launch_time + StaticConfig.boostConfig.boostTime;
-        _elapsedTime += Time.deltaTime;
-        if(_elapsedTime > launch_time) {
-            _flightPhase = FlightPhase.BOOST;
+        double elapsedSimulationTime = SimManager.Instance.GetElapsedSimulationTime();
+
+        if(_flightPhase == FlightPhase.TERMINATED) {
+            return;
         }
-        if(_elapsedTime > boost_time) {
-            _flightPhase = FlightPhase.MIDCOURSE;
+
+        if(elapsedSimulationTime >= launch_time && _flightPhase == FlightPhase.READY) {
+            SetFlightPhase(FlightPhase.BOOST);
+        }
+        if(_timeSinceLaunch > boost_time && _flightPhase == FlightPhase.BOOST) {
+            SetFlightPhase(FlightPhase.MIDCOURSE);
         }
         AlignWithVelocity();
         switch (_flightPhase) {

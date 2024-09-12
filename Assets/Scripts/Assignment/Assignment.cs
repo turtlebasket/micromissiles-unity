@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // The assignment class is an interface for assigning a target to each missile.
-public abstract class Assignment
+public interface IAssignment
 {
     // Assignment item type.
     // The first element corresponds to the missile index, and the second element
@@ -21,13 +21,9 @@ public abstract class Assignment
     }
 
     // A list containing the missile-target assignments.
-    protected LinkedList<AssignmentItem> missileToTargetAssignments = new LinkedList<AssignmentItem>();
-
-    // Return the missile-target assignments.
-    public IEnumerable<AssignmentItem> Assignments => missileToTargetAssignments;
 
     // Assign a target to each missile that has not been assigned a target yet.
-    public abstract void Assign(List<Agent> missiles, List<Agent> targets);
+    public abstract IEnumerable<AssignmentItem> Assign(List<Agent> missiles, List<Agent> targets);
 
     // Get the list of assignable missile indices.
     protected static List<int> GetAssignableMissileIndices(List<Agent> missiles)

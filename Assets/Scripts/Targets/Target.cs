@@ -4,8 +4,6 @@ using UnityEngine;
 
 public abstract class Target : Agent
 {
-
-
     public override bool IsAssignable() {
         return false;
     }

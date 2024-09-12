@@ -5,7 +5,7 @@ using UnityEngine;
 public class Missile : Agent
 {
 
-    protected double _sensorUpdateTime = 0.0;
+    [SerializeField] protected bool _showDebugVectors = true;
 
     [SerializeField]
     private Vector3 _boostAcceleration;
@@ -32,6 +32,13 @@ public class Missile : Agent
         GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
     }
 
+    protected override void Update() {
+        base.Update();
+        if(_showDebugVectors) {
+            DrawDebugVectors();
+        }
+    }
+    
     protected override void UpdateBoost(double deltaTime)
     {
         // The missile only accelerates along its roll axis (forward in Unity)
@@ -142,4 +149,25 @@ public class Missile : Agent
         return Mathf.Abs(liftAcceleration / liftDragRatio) * Vector3.one;
     }
 
+
+    protected virtual void DrawDebugVectors()
+    {
+        if (_target != null)
+        {
+            // Line of sight
+            Debug.DrawLine(transform.position, _target.transform.position, new Color(1, 1, 1, 0.15f));
+
+            // Velocity vector
+            Debug.DrawRay(transform.position, GetVelocity()*0.01f, new Color(0, 0, 1, 0.15f));
+
+            // Current forward direction
+            Debug.DrawRay(transform.position, transform.forward * 5f, Color.yellow);
+
+            // Pitch axis (right)
+            Debug.DrawRay(transform.position, transform.right * 5f, Color.red);
+
+            // Yaw axis (up)
+            Debug.DrawRay(transform.position, transform.up * 5f, Color.magenta);
+        }
+    }
 }
