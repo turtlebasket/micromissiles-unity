@@ -26,7 +26,7 @@ public class SimManager : MonoBehaviour
         simulationRunning = true;
     }
     
-    private void InitializeSimulation()
+    private void InitializeSimulation() 
     {
         // Create missiles based on config
         foreach (var swarmConfig in simulationConfig.missile_swarm_configs)
@@ -46,7 +46,7 @@ public class SimManager : MonoBehaviour
             }
         }
 
-        _assignment = new RoundRobinAssignment();
+        _assignment = new ThreatAssignment();
         // Perform initial assignment
         AssignMissilesToTargets();
     }
@@ -191,7 +191,7 @@ public class SimManager : MonoBehaviour
         bool allMissilesTerminated = true;
         foreach (var missile in missiles)
         {
-            if (missile != null && !missile.IsHit())
+            if (missile != null && !missile.IsHit() && !missile.IsMiss())
             {
                 allMissilesTerminated = false;
                 break;

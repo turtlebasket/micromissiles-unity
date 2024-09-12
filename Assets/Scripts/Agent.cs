@@ -25,6 +25,7 @@ public abstract class Agent : MonoBehaviour
     [SerializeField]
     protected Agent _target;
     protected bool _isHit = false;
+    protected bool _isMiss = false;
 
     protected DynamicConfig _dynamicConfig;
     [SerializeField]
@@ -71,10 +72,25 @@ public abstract class Agent : MonoBehaviour
         return _isHit;
     }
 
+    public bool IsMiss() {
+        return _isMiss;
+    }
+
+    public void TerminateAgent() {
+                _flightPhase = FlightPhase.TERMINATED;
+        transform.position = new Vector3(0, 0, 0);
+        gameObject.SetActive(false);
+    }
+
     // Mark the agent as having hit the target or been hit.
     public void MarkAsHit() {
         _isHit = true;
-        _flightPhase = FlightPhase.TERMINATED;
+        TerminateAgent();
+    }
+
+    public void MarkAsMiss() {
+        _isMiss = true;
+        TerminateAgent();
     }
 
 
@@ -147,7 +163,7 @@ public abstract class Agent : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(velocity, Vector3.up);
             
             // Smoothly rotate towards the target rotation
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 100f * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 1000f * Time.deltaTime);
         }
     }
 

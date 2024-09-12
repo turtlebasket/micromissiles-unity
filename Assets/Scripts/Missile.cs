@@ -79,11 +79,22 @@ public class Missile : Agent
         {
             // Check kill probability before marking as hit
             float killProbability = StaticConfig.hitConfig.killProbability;
+            GameObject markerObject = Instantiate(Resources.Load<GameObject>("Prefabs/HitMarkerPrefab"), transform.position, Quaternion.identity);
             if (Random.value <= killProbability)
             {
+                // Set green for hit
+                markerObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0, 0.5f);
                 // Mark both this agent and the other agent as hit
                 this.MarkAsHit();
                 otherAgent.MarkAsHit();
+                
+            }
+            else {
+                // Set red for miss
+                markerObject.GetComponent<Renderer>().material.color = new Color(1, 0, 0, 0.5f);
+                this.MarkAsMiss();
+                otherAgent.MarkAsMiss();
+                
             }
         }
     }

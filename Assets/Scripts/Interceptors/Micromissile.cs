@@ -30,17 +30,9 @@ public class Micromissile : Missile
 
             // Sense the target
             SensorOutput sensorOutput = GetComponent<Sensor>().Sense(_target);
-
-            // Check whether the target has been hit
-            if (_target.IsHit())
-            {
-                float killProbability = _target.GetComponent<Agent>().StaticConfig.hitConfig.killProbability;
-                if (Random.value < killProbability)
-                {
-                    MarkAsHit();
-                    _target.MarkAsHit();
-                    return;
-                }
+            if(sensorOutput.velocity.range > 1000f) {
+                this.MarkAsMiss();
+                _target.MarkAsMiss();
             }
 
             // Calculate the acceleration input
@@ -94,10 +86,10 @@ public class Micromissile : Missile
             Debug.DrawLine(transform.position, _target.transform.position, Color.white);
 
             // Velocity vector
-            Debug.DrawRay(transform.position, GetVelocity(), Color.blue);
+            Debug.DrawRay(transform.position, GetVelocity()*0.01f, Color.blue);
 
             // Acceleration input
-            Debug.DrawRay(transform.position, _accelerationCommand*1000f, Color.green);
+            Debug.DrawRay(transform.position, _accelerationCommand*1f, Color.green);
 
             // Current forward direction
             Debug.DrawRay(transform.position, transform.forward * 5f, Color.yellow);
