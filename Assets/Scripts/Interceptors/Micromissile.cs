@@ -6,9 +6,8 @@ public class Micromissile : Missile
 {
     [SerializeField] private float _navigationGain = 3f; // Typically 3-5
 
-    private Vector3 _previousLOS;
+    private SensorOutput _sensorOutput;
     private Vector3 _accelerationCommand;
-    private float _lastUpdateTime;
     private double _elapsedTime = 0;
     protected override void UpdateMidCourse(double deltaTime)
     {
@@ -21,16 +20,15 @@ public class Micromissile : Missile
 
             // Correct the state of the target model at the sensor frequency
             float sensorUpdatePeriod = 1f / _agentConfig.dynamic_config.sensor_config.frequency;
-            if (_elapsedTime - _lastUpdateTime >= sensorUpdatePeriod)
+            if (_elapsedTime >= sensorUpdatePeriod)
             {
                 // TODO: Implement guidance filter to estimate state from sensor output
                 // For now, we'll use the target's actual state
-                // targetModel.SetState(_target.GetState());
-                _lastUpdateTime = (float)_elapsedTime;
+                _sensorOutput = GetComponent<Sensor>().Sense(_target);
                 _elapsedTime = 0;
             }
 
-            // Sense the target
+            // Check whether the target should be considered a miss
             SensorOutput sensorOutput = GetComponent<Sensor>().Sense(_target);
             if(sensorOutput.velocity.range > 1000f) {
                 this.MarkAsMiss();
@@ -38,7 +36,7 @@ public class Micromissile : Missile
             }
 
             // Calculate the acceleration input
-            accelerationInput = CalculateAccelerationCommand(sensorOutput);
+            accelerationInput = CalculateAccelerationCommand(_sensorOutput);
         }
 
         // Calculate and set the total acceleration

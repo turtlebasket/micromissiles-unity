@@ -45,7 +45,7 @@ public class Missile : Agent
         Vector3 rollAxis = transform.forward;
 
         // Calculate boost acceleration
-        float boostAcceleration = StaticConfig.boostConfig.boostAcceleration * Physics.gravity.magnitude;
+        float boostAcceleration = (float)(StaticConfig.boostConfig.boostAcceleration * Constants.kGravity);
         Vector3 accelerationInput = boostAcceleration * rollAxis;
 
         // Calculate the total acceleration
