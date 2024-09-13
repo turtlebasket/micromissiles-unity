@@ -14,37 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 0.2
   missile_swarm_configs:
-  - num_agents: 10
+  - num_agents: 20
     agent_config:
       missile_type: 0
       target_type: 0
       initial_state:
         position: {x: 0, y: 10, z: 0}
         rotation: {x: -45, y: 0, z: 0}
-        velocity: {x: 0, y: 0, z: 10}
+        velocity: {x: 0, y: 10, z: 10}
       standard_deviation:
         position: {x: 10, y: 10, z: 10}
-        velocity: {x: 0, y: 0, z: 0}
+        velocity: {x: 5, y: 0, z: 5}
       dynamic_config:
         launch_config:
           launch_time: 0
         sensor_config:
           type: 0
-          frequency: 0
+          frequency: 1
       plotting_config:
         color: {r: 0, g: 0, b: 0, a: 0}
         linestyle: 0
         marker: 0
       submunitions_config:
-        num_submunitions: 10
+        num_submunitions: 7
         launch_config:
-          launch_time: 2
+          launch_time: 1.5
         agent_config:
           missile_type: 1
           initial_state:
-            position: {x: 0, y: 0, z: 0}
+            position: {x: -38.074936, y: 286.19226, z: 293.8709}
             rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: 0, y: 0, z: 0}
+            velocity: {x: -20.437624, y: 181.02332, z: 193.21309}
           standard_deviation:
             position: {x: 5, y: 5, z: 5}
             velocity: {x: 0, y: 0, z: 0}
@@ -53,7 +53,7 @@ MonoBehaviour:
               launch_time: 0
             sensor_config:
               type: 0
-              frequency: 0
+              frequency: 1
           plotting_config:
             color: {r: 0, g: 0, b: 0, a: 0}
             linestyle: 0
