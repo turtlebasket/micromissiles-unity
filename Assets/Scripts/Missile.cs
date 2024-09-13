@@ -68,12 +68,12 @@ public class Missile : Agent
             accelerationInput -= gravityProjection;
         }
 
-        Vector3 airDrag = CalculateDrag();
-        Vector3 liftInducedDrag = CalculateLiftInducedDrag(accelerationInput);
-        Vector3 dragAcceleration = -(airDrag + liftInducedDrag);
+        float airDrag = CalculateDrag();
+        float liftInducedDrag = CalculateLiftInducedDrag(accelerationInput);
+        float dragAcceleration = -(airDrag + liftInducedDrag);
 
         // Project the drag acceleration onto the forward direction
-        Vector3 dragAccelerationAlongRoll = Vector3.Dot(dragAcceleration, transform.forward) * transform.forward;
+        Vector3 dragAccelerationAlongRoll = dragAcceleration * transform.forward;
 
         return accelerationInput + gravity + dragAccelerationAlongRoll;
     }
@@ -131,22 +131,21 @@ public class Missile : Agent
                gravityProjectionYawCoefficient * yawAxis;
     }
 
-    private Vector3 CalculateDrag()
+    private float CalculateDrag()
     {
         float dragCoefficient = StaticConfig.liftDragConfig.dragCoefficient;
         float crossSectionalArea = StaticConfig.bodyConfig.crossSectionalArea;
         float mass = StaticConfig.bodyConfig.mass;
         float dynamicPressure = (float)GetDynamicPressure();
         float dragForce = dragCoefficient * dynamicPressure * crossSectionalArea;
-        return dragForce / mass * Vector3.one;
+        return dragForce / mass;
     }
 
-    private Vector3 CalculateLiftInducedDrag(Vector3 accelerationInput)
+    private float CalculateLiftInducedDrag(Vector3 accelerationInput)
     {
-        Vector3 principalAxes = transform.forward;
-        float liftAcceleration = Vector3.Dot(accelerationInput, principalAxes);
+        float liftAcceleration = Vector3.Dot(accelerationInput, transform.forward);
         float liftDragRatio = StaticConfig.liftDragConfig.liftDragRatio;
-        return Mathf.Abs(liftAcceleration / liftDragRatio) * Vector3.one;
+        return Mathf.Abs(liftAcceleration / liftDragRatio);
     }
 
 
