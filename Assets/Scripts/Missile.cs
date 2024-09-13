@@ -112,7 +112,7 @@ public class Missile : Agent
 
     protected float CalculateMaxAcceleration()
     {
-        float maxReferenceAcceleration = StaticConfig.accelerationConfig.maxReferenceAcceleration * Physics.gravity.magnitude;
+        float maxReferenceAcceleration = (float)(StaticConfig.accelerationConfig.maxReferenceAcceleration * Constants.kGravity);
         float referenceSpeed = StaticConfig.accelerationConfig.referenceSpeed;
         return Mathf.Pow(GetComponent<Rigidbody>().velocity.magnitude / referenceSpeed, 2) * maxReferenceAcceleration;
     }
