@@ -26,7 +26,7 @@ public class Hydra70 : Missile
     {
         Vector3 accelerationInput = Vector3.zero;
         // Calculate and set the total acceleration
-        Vector3 acceleration = CalculateAcceleration(accelerationInput, compensateForGravity: true);
+        Vector3 acceleration = CalculateAcceleration(accelerationInput);
         GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
         _acceleration = acceleration;
     }

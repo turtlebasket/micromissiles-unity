@@ -59,7 +59,7 @@ public class Missile : Agent
 
     }
 
-    protected Vector3 CalculateAcceleration(Vector3 accelerationInput, bool compensateForGravity = true)
+    protected Vector3 CalculateAcceleration(Vector3 accelerationInput, bool compensateForGravity = false)
     {
         Vector3 gravity = Physics.gravity;
         if (compensateForGravity)
