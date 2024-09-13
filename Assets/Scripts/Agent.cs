@@ -65,6 +65,10 @@ public abstract class Agent : MonoBehaviour
         _target = target;
     }
 
+    public Agent GetAssignedTarget() {
+        return _target;
+    }
+
     public bool HasAssignedTarget() {
         return _target != null;
     }
@@ -90,7 +94,7 @@ public abstract class Agent : MonoBehaviour
     }
 
     public void TerminateAgent() {
-                _flightPhase = FlightPhase.TERMINATED;
+        _flightPhase = FlightPhase.TERMINATED;
         transform.position = new Vector3(0, 0, 0);
         gameObject.SetActive(false);
     }
@@ -103,6 +107,10 @@ public abstract class Agent : MonoBehaviour
 
     public void MarkAsMiss() {
         _isMiss = true;
+        if(_target != null) {
+            SimManager.Instance.RegisterTargetMiss(_target as Target);
+            _target = null;
+        }
         TerminateAgent();
     }
 

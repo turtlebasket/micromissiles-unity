@@ -34,9 +34,27 @@ public class ThreatAssignment : IAssignment
             if (missiles[missileIndex].HasAssignedTarget()) continue;
             if (threatInfos.Count == 0) break;
 
-            ThreatInfo highestThreat = threatInfos[0];
-            assignments.Add(new IAssignment.AssignmentItem(missileIndex, highestThreat.TargetIndex));
-            threatInfos.RemoveAt(0);
+            // Find the optimal target for this missile based on distance and threat
+            ThreatInfo optimalTarget = null;
+            float optimalScore = float.MinValue;
+
+            foreach (ThreatInfo threat in threatInfos)
+            {
+                float distance = Vector3.Distance(missiles[missileIndex].transform.position, targets[threat.TargetIndex].transform.position);
+                float score = threat.ThreatLevel / distance; // Balance threat level with proximity
+
+                if (score > optimalScore)
+                {
+                    optimalScore = score;
+                    optimalTarget = threat;
+                }
+            }
+
+            if (optimalTarget != null)
+            {
+                assignments.Add(new IAssignment.AssignmentItem(missileIndex, optimalTarget.TargetIndex));
+                threatInfos.Remove(optimalTarget);
+            }
         }
         return assignments;
     }

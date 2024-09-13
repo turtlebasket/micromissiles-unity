@@ -15,8 +15,8 @@ public class SimManager : MonoBehaviour
 
     
     private List<Missile> _missiles = new List<Missile>();
-    private HashSet<Target> _unassignedTargets = new HashSet<Target>();
-    private HashSet<Target> _targets = new HashSet<Target>();
+    private List<Target> _unassignedTargets = new List<Target>();
+    private List<Target> _targets = new List<Target>();
     private float _elapsedSimulationTime = 0f;
     private float endTime = 100f; // Set an appropriate end time
     private bool simulationRunning = false;
@@ -83,6 +83,10 @@ public class SimManager : MonoBehaviour
         AssignMissilesToTargets(_missiles);
     }
 
+    public void RegisterTargetMiss(Target target) {
+        _unassignedTargets.Add(target);
+    }
+
     public void AssignMissilesToTargets(List<Missile> missilesToAssign)
     {
         
@@ -100,12 +104,14 @@ public class SimManager : MonoBehaviour
             if (assignment.MissileIndex < missilesToAssign.Count)
             {
                 Missile missile = missilesToAssign[assignment.MissileIndex];
-                Target target = _targets.ElementAt(assignment.TargetIndex);
+                Target target = _unassignedTargets[assignment.TargetIndex];
                 missile.AssignTarget(target);
                 Debug.Log($"Missile {missile.name} assigned to target {target.name}");
-                _unassignedTargets.Remove(target);
+                
             }
         }
+        // TODO this whole function should be optimized
+        _unassignedTargets.RemoveAll(target => missilesToAssign.Any(missile => missile.GetAssignedTarget() == target));
     }
 
     public Missile CreateMissile(AgentConfig config)

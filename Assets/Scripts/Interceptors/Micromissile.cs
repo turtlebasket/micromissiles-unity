@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Micromissile : Missile
 {
-    [SerializeField] private float _navigationGain = 3f; // Typically 3-5
+    [SerializeField] private float _navigationGain = 5f; // Typically 3-5
 
     private SensorOutput _sensorOutput;
     private Vector3 _accelerationCommand;
@@ -32,7 +32,6 @@ public class Micromissile : Missile
             SensorOutput sensorOutput = GetComponent<Sensor>().Sense(_target);
             if(sensorOutput.velocity.range > 1000f) {
                 this.MarkAsMiss();
-                _target.MarkAsMiss();
             }
 
             // Calculate the acceleration input

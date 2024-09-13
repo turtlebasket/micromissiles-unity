@@ -12,25 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79f1fe138866d6a40b209a4edcf2ee06, type: 3}
   m_Name: SimulationConfigHydra70
   m_EditorClassIdentifier: 
-  timeScale: 0.2
+  timeScale: 1
   missile_swarm_configs:
-  - num_agents: 20
+  - num_agents: 10
     agent_config:
       missile_type: 0
       target_type: 0
       initial_state:
-        position: {x: 0, y: 10, z: 0}
+        position: {x: 0, y: 20, z: 0}
         rotation: {x: -45, y: 0, z: 0}
         velocity: {x: 0, y: 10, z: 10}
       standard_deviation:
-        position: {x: 10, y: 10, z: 10}
-        velocity: {x: 5, y: 0, z: 5}
+        position: {x: 10, y: 0, z: 10}
+        velocity: {x: 5, y: 0, z: 1}
       dynamic_config:
         launch_config:
           launch_time: 0
         sensor_config:
           type: 0
-          frequency: 1
+          frequency: 1000
       plotting_config:
         color: {r: 0, g: 0, b: 0, a: 0}
         linestyle: 0
@@ -38,13 +38,101 @@ MonoBehaviour:
       submunitions_config:
         num_submunitions: 7
         launch_config:
-          launch_time: 1.5
+          launch_time: 2
         agent_config:
           missile_type: 1
           initial_state:
-            position: {x: -38.074936, y: 286.19226, z: 293.8709}
+            position: {x: -276.48438, y: 585.0613, z: 640.66565}
             rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: -20.437624, y: 181.02332, z: 193.21309}
+            velocity: {x: -115.62746, y: 195.53085, z: 266.85275}
+          standard_deviation:
+            position: {x: 5, y: 5, z: 5}
+            velocity: {x: 0, y: 0, z: 0}
+          dynamic_config:
+            launch_config:
+              launch_time: 0
+            sensor_config:
+              type: 0
+              frequency: 1
+          plotting_config:
+            color: {r: 0, g: 0, b: 0, a: 0}
+            linestyle: 0
+            marker: 0
+  - num_agents: 10
+    agent_config:
+      missile_type: 0
+      target_type: 0
+      initial_state:
+        position: {x: 200, y: 20, z: 0}
+        rotation: {x: -60, y: 0, z: 0}
+        velocity: {x: 0, y: 10, z: 12}
+      standard_deviation:
+        position: {x: 10, y: 0, z: 10}
+        velocity: {x: 5, y: 0, z: 1}
+      dynamic_config:
+        launch_config:
+          launch_time: 10
+        sensor_config:
+          type: 0
+          frequency: 1000
+      plotting_config:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        linestyle: 0
+        marker: 0
+      submunitions_config:
+        num_submunitions: 7
+        launch_config:
+          launch_time: 12
+        agent_config:
+          missile_type: 1
+          initial_state:
+            position: {x: -142.09969, y: 732.03265, z: 973.45154}
+            rotation: {x: 0, y: 0, z: 0}
+            velocity: {x: -127.14329, y: 235.90274, z: 367.02448}
+          standard_deviation:
+            position: {x: 5, y: 5, z: 5}
+            velocity: {x: 0, y: 0, z: 0}
+          dynamic_config:
+            launch_config:
+              launch_time: 0
+            sensor_config:
+              type: 0
+              frequency: 1
+          plotting_config:
+            color: {r: 0, g: 0, b: 0, a: 0}
+            linestyle: 0
+            marker: 0
+  - num_agents: 10
+    agent_config:
+      missile_type: 0
+      target_type: 0
+      initial_state:
+        position: {x: -100, y: 20, z: 0}
+        rotation: {x: -45, y: 0, z: 0}
+        velocity: {x: 0, y: 10, z: 10}
+      standard_deviation:
+        position: {x: 10, y: 0, z: 10}
+        velocity: {x: 5, y: 0, z: 3}
+      dynamic_config:
+        launch_config:
+          launch_time: 20
+        sensor_config:
+          type: 0
+          frequency: 1000
+      plotting_config:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        linestyle: 0
+        marker: 0
+      submunitions_config:
+        num_submunitions: 7
+        launch_config:
+          launch_time: 23
+        agent_config:
+          missile_type: 1
+          initial_state:
+            position: {x: -117.94113, y: 473.32446, z: 1092.305}
+            rotation: {x: 0, y: 0, z: 0}
+            velocity: {x: -5.810343, y: 133.54488, z: 394.63327}
           standard_deviation:
             position: {x: 5, y: 5, z: 5}
             velocity: {x: 0, y: 0, z: 0}
@@ -64,12 +152,12 @@ MonoBehaviour:
       missile_type: 0
       target_type: 0
       initial_state:
-        position: {x: 0, y: 400, z: 3000}
+        position: {x: 0, y: 600, z: 6000}
         rotation: {x: 90, y: 0, z: 0}
-        velocity: {x: 0, y: 0, z: -150}
+        velocity: {x: 0, y: 0, z: -50}
       standard_deviation:
-        position: {x: 500, y: 200, z: 100}
-        velocity: {x: 0, y: 0, z: 50}
+        position: {x: 1000, y: 200, z: 100}
+        velocity: {x: 0, y: 0, z: 25}
       dynamic_config:
         launch_config:
           launch_time: 0
