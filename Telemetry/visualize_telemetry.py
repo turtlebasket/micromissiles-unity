@@ -28,10 +28,11 @@ def plot_telemetry(file_path):
     colors = {'T': 'red', 'M': 'blue'}
 
     # Group data by AgentID
-    for agent_type, type_data in df.groupby('AgentType'):
+    for agent_id, agent_data in df.groupby('AgentID'):
+        agent_type = agent_data['AgentType'].iloc[0]
         color = colors.get(agent_type, 'black')
-        downsampled = type_data.groupby('AgentID').apply(lambda x: x.iloc[::10], include_groups=False)
-        
+        downsampled = agent_data.iloc[::10]
+
         ax.plot(
             downsampled['AgentX'],
             downsampled['AgentZ'],

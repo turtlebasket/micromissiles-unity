@@ -10,68 +10,66 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79f1fe138866d6a40b209a4edcf2ee06, type: 3}
-  m_Name: SimulationConfig
+  m_Name: SimulationConfigSimple
   m_EditorClassIdentifier: 
-  timeScale: 0.1
+  timeScale: 1
   missile_swarm_configs:
-  - num_agents: 4
-    agent_config:
-      missile_type: 1
-      target_type: 0
-      initial_state:
-        position: {x: 0, y: 600, z: -500}
-        rotation: {x: 0, y: 0, z: 0}
-        velocity: {x: 0.001, y: 0, z: 0.002}
-      standard_deviation:
-        position: {x: 200, y: 10, z: 200}
-        velocity: {x: 0, y: 0, z: 0}
-      dynamic_config:
-        launch_config:
-          launch_time: 0
-        sensor_config:
-          type: 0
-          frequency: 0
-      plotting_config:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        linestyle: 0
-        marker: 0
-      submunitions_config:
-        num_submunitions: 0
-        launch_config:
-          launch_time: 0
-        agent_config:
-          missile_type: 0
-          initial_state:
-            position: {x: 0, y: 0, z: 0}
-            rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: 0, y: 0, z: 0}
-          standard_deviation:
-            position: {x: 0, y: 0, z: 0}
-            velocity: {x: 0, y: 0, z: 0}
-          dynamic_config:
-            launch_config:
-              launch_time: 0
-            sensor_config:
-              type: 0
-              frequency: 0
-          plotting_config:
-            color: {r: 0, g: 0, b: 0, a: 0}
-            linestyle: 0
-            marker: 0
-          prefabName: 
-      prefabName: Micromissile
-  target_swarm_configs:
-  - num_agents: 8
+  - num_agents: 1
     agent_config:
       missile_type: 0
       target_type: 0
       initial_state:
-        position: {x: 0, y: 200, z: 500}
-        rotation: {x: 0, y: 0, z: 0}
-        velocity: {x: 300, y: 0, z: 0}
+        position: {x: 0, y: 20, z: 0}
+        rotation: {x: -45, y: 0, z: 0}
+        velocity: {x: 0, y: 10, z: 10}
       standard_deviation:
-        position: {x: 100, y: 50, z: 100}
-        velocity: {x: 50, y: 0, z: 10}
+        position: {x: 10, y: 0, z: 10}
+        velocity: {x: 5, y: 0, z: 1}
+      dynamic_config:
+        launch_config:
+          launch_time: 0
+        sensor_config:
+          type: 0
+          frequency: 100
+      plotting_config:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        linestyle: 0
+        marker: 0
+      submunitions_config:
+        num_submunitions: 7
+        launch_config:
+          launch_time: 4
+        agent_config:
+          missile_type: 1
+          initial_state:
+            position: {x: 0, y: 0, z: 0}
+            rotation: {x: 0, y: 0, z: 0}
+            velocity: {x: 0, y: 0, z: 0}
+          standard_deviation:
+            position: {x: 5, y: 5, z: 5}
+            velocity: {x: 0, y: 0, z: 0}
+          dynamic_config:
+            launch_config:
+              launch_time: 0
+            sensor_config:
+              type: 0
+              frequency: 100
+          plotting_config:
+            color: {r: 0, g: 0, b: 0, a: 0}
+            linestyle: 0
+            marker: 0
+  target_swarm_configs:
+  - num_agents: 7
+    agent_config:
+      missile_type: 0
+      target_type: 0
+      initial_state:
+        position: {x: 0, y: 600, z: 6000}
+        rotation: {x: 90, y: 0, z: 0}
+        velocity: {x: 0, y: 0, z: -50}
+      standard_deviation:
+        position: {x: 1000, y: 200, z: 100}
+        velocity: {x: 0, y: 0, z: 25}
       dynamic_config:
         launch_config:
           launch_time: 0
@@ -105,5 +103,3 @@ MonoBehaviour:
             color: {r: 0, g: 0, b: 0, a: 0}
             linestyle: 0
             marker: 0
-          prefabName: 
-      prefabName: DroneTarget
