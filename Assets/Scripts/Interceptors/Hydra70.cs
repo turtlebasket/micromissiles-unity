@@ -36,9 +36,6 @@ public class Hydra70 : Missile {
   }
 
   public void SpawnSubmunitions() {
-    Debug.Log("Spawning submunitions");
-    // print the callstack
-    Debug.Log(new System.Diagnostics.StackTrace().ToString());
     List<Missile> submunitions = new List<Missile>();
     switch (_agentConfig.submunitions_config.agent_config.missile_type) {
       case MissileType.MICROMISSILE:
@@ -50,7 +47,6 @@ public class Hydra70 : Missile {
           convertedConfig.initial_state.velocity = GetComponent<Rigidbody>().velocity;
           Missile submunition = SimManager.Instance.CreateMissile(convertedConfig);
           submunitions.Add(submunition);
-          Debug.Log("Created submunition");
         }
         break;
     }

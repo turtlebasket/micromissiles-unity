@@ -20,13 +20,18 @@ public class SimManager : MonoBehaviour {
   public SimulationConfig simulationConfig;
 
   private List<Missile> _missiles = new List<Missile>();
+  private List<Missile> _activeMissiles = new List<Missile>();
   private List<Target> _unassignedTargets = new List<Target>();
   private List<Target> _targets = new List<Target>();
+  private List<Target> _activeTargets = new List<Target>();
   private float _elapsedSimulationTime = 0f;
   private float endTime = 100f;  // Set an appropriate end time
   private bool simulationRunning = false;
 
   private IAssignment _assignmentScheme;
+
+  public delegate void SimulationEndedHandler();
+  public event SimulationEndedHandler OnSimulationEnded;
 
   /// <summary>
   /// Gets the elapsed simulation time.
@@ -34,6 +39,14 @@ public class SimManager : MonoBehaviour {
   /// <returns>The elapsed time in seconds.</returns>
   public double GetElapsedSimulationTime() {
     return _elapsedSimulationTime;
+  }
+
+  public List<Missile> GetActiveMissiles() {
+    return _activeMissiles;
+  }
+
+  public List<Target> GetActiveTargets() {
+    return _activeTargets;
   }
 
   void Awake() {
@@ -63,6 +76,7 @@ public class SimManager : MonoBehaviour {
     foreach (var swarmConfig in simulationConfig.missile_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var missile = CreateMissile(swarmConfig.agent_config);
+        missile.OnAgentHit += RegisterMissileHit;
       }
     }
 
@@ -71,6 +85,8 @@ public class SimManager : MonoBehaviour {
     foreach (var swarmConfig in simulationConfig.target_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var target = CreateTarget(swarmConfig.agent_config);
+        target.OnAgentHit += RegisterTargetHit;
+        target.OnAgentMiss += RegisterTargetMiss;
       }
     }
 
@@ -81,8 +97,22 @@ public class SimManager : MonoBehaviour {
     AssignMissilesToTargets(_missiles);
   }
 
-  public void RegisterTargetMiss(Target target) {
-    _unassignedTargets.Add(target);
+  public void RegisterMissileHit(Agent missile) {
+    if (missile is Missile missileComponent) {
+      _activeMissiles.Remove(missileComponent);
+    }
+  }
+
+  public void RegisterTargetHit(Agent target) {
+    if (target is Target targetComponent) {
+      _activeTargets.Remove(targetComponent);
+    }
+  }
+
+  public void RegisterTargetMiss(Agent target) {
+    if (target is Target targetComponent) {
+      _unassignedTargets.Add(targetComponent);
+    }
   }
 
   /// <summary>
@@ -137,16 +167,9 @@ public class SimManager : MonoBehaviour {
         break;
     }
 
-    // Missile missile = missileObject.GetComponent<Missile>();
-    // if (missile == null)
-    // {
-    //     Debug.LogError($"Missile component not found on prefab '{prefabName}'.");
-    //     Destroy(missileObject);
-    //     return null;
-    // }
-
-    // missile.SetAgentConfig(config);
     _missiles.Add(missileObject.GetComponent<Missile>());
+    _activeMissiles.Add(missileObject.GetComponent<Missile>());
+
     // Assign a unique and simple target ID
     int missileId = _missiles.Count;
     missileObject.name = $"{config.missile_type}_Missile_{missileId}";
@@ -167,17 +190,10 @@ public class SimManager : MonoBehaviour {
     if (targetObject == null)
       return null;
 
-    // Target target = targetObject.GetComponent<Target>();
-    // if (target == null)
-    // {
-    //     Debug.LogError($"Target component not found on prefab '{config.prefabName}'.");
-    //     Destroy(targetObject);
-    //     return null;
-    // }
-
-    // target.SetAgentConfig(config);
     _targets.Add(targetObject.GetComponent<Target>());
+    _activeTargets.Add(targetObject.GetComponent<Target>());
     _unassignedTargets.Add(targetObject.GetComponent<Target>());
+
     // Assign a unique and simple target ID
     int targetId = _targets.Count;
     targetObject.name = $"{config.target_type}_Target_{targetId}";
@@ -214,7 +230,9 @@ public class SimManager : MonoBehaviour {
   }
 
 
-  private void RestartSimulation() {
+  public void RestartSimulation() {
+    OnSimulationEnded?.Invoke();
+    Debug.Log("Simulation ended");
     // Reset simulation time
     _elapsedSimulationTime = 0f;
     simulationRunning = true;

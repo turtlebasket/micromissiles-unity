@@ -75,3 +75,5 @@ crashlytics-build.properties
 .vscode/
 .vsconfig
 
+# Telemetry Logs
+Telemetry/Logs/

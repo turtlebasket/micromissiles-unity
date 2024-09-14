@@ -24,6 +24,14 @@ public abstract class Agent : MonoBehaviour {
   [SerializeField]
   public StaticConfig StaticConfig;
 
+  // Define delegates
+  public delegate void AgentHitEventHandler(Agent agent);
+  public delegate void AgentMissEventHandler(Agent agent);
+
+  // Define events
+  public event AgentHitEventHandler OnAgentHit;
+  public event AgentMissEventHandler OnAgentMiss;
+
   public void SetFlightPhase(FlightPhase flightPhase) {
     Debug.Log(
         $"Setting flight phase to {flightPhase} at time {SimManager.Instance.GetElapsedSimulationTime()}");
@@ -91,13 +99,14 @@ public abstract class Agent : MonoBehaviour {
   // Mark the agent as having hit the target or been hit.
   public void MarkAsHit() {
     _isHit = true;
+    OnAgentHit?.Invoke(this);
     TerminateAgent();
   }
 
   public void MarkAsMiss() {
     _isMiss = true;
     if (_target != null) {
-      SimManager.Instance.RegisterTargetMiss(_target as Target);
+      OnAgentMiss?.Invoke(this);
       _target = null;
     }
     TerminateAgent();
