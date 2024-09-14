@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Micromissile : Missile {
   [SerializeField]
-  private float _navigationGain = 5f;  // Typically 3-5
+  private float _navigationGain = 3f;  // Typically 3-5
 
   private SensorOutput _sensorOutput;
   private Vector3 _accelerationCommand;
