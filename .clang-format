@@ -1,0 +1,4 @@
+BasedOnStyle: Google
+---
+Language: CSharp
+ColumnLimit: 100
