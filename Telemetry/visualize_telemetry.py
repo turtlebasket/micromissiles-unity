@@ -19,6 +19,7 @@ def plot_telemetry(file_path):
     # Read the telemetry CSV file
     df = pd.read_csv(file_path)
 
+
     # Create a 3D plot
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -29,7 +30,7 @@ def plot_telemetry(file_path):
     # Group data by AgentID
     for agent_type, type_data in df.groupby('AgentType'):
         color = colors.get(agent_type, 'black')
-        downsampled = type_data.groupby('AgentID').apply(lambda x: x.iloc[::10])
+        downsampled = type_data.groupby('AgentID').apply(lambda x: x.iloc[::10], include_groups=False)
         
         ax.plot(
             downsampled['AgentX'],
@@ -41,9 +42,11 @@ def plot_telemetry(file_path):
             label=f"{agent_type}"
         )
 
-    ax.set_xlabel('X (Right)')
-    ax.set_ylabel('Z (Forward)')
-    ax.set_zlabel('Y (Up)')
+
+    ax.set_xlabel('X (m)')
+    ax.set_ylabel('Z (m)')
+    ax.set_zlabel('Y (m)')
+    
 
     ax.view_init(elev=20, azim=45)
 
@@ -55,7 +58,11 @@ def plot_telemetry(file_path):
     ax.plot_surface(xx, zz, yy, alpha=0.2, color='green')
 
     plt.title('Agents Trajectories (X: Right, Z: Forward, Y: Up)')
-    plt.legend()
+    legend = [
+        plt.Line2D([0], [0], color='red', lw=2, label='Target'),
+        plt.Line2D([0], [0], color='blue', lw=2, label='Missile')
+    ]
+    plt.legend(handles=legend)
     plt.tight_layout()
     plt.show()
     

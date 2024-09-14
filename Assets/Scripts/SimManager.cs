@@ -77,6 +77,7 @@ public class SimManager : MonoBehaviour {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var missile = CreateMissile(swarmConfig.agent_config);
         missile.OnAgentHit += RegisterMissileHit;
+        missile.OnAgentMiss += RegisterMissileMiss;
       }
     }
 
@@ -98,6 +99,12 @@ public class SimManager : MonoBehaviour {
   }
 
   public void RegisterMissileHit(Agent missile) {
+    if (missile is Missile missileComponent) {
+      _activeMissiles.Remove(missileComponent);
+    }
+  }
+
+  public void RegisterMissileMiss(Agent missile) {
     if (missile is Missile missileComponent) {
       _activeMissiles.Remove(missileComponent);
     }
