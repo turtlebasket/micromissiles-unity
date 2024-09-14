@@ -30,7 +30,7 @@ MonoBehaviour:
           launch_time: 0
         sensor_config:
           type: 0
-          frequency: 1000
+          frequency: 100
       plotting_config:
         color: {r: 0, g: 0, b: 0, a: 0}
         linestyle: 0
@@ -38,13 +38,13 @@ MonoBehaviour:
       submunitions_config:
         num_submunitions: 7
         launch_config:
-          launch_time: 2
+          launch_time: 4
         agent_config:
           missile_type: 1
           initial_state:
-            position: {x: -276.48438, y: 585.0613, z: 640.66565}
+            position: {x: -171.3253, y: 683.85236, z: 846.74677}
             rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: -115.62746, y: 195.53085, z: 266.85275}
+            velocity: {x: -45.325005, y: 110.16025, z: 216.10002}
           standard_deviation:
             position: {x: 5, y: 5, z: 5}
             velocity: {x: 0, y: 0, z: 0}
@@ -53,7 +53,7 @@ MonoBehaviour:
               launch_time: 0
             sensor_config:
               type: 0
-              frequency: 1
+              frequency: 100
           plotting_config:
             color: {r: 0, g: 0, b: 0, a: 0}
             linestyle: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
           launch_time: 10
         sensor_config:
           type: 0
-          frequency: 1000
+          frequency: 100
       plotting_config:
         color: {r: 0, g: 0, b: 0, a: 0}
         linestyle: 0
@@ -86,9 +86,9 @@ MonoBehaviour:
         agent_config:
           missile_type: 1
           initial_state:
-            position: {x: -142.09969, y: 732.03265, z: 973.45154}
+            position: {x: -3.2042065, y: 781.2401, z: 1043.2384}
             rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: -127.14329, y: 235.90274, z: 367.02448}
+            velocity: {x: -72.93396, y: 249.48598, z: 385.07947}
           standard_deviation:
             position: {x: 5, y: 5, z: 5}
             velocity: {x: 0, y: 0, z: 0}
@@ -97,7 +97,7 @@ MonoBehaviour:
               launch_time: 0
             sensor_config:
               type: 0
-              frequency: 1
+              frequency: 100
           plotting_config:
             color: {r: 0, g: 0, b: 0, a: 0}
             linestyle: 0
@@ -118,7 +118,7 @@ MonoBehaviour:
           launch_time: 20
         sensor_config:
           type: 0
-          frequency: 1000
+          frequency: 100
       plotting_config:
         color: {r: 0, g: 0, b: 0, a: 0}
         linestyle: 0
@@ -130,9 +130,9 @@ MonoBehaviour:
         agent_config:
           missile_type: 1
           initial_state:
-            position: {x: -117.94113, y: 473.32446, z: 1092.305}
+            position: {x: -246.4463, y: 976.02924, z: 1081.1262}
             rotation: {x: 0, y: 0, z: 0}
-            velocity: {x: -5.810343, y: 133.54488, z: 394.63327}
+            velocity: {x: -31.540234, y: 178.44958, z: 249.32939}
           standard_deviation:
             position: {x: 5, y: 5, z: 5}
             velocity: {x: 0, y: 0, z: 0}
@@ -141,7 +141,7 @@ MonoBehaviour:
               launch_time: 0
             sensor_config:
               type: 0
-              frequency: 1
+              frequency: 100
           plotting_config:
             color: {r: 0, g: 0, b: 0, a: 0}
             linestyle: 0
