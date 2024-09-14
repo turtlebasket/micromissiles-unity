@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Manages the simulation by handling missiles, targets, and their assignments.
+/// Implements the Singleton pattern to ensure only one instance exists.
+/// </summary>
 public class SimManager : MonoBehaviour {
-  // Singleton instance
+  /// <summary>
+  /// Singleton instance of SimManager.
+  /// </summary>
   public static SimManager Instance { get; private set; }
 
+  /// <summary>
+  /// Configuration settings for the simulation.
+  /// </summary>
   [SerializeField]
   public SimulationConfig simulationConfig;
 
@@ -19,6 +28,10 @@ public class SimManager : MonoBehaviour {
 
   private IAssignment _assignmentScheme;
 
+  /// <summary>
+  /// Gets the elapsed simulation time.
+  /// </summary>
+  /// <returns>The elapsed time in seconds.</returns>
   public double GetElapsedSimulationTime() {
     return _elapsedSimulationTime;
   }
@@ -62,9 +75,8 @@ public class SimManager : MonoBehaviour {
     }
 
     _assignmentScheme = new ThreatAssignment();
-    // Perform initial assignment
   }
-
+  
   public void AssignMissilesToTargets() {
     AssignMissilesToTargets(_missiles);
   }
@@ -73,6 +85,10 @@ public class SimManager : MonoBehaviour {
     _unassignedTargets.Add(target);
   }
 
+  /// <summary>
+  /// Assigns the specified list of missiles to available targets based on the assignment scheme.
+  /// </summary>
+  /// <param name="missilesToAssign">The list of missiles to assign.</param>
   public void AssignMissilesToTargets(List<Missile> missilesToAssign) {
     // Convert Missile and Target lists to Agent lists
     List<Agent> missileAgents = new List<Agent>(missilesToAssign.ConvertAll(m => m as Agent));
@@ -97,6 +113,11 @@ public class SimManager : MonoBehaviour {
         target => missilesToAssign.Any(missile => missile.GetAssignedTarget() == target));
   }
 
+  /// <summary>
+  /// Creates a missile based on the provided configuration.
+  /// </summary>
+  /// <param name="config">Configuration settings for the missile.</param>
+  /// <returns>The created Missile instance, or null if creation failed.</returns>
   public Missile CreateMissile(AgentConfig config) {
     string prefabName = config.missile_type switch { MissileType.HYDRA_70 => "Hydra70",
                                                      MissileType.MICROMISSILE => "Micromissile",
@@ -132,6 +153,11 @@ public class SimManager : MonoBehaviour {
     return missileObject.GetComponent<Missile>();
   }
 
+  /// <summary>
+  /// Creates a target based on the provided configuration.
+  /// </summary>
+  /// <param name="config">Configuration settings for the target.</param>
+  /// <returns>The created Target instance, or null if creation failed.</returns>
   private Target CreateTarget(AgentConfig config) {
     string prefabName = config.target_type switch {
       TargetType.DRONE => "DroneTarget", TargetType.MISSILE => "MissileTarget",
@@ -158,6 +184,12 @@ public class SimManager : MonoBehaviour {
     return targetObject.GetComponent<Target>();
   }
 
+  /// <summary>
+  /// Creates an agent (missile or target) based on the provided configuration and prefab name.
+  /// </summary>
+  /// <param name="config">Configuration settings for the agent.</param>
+  /// <param name="prefabName">Name of the prefab to instantiate.</param>
+  /// <returns>The created GameObject instance, or null if creation failed.</returns>
   public GameObject CreateAgent(AgentConfig config, string prefabName) {
     GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
     if (prefab == null) {
@@ -181,6 +213,7 @@ public class SimManager : MonoBehaviour {
     return agentObject;
   }
 
+
   private void RestartSimulation() {
     // Reset simulation time
     _elapsedSimulationTime = 0f;
@@ -192,14 +225,16 @@ public class SimManager : MonoBehaviour {
         Destroy(missile.gameObject);
       }
     }
-    _missiles.Clear();
 
     foreach (var target in _targets) {
       if (target != null) {
         Destroy(target.gameObject);
       }
     }
+
+    _missiles.Clear();
     _targets.Clear();
+    _unassignedTargets.Clear();
 
     InitializeSimulation();
   }
