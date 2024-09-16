@@ -7,8 +7,8 @@ public class Hydra70 : Missile {
   private Vector3 _acceleration;
   private bool _submunitionsLaunched = false;
 
-  protected override void Update() {
-    base.Update();
+  protected override void FixedUpdate() {
+    base.FixedUpdate();
 
     // Check if it's time to launch submunitions
     if (!_submunitionsLaunched &&

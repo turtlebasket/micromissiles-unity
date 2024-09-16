@@ -9,8 +9,8 @@ public class DroneTarget : Target {
   }
 
   // Update is called once per frame
-  protected override void Update() {
-    base.Update();
+  protected override void FixedUpdate() {
+    base.FixedUpdate();
   }
 
   protected override void UpdateReady(double deltaTime) {}

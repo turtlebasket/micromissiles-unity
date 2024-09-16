@@ -49,6 +49,10 @@ public class SimManager : MonoBehaviour {
     return _activeTargets;
   }
 
+  public List<Agent> GetActiveAgents() {
+    return _activeMissiles.ConvertAll(missile => missile as Agent).Concat(_activeTargets.ConvertAll(target => target as Agent)).ToList();
+  }
+
   void Awake() {
     // Ensure only one instance of SimManager exists
     if (Instance == null) {
@@ -62,12 +66,29 @@ public class SimManager : MonoBehaviour {
   void Start() {
     // Slow down time by simulationConfig.timeScale
     if (Instance == this) {
-      Time.timeScale = simulationConfig.timeScale;
-      Time.fixedDeltaTime = Time.timeScale * 0.02f;
-      Time.maximumDeltaTime = Time.timeScale * 0.15f;
       InitializeSimulation();
       simulationRunning = true;
     }
+  }
+
+  public void SetTimeScale(float timeScale) {
+    Time.timeScale = timeScale;
+    Time.fixedDeltaTime = Time.timeScale * 0.02f;
+    Time.maximumDeltaTime = Time.timeScale * 0.15f;
+  }
+
+  public void PauseSimulation() {
+    SetTimeScale(0);
+    simulationRunning = false;
+  }
+
+  public void ResumeSimulation() {
+    SetTimeScale(simulationConfig.timeScale);
+    simulationRunning = true;
+  }
+
+  public bool IsSimulationRunning() {
+    return simulationRunning;
   }
 
   private void InitializeSimulation() {

@@ -11,7 +11,7 @@ public abstract class Target : Agent {
     base.Start();
   }
 
-  protected override void Update() {
-    base.Update();
+  protected override void FixedUpdate() {
+    base.FixedUpdate();
   }
 }

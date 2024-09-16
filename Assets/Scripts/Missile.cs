@@ -30,8 +30,8 @@ public class Missile : Agent {
     // GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
   }
 
-  protected override void Update() {
-    base.Update();
+  protected override void FixedUpdate() {
+    base.FixedUpdate();
     if (_showDebugVectors) {
       DrawDebugVectors();
     }

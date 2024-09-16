@@ -136,9 +136,9 @@ public abstract class Agent : MonoBehaviour {
   }
 
   // Update is called once per frame
-  protected virtual void Update() {
-    _timeSinceLaunch += Time.deltaTime;
-    _timeInPhase += Time.deltaTime;
+  protected virtual void FixedUpdate() {
+    _timeSinceLaunch += Time.fixedDeltaTime;
+    _timeInPhase += Time.fixedDeltaTime;
 
     var launch_time = _agentConfig.dynamic_config.launch_config.launch_time;
     var boost_time = launch_time + StaticConfig.boostConfig.boostTime;
@@ -159,14 +159,14 @@ public abstract class Agent : MonoBehaviour {
       case FlightPhase.INITIALIZED:
         break;
       case FlightPhase.READY:
-        UpdateReady(Time.deltaTime);
+        UpdateReady(Time.fixedDeltaTime);
         break;
       case FlightPhase.BOOST:
-        UpdateBoost(Time.deltaTime);
+        UpdateBoost(Time.fixedDeltaTime);
         break;
       case FlightPhase.MIDCOURSE:
       case FlightPhase.TERMINAL:
-        UpdateMidCourse(Time.deltaTime);
+        UpdateMidCourse(Time.fixedDeltaTime);
         break;
       case FlightPhase.TERMINATED:
         break;
