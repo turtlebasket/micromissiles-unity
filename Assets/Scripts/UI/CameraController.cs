@@ -1,16 +1,179 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
-public class InputManager : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
+    #region Singleton
 
-    public static InputManager Instance { get; private set; }
+    /// <summary>
+    /// Singleton instance of the CameraController.
+    /// </summary>
+    public static CameraController Instance { get; private set; }
 
-    
+    #endregion
 
+    #region Camera Settings
+
+    /// <summary>
+    /// Determines if mouse input is active for camera control.
+    /// </summary>
     public bool mouseActive = true;
+
+    /// <summary>
+    /// Locks user input for camera control.
+    /// </summary>
+    public bool lockUserInput = false;
+
+    /// <summary>
+    /// Normal speed of camera movement.
+    /// </summary>
+    [SerializeField] private float _cameraSpeedNormal = 100.0f;
+
+    /// <summary>
+    /// Maximum speed of camera movement.
+    /// </summary>
+    [SerializeField] private float _cameraSpeedMax = 1000.0f;
+
+    /// <summary>
+    /// Current speed of camera movement.
+    /// </summary>
+    private float _cameraSpeed;
+
+    /// <summary>
+    /// Horizontal rotation speed.
+    /// </summary>
+    public float _speedH = 2.0f;
+
+    /// <summary>
+    /// Vertical rotation speed.
+    /// </summary>
+    public float _speedV = 2.0f;
+
+    /// <summary>
+    /// Current yaw angle of the camera.
+    /// </summary>
+    private float _yaw = 0.0f;
+
+    /// <summary>
+    /// Current pitch angle of the camera.
+    /// </summary>
+    private float _pitch = 0.0f;
+
+    #endregion
+
+    #region Orbit Settings
+
+    /// <summary>
+    /// Determines if the camera should auto-rotate.
+    /// </summary>
+    public bool autoRotate = false;
+
+    /// <summary>
+    /// Target transform for orbit rotation.
+    /// </summary>
+    public Transform target;
+
+    /// <summary>
+    /// Distance from the camera to the orbit target.
+    /// </summary>
+    [SerializeField] private float _orbitDistance = 5.0f;
+
+    /// <summary>
+    /// Horizontal orbit rotation speed.
+    /// </summary>
+    [SerializeField] private float _orbitXSpeed = 120.0f;
+
+    /// <summary>
+    /// Vertical orbit rotation speed.
+    /// </summary>
+    [SerializeField] private float _orbitYSpeed = 120.0f;
+
+    /// <summary>
+    /// Speed of camera zoom.
+    /// </summary>
+    [SerializeField] private float _zoomSpeed = 500.0f;
+
+    /// <summary>
+    /// Minimum vertical angle limit for orbit.
+    /// </summary>
+    public float orbitYMinLimit = -20f;
+
+    /// <summary>
+    /// Maximum vertical angle limit for orbit.
+    /// </summary>
+    public float orbitYMaxLimit = 80f;
+
+    /// <summary>
+    /// Minimum distance for orbit.
+    /// </summary>
+    private float _orbitDistanceMin = 10f;
+
+    /// <summary>
+    /// Maximum distance for orbit.
+    /// </summary>
+    private float _orbitDistanceMax = 10000f;
+
+    /// <summary>
+    /// Current horizontal orbit angle.
+    /// </summary>
+    private float _orbitX = 0.0f;
+
+    /// <summary>
+    /// Current vertical orbit angle.
+    /// </summary>
+    private float _orbitY = 0.0f;
+
+    #endregion
+
+    #region Rendering
+
+    /// <summary>
+    /// Renderer for the orbit target.
+    /// </summary>
+    public Renderer targetRenderer;
+
+    /// <summary>
+    /// Renderer for the floor.
+    /// </summary>
+    public Renderer floorRenderer;
+
+    /// <summary>
+    /// Alpha value for material transparency.
+    /// </summary>
+    public float matAlpha;
+
+    #endregion
+
+    #region Autoplay Settings
+
+    /// <summary>
+    /// Speed of camera movement during autoplay.
+    /// </summary>
+    public float autoplayCamSpeed = 2f;
+
+    /// <summary>
+    /// Duration of horizontal auto-rotation.
+    /// </summary>
+    public float xAutoRotateTime = 5f;
+
+    /// <summary>
+    /// Duration of vertical auto-rotation.
+    /// </summary>
+    public float yAutoRotateTime = 5f;
+
+    /// <summary>
+    /// Coroutine for autoplay functionality.
+    /// </summary>
+    private Coroutine autoplayRoutine;
+
+    #endregion
+
+    #region Camera Presets
+
+    /// <summary>
+    /// Represents a preset camera position and rotation.
+    /// </summary>
     [System.Serializable]
     public struct CameraPreset
     {
@@ -18,59 +181,56 @@ public class InputManager : MonoBehaviour
         public Quaternion rotation;
     }
 
-    public float autoplayCamSpeed = 2f;
-    public float xAutoRotateTime = 5f;
-    public float yAutoRotateTime = 5f;
-    private Coroutine autoplayRoutine;
-    
-
-    public bool lockUserInput = false;
-
-    private float _cameraSpeed;
-    public float _cameraSpeedNormal = 5.0f;
-    public float _cameraSpeedMax = 10.0f;
-
-    public float _speedH = 2.0f;
-    public float _speedV = 2.0f;
-
-    private float _yaw = 0.0f;
-    private float _pitch = 0.0f;
-
-    private float reloadModifier;
-
-    // Orbit controller
-    public bool autoRotate = false;
-    
-    public Transform target;
-    public Renderer targetRenderer;
-    public Renderer floorRenderer;
-    public float matAlpha;
-    public float orbitDistance = 5.0f;
-    public float orbitXSpeed = 120.0f;
-    public float orbitYSpeed = 120.0f;
-
-    public float orbitYMinLimit = -20f;
-    public float orbitYMaxLimit = 80f;
-
-    public float orbitDistanceMin = .5f;
-    public float orbitDistanceMax = 15f;
-
-    private Rigidbody _rigidbody;
-
-    float x = 0.0f;
-    float y = 0.0f;
-
-
+    /// <summary>
+    /// Preset camera position for key 4.
+    /// </summary>
     CameraPreset fourPos = new CameraPreset();
+
+    /// <summary>
+    /// Preset camera position for key 5.
+    /// </summary>
     CameraPreset fivePos = new CameraPreset();
+
+    /// <summary>
+    /// Preset camera position for key 6.
+    /// </summary>
     CameraPreset sixPos = new CameraPreset();
 
+    #endregion
+
+    #region Movement
+
+    /// <summary>
+    /// Mapping of translation inputs to movement vectors.
+    /// </summary>
+    private Dictionary<TranslationInput, Vector3> _translationInputToVectorMap;
+
+    /// <summary>
+    /// Forward movement vector.
+    /// </summary>
     Vector3 wVector = Vector3.forward;
+
+    /// <summary>
+    /// Left movement vector.
+    /// </summary>
     Vector3 aVector = Vector3.left;
+
+    /// <summary>
+    /// Backward movement vector.
+    /// </summary>
     Vector3 sVector = Vector3.back;
+
+    /// <summary>
+    /// Right movement vector.
+    /// </summary>
     Vector3 dVector = Vector3.right;
 
+    /// <summary>
+    /// Angle between forward vector and camera direction.
+    /// </summary>
     public float forwardToCameraAngle;
+
+    #endregion
 
     void SetCameraRotation(Quaternion rotation)
     {
@@ -96,6 +256,15 @@ public class InputManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
+
+        _translationInputToVectorMap = new Dictionary<TranslationInput, Vector3> {
+            {TranslationInput.Forward, wVector},
+            {TranslationInput.Left, aVector},
+            {TranslationInput.Back, sVector},
+            {TranslationInput.Right, dVector},
+            {TranslationInput.Up, Vector3.up},
+            {TranslationInput.Down, Vector3.down}
+        };
     }
 
     // Start is called before the first frame update
@@ -109,16 +278,10 @@ public class InputManager : MonoBehaviour
         sixPos.rotation = Quaternion.Euler(0, 0, 0);
 
         Vector3 angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
+        _orbitX = angles.y;
+        _orbitY = angles.x;
 
         UpdateTargetAlpha();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        HandleInput();
     }
 
     IEnumerator AutoPlayRoutine()
@@ -128,32 +291,32 @@ public class InputManager : MonoBehaviour
             float elapsedTime = 0f;
             while (elapsedTime <= xAutoRotateTime)
             {
-                x += Time.unscaledDeltaTime * autoplayCamSpeed * orbitDistance * 0.02f;
-                UpdateCamPosition();
+                _orbitX += Time.unscaledDeltaTime * autoplayCamSpeed * _orbitDistance * 0.02f;
+                UpdateCamPosition(_orbitX, _orbitY);
                 elapsedTime += Time.unscaledDeltaTime;
                 yield return null;
             }
             elapsedTime = 0f;
             while (elapsedTime <= yAutoRotateTime)
             {
-                y -= Time.unscaledDeltaTime * autoplayCamSpeed * orbitDistance * 0.02f;
-                UpdateCamPosition();
+                _orbitY -= Time.unscaledDeltaTime * autoplayCamSpeed * _orbitDistance * 0.02f;
+                UpdateCamPosition(_orbitX, _orbitY);
                 elapsedTime += Time.unscaledDeltaTime;
                 yield return null;
             }
             elapsedTime = 0f;
             while (elapsedTime <= xAutoRotateTime)
             {
-                x -= Time.unscaledDeltaTime * autoplayCamSpeed * orbitDistance * 0.02f;
-                UpdateCamPosition();
+                _orbitX -= Time.unscaledDeltaTime * autoplayCamSpeed * _orbitDistance * 0.02f;
+                UpdateCamPosition(_orbitX, _orbitY);
                 elapsedTime += Time.unscaledDeltaTime;
                 yield return null;
             }
             elapsedTime = 0f;
             while (elapsedTime <= yAutoRotateTime)
             {
-                y += Time.unscaledDeltaTime * autoplayCamSpeed * orbitDistance * 0.02f;
-                UpdateCamPosition();
+                _orbitY += Time.unscaledDeltaTime * autoplayCamSpeed * _orbitDistance * 0.02f;
+                UpdateCamPosition(_orbitX, _orbitY);
                 elapsedTime += Time.unscaledDeltaTime;
                 yield return null;
             }
@@ -167,19 +330,19 @@ public class InputManager : MonoBehaviour
         if(Physics.Raycast(transform.position, transform.forward, out hit, float.MaxValue, LayerMask.GetMask("Floor"), QueryTriggerInteraction.Ignore))
         {
             target.transform.position = hit.point;
-            orbitDistance = hit.distance;
+            _orbitDistance = hit.distance;
             Vector3 angles = transform.eulerAngles;
-            x = angles.y;
-            y = angles.x;
-            UpdateCamPosition();
+            _orbitX = angles.y;
+            _orbitY = angles.x;
+            UpdateCamPosition(_orbitX, _orbitY);
         }
         else
         {
             target.transform.position = transform.position + (transform.forward * 100);
-            orbitDistance = 100;
+            _orbitDistance = 100;
             Vector3 angles = transform.eulerAngles;
-            x = angles.y;
-            y = angles.x;
+            _orbitX = angles.y;
+            _orbitY = angles.x;
             //UpdateCamPosition();
         }
     }
@@ -188,44 +351,34 @@ public class InputManager : MonoBehaviour
 
     public void EnableFloorGridRenderer(bool enable) { floorRenderer.enabled = enable;  } 
 
-    private void HandleMouseInput()
-    {
-        // Orbit
+
+    public void OrbitCamera(float xOrbit, float yOrbit) {
         if (target)
         {
-            if (Input.GetMouseButton(0))
-            {
-                x += Input.GetAxis("Mouse X") * orbitXSpeed * orbitDistance * 0.02f;
-                y -= Input.GetAxis("Mouse Y") * orbitYSpeed * orbitDistance * 0.02f;
+            _orbitX += xOrbit * _orbitXSpeed * _orbitDistance * 0.02f;
+            _orbitY -= yOrbit * _orbitYSpeed * _orbitDistance * 0.02f;
 
-                y = ClampAngle(y, orbitYMinLimit, orbitYMaxLimit);
-                UpdateCamPosition();
-                
-            }
-            // Rotate
-            else if (Input.GetMouseButton(1))
-            {
-                _yaw += _speedH * Input.GetAxis("Mouse X");
-                _pitch -= _speedV * Input.GetAxis("Mouse Y");
-
-                transform.eulerAngles = new Vector3(_pitch, _yaw, 0.0f);
-            }
-
+            _orbitY = ClampAngle(_orbitY, orbitYMinLimit, orbitYMaxLimit);
+            UpdateCamPosition(_orbitX, _orbitY);
         }
-        
-        
     }
 
-    private void UpdateCamPosition()
+    public void RotateCamera(float xRotate, float yRotate) {
+        _yaw += xRotate * _speedH;
+        _pitch -= yRotate * _speedV;
+        transform.eulerAngles = new Vector3(_pitch, _yaw, 0.0f);
+    }
+
+    private void UpdateCamPosition(float x, float y)
     {
         Quaternion rotation = Quaternion.Euler(y, x, 0);
         RaycastHit hit;
         //Debug.DrawLine(target.position, transform.position, Color.red);
         if (Physics.Linecast(target.position, transform.position, out hit, ~LayerMask.GetMask("Floor"), QueryTriggerInteraction.Ignore))
         {
-            orbitDistance -= hit.distance;
+            _orbitDistance -= hit.distance;
         }
-        Vector3 negDistance = new Vector3(0.0f, 0.0f, -orbitDistance);
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -_orbitDistance);
         Vector3 position = rotation * negDistance + target.position;
         UpdateTargetAlpha();
 
@@ -233,27 +386,16 @@ public class InputManager : MonoBehaviour
         transform.position = position;
     }
 
-    private void HandleInput()
-    {
-        if (!lockUserInput)
-        {
-            HandleLockableInput();
-        }
-        HandleNonLockableInput();
-    }
 
-    void HandleScrollWheelInput()
+    public void ZoomCamera(float zoom)
     {
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
-        {
-            orbitDistance = Mathf.Clamp(orbitDistance - Input.GetAxis("Mouse ScrollWheel") * 500, orbitDistanceMin, orbitDistanceMax);
-            UpdateCamPosition();
-        }
+        _orbitDistance = Mathf.Clamp(_orbitDistance - zoom * _zoomSpeed, _orbitDistanceMin, _orbitDistanceMax);
+        UpdateCamPosition(_orbitX, _orbitY);
     }
 
     void UpdateTargetAlpha()
     {
-        matAlpha = (orbitDistance - orbitDistanceMin) / (orbitDistanceMax - orbitDistanceMin);
+        matAlpha = (_orbitDistance - _orbitDistanceMin) / (_orbitDistanceMax - _orbitDistanceMin);
         matAlpha = Mathf.Max(Mathf.Sqrt(matAlpha) - 0.5f, 0);
         Color matColor = targetRenderer.material.color;
         matColor.a = matAlpha;
@@ -297,88 +439,40 @@ public class InputManager : MonoBehaviour
 
     }
 
+    public enum TranslationInput {
+        Forward,
+        Left,
+        Back,
+        Right,
+        Up,
+        Down
+    }
+
+
+
+    public void TranslateCamera(TranslationInput input) {
+        UpdateDirectionVectors();
+        target.Translate(_translationInputToVectorMap[input] * Time.unscaledDeltaTime * _cameraSpeed);
+        UpdateCamPosition(_orbitX, _orbitY);
+    }
+
     void HandleLockableInput()
     {
 
-        HandleMouseInput();
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            reloadModifier = -.1f;
             _cameraSpeed = _cameraSpeedMax;
         }
         else
         {
-            reloadModifier = .1f;
             _cameraSpeed = _cameraSpeedNormal;
         }
         
-        // TRANSLATIONAL MOVEMENT
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-        {
-            UpdateDirectionVectors();
-            //transform.Translate(Vector3.forward * Time.deltaTime * _cameraSpeed);
-            target.Translate(wVector * Time.unscaledDeltaTime * _cameraSpeed);
-            UpdateCamPosition();
-        }
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-        {
-            UpdateDirectionVectors();
-            //transform.Translate(Vector3.left * Time.deltaTime * _cameraSpeed);
-            target.Translate(aVector * Time.unscaledDeltaTime * _cameraSpeed);
-            UpdateCamPosition();
-        }
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        {
-            UpdateDirectionVectors();
-            //transform.Translate(Vector3.back * Time.deltaTime * _cameraSpeed);
-            target.Translate(sVector * Time.unscaledDeltaTime * _cameraSpeed);
-            UpdateCamPosition();
-        }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        {
-            UpdateDirectionVectors();
-            //transform.Translate(Vector3.right * Time.deltaTime * _cameraSpeed);
-            target.Translate(dVector * Time.unscaledDeltaTime * _cameraSpeed);
-            UpdateCamPosition();
-        }
-        if (Input.GetKey(KeyCode.Q))
-        {
-            //transform.Translate(Vector3.up * Time.deltaTime * _cameraSpeed);
-            target.Translate(Vector3.up * Time.unscaledDeltaTime * _cameraSpeed);
-
-            UpdateCamPosition();
-        }
-        if (Input.GetKey(KeyCode.E))
-        {
-            //transform.Translate(Vector3.down * Time.deltaTime * _cameraSpeed);
-            target.Translate(Vector3.down * Time.unscaledDeltaTime * _cameraSpeed);
-
-            UpdateCamPosition();
-        }
-
+        
     }
 
     void HandleNonLockableInput()
     {
-        HandleScrollWheelInput();
-        if (Input.GetKeyDown(KeyCode.I))
-
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            // Pause the time
-            if (SimManager.Instance.IsSimulationRunning()) {
-                SimManager.Instance.PauseSimulation();
-            } else {
-                SimManager.Instance.ResumeSimulation();
-            }
-        }
-
         if (Input.GetKeyDown(KeyCode.P))
         {
             autoRotate = !autoRotate;
