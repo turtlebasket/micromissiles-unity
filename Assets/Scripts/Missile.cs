@@ -131,7 +131,8 @@ public class Missile : Agent {
   }
 
   private float CalculateLiftInducedDrag(Vector3 accelerationInput) {
-    float liftAcceleration = Vector3.Dot(accelerationInput, transform.forward);
+    float liftAcceleration =
+        (accelerationInput - Vector3.Dot(accelerationInput, transform.up) * transform.up).magnitude;
     float liftDragRatio = StaticConfig.liftDragConfig.liftDragRatio;
     return Mathf.Abs(liftAcceleration / liftDragRatio);
   }
