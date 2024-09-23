@@ -155,7 +155,7 @@ public class InputManager : MonoBehaviour
             autoRotate = !autoRotate;
             if (autoRotate)
             {
-                autoplayRoutine = StartCoroutine(AutoPlayRoutine());
+                autoplayRoutine = StartCoroutine(AutoPlayRoutine()); 
             }
             else
             {
@@ -166,66 +166,29 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             // ORIGIN
-            transform.position = new Vector3(0, 20, -20);
-            SetCameraRotation(Quaternion.Euler(24f, -0.5f, 0));
-            Camera.main.fieldOfView = 45f;
-            ResetCameraTarget();
+            // Set pre-set view 1 
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            transform.position = new Vector3(0, 30, -20);
-            SetCameraRotation(Quaternion.Euler(36.6f, -0.5f, 0));
-            Camera.main.fieldOfView = 60f;
-            ResetCameraTarget();
+            // Set pre-set view 2
 
         }
 
 
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                fourPos.position = transform.position;
-                fourPos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = fourPos.position;
-                SetCameraRotation(fourPos.rotation);
-                ResetCameraTarget();
-            }
-            
+            // Set pre-set view 4
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                fivePos.position = transform.position;
-                fivePos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = fivePos.position;
-                SetCameraRotation(fivePos.rotation);
-                ResetCameraTarget();
-            }
+            // Set pre-set view 5
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                sixPos.position = transform.position;
-                sixPos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = sixPos.position;
-                SetCameraRotation(sixPos.rotation);
-                ResetCameraTarget();
-            }
+            // Set pre-set view 6
         }
 
 
