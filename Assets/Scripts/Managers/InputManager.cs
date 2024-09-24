@@ -120,8 +120,11 @@ public class InputManager : MonoBehaviour
     void HandleNonLockableInput()
     {
         HandleScrollWheelInput();
-        if (Input.GetKeyDown(KeyCode.I))
 
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
 
         if (Input.GetKeyDown(KeyCode.C))
         {

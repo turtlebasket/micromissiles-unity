@@ -322,25 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _flightPhase: 0
   _target: {fileID: 0}
-  StaticConfig:
-    accelerationConfig:
-      maxReferenceAcceleration: 300
-      referenceSpeed: 1000
-    boostConfig:
-      boostTime: 0.3
-      boostAcceleration: 100
-    liftDragConfig:
-      liftCoefficient: 0.2
-      dragCoefficient: 1
-      liftDragRatio: 5
-    bodyConfig:
-      mass: 15.8
-      crossSectionalArea: 0.004
-      finArea: 0.007
-      bodyArea: 0.12
-    hitConfig:
-      hitRadius: 1
-      killProbability: 0.9
+  staticConfigFile: hydra70.json
   _showDebugVectors: 1
   _boostAcceleration: {x: 0, y: 0, z: 0}
 --- !u!54 &3328180170527195603

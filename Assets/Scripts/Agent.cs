@@ -1,8 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.PlasticSCM.Editor.UI;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Agent : MonoBehaviour {
@@ -22,7 +19,9 @@ public abstract class Agent : MonoBehaviour {
   protected double _timeInPhase = 0;
 
   [SerializeField]
-  public StaticConfig StaticConfig;
+  public string staticConfigFile = "generic_static_config.json";
+
+  protected StaticConfig _staticConfig;
 
   // Define delegates
   public delegate void AgentHitEventHandler(Agent agent);
@@ -130,6 +129,10 @@ public abstract class Agent : MonoBehaviour {
   protected abstract void UpdateBoost(double deltaTime);
   protected abstract void UpdateMidCourse(double deltaTime);
 
+  protected virtual void Awake() {
+    _staticConfig = ConfigLoader.LoadStaticConfig(staticConfigFile);
+  }
+
   // Start is called before the first frame update
   protected virtual void Start() {
     _flightPhase = FlightPhase.READY;
@@ -141,7 +144,7 @@ public abstract class Agent : MonoBehaviour {
     _timeInPhase += Time.fixedDeltaTime;
 
     var launch_time = _agentConfig.dynamic_config.launch_config.launch_time;
-    var boost_time = launch_time + StaticConfig.boostConfig.boostTime;
+    var boost_time = launch_time + _staticConfig.boostConfig.boostTime;
     double elapsedSimulationTime = SimManager.Instance.GetElapsedSimulationTime();
 
     if (_flightPhase == FlightPhase.TERMINATED) {

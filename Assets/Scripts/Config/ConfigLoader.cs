@@ -17,6 +17,20 @@ public static class ConfigLoader {
         }
     }
 
+    public static StaticConfig LoadStaticConfig(string configFileName) {
+        string configFilePath = Path.Combine(Application.streamingAssetsPath, "Configs/Models", configFileName);
+        if (File.Exists(configFilePath)) {
+            string json = File.ReadAllText(configFilePath);
+            StaticConfig config = JsonConvert.DeserializeObject<StaticConfig>(json, new JsonSerializerSettings {
+                Converters = { new Newtonsoft.Json.Converters.StringEnumConverter() }
+            });
+            return config;
+        } else {
+            Debug.LogError($"Static configuration file not found at path: {configFilePath}");
+            return null;
+        }
+    }
+
     public static void PrintSimulationConfig(SimulationConfig config)
     {
         if (config == null)

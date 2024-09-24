@@ -22,7 +22,7 @@ public class Missile : Agent {
   // Unassign the target from the missile.
   public override void UnassignTarget() {
     base.UnassignTarget();
-  }
+  }  
 
   protected override void UpdateReady(double deltaTime) {
     Vector3 accelerationInput = Vector3.zero;
@@ -43,7 +43,7 @@ public class Missile : Agent {
 
     // Calculate boost acceleration
     float boostAcceleration =
-        (float)(StaticConfig.boostConfig.boostAcceleration * Constants.kGravity);
+        (float)(_staticConfig.boostConfig.boostAcceleration * Constants.kGravity);
     Vector3 accelerationInput = boostAcceleration * rollAxis;
 
     // Calculate the total acceleration
@@ -81,7 +81,7 @@ public class Missile : Agent {
     Agent otherAgent = other.gameObject.GetComponentInParent<Agent>();
     if (otherAgent != null && otherAgent.GetComponent<Target>() != null) {
       // Check kill probability before marking as hit
-      float killProbability = StaticConfig.hitConfig.killProbability;
+      float killProbability = _staticConfig.hitConfig.killProbability;
       GameObject markerObject = Instantiate(Resources.Load<GameObject>("Prefabs/HitMarkerPrefab"),
                                             transform.position, Quaternion.identity);
       if (Random.value <= killProbability) {
@@ -102,8 +102,8 @@ public class Missile : Agent {
 
   protected float CalculateMaxAcceleration() {
     float maxReferenceAcceleration =
-        (float)(StaticConfig.accelerationConfig.maxReferenceAcceleration * Constants.kGravity);
-    float referenceSpeed = StaticConfig.accelerationConfig.referenceSpeed;
+        (float)(_staticConfig.accelerationConfig.maxReferenceAcceleration * Constants.kGravity);
+    float referenceSpeed = _staticConfig.accelerationConfig.referenceSpeed;
     return Mathf.Pow(GetComponent<Rigidbody>().velocity.magnitude / referenceSpeed, 2) *
            maxReferenceAcceleration;
   }
@@ -122,9 +122,9 @@ public class Missile : Agent {
   }
 
   private float CalculateDrag() {
-    float dragCoefficient = StaticConfig.liftDragConfig.dragCoefficient;
-    float crossSectionalArea = StaticConfig.bodyConfig.crossSectionalArea;
-    float mass = StaticConfig.bodyConfig.mass;
+    float dragCoefficient = _staticConfig.liftDragConfig.dragCoefficient;
+    float crossSectionalArea = _staticConfig.bodyConfig.crossSectionalArea;
+    float mass = _staticConfig.bodyConfig.mass;
     float dynamicPressure = (float)GetDynamicPressure();
     float dragForce = dragCoefficient * dynamicPressure * crossSectionalArea;
     return dragForce / mass;
@@ -133,7 +133,7 @@ public class Missile : Agent {
   private float CalculateLiftInducedDrag(Vector3 accelerationInput) {
     float liftAcceleration =
         (accelerationInput - Vector3.Dot(accelerationInput, transform.up) * transform.up).magnitude;
-    float liftDragRatio = StaticConfig.liftDragConfig.liftDragRatio;
+    float liftDragRatio = _staticConfig.liftDragConfig.liftDragRatio;
     return Mathf.Abs(liftAcceleration / liftDragRatio);
   }
 
