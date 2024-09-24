@@ -17,19 +17,9 @@ public class InputManager : MonoBehaviour
         public Vector3 position;
         public Quaternion rotation;
     }
-
-    public float autoplayCamSpeed = 2f;
-    public float xAutoRotateTime = 5f;
-    public float yAutoRotateTime = 5f;
-    private Coroutine autoplayRoutine;
     
-
     public bool lockUserInput = false;
 
-    private float _yaw = 0.0f;
-    private float _pitch = 0.0f;
-
-    private float reloadModifier;
 
     private void Awake()
     {
@@ -92,13 +82,11 @@ public class InputManager : MonoBehaviour
         HandleMouseInput();
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            reloadModifier = -.1f;
-            _cameraSpeed = _cameraSpeedMax;
+            CameraController.Instance.SetCameraSpeed(CameraController.Instance.GetCameraSpeedMax());
         }
         else
         {
-            reloadModifier = .1f;
-            _cameraSpeed = _cameraSpeedNormal;
+            CameraController.Instance.SetCameraSpeed(CameraController.Instance.GetCameraSpeedNormal());
         }
         
         // TRANSLATIONAL MOVEMENT
@@ -152,15 +140,7 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            autoRotate = !autoRotate;
-            if (autoRotate)
-            {
-                autoplayRoutine = StartCoroutine(AutoPlayRoutine()); 
-            }
-            else
-            {
-                StopCoroutine( autoplayRoutine );
-            }
+            CameraController.Instance.SetAutoRotate(!CameraController.Instance.IsAutoRotate());
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))

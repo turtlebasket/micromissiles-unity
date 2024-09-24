@@ -67,7 +67,7 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Determines if the camera should auto-rotate.
     /// </summary>
-    public bool autoRotate = false;
+    public bool _autoRotate = false;
 
     /// <summary>
     /// Target transform for orbit rotation.
@@ -239,6 +239,37 @@ public class CameraController : MonoBehaviour
         _yaw = rotation.eulerAngles.y;
     }
 
+    public void SetCameraSpeed(float speed)
+    {
+        _cameraSpeed = speed;
+    }
+
+    public float GetCameraSpeedMax()
+    {
+        return _cameraSpeedMax;
+    }
+
+    public float GetCameraSpeedNormal()
+    {
+        return _cameraSpeedNormal;
+    }
+
+    public bool IsAutoRotate()
+    {
+        return _autoRotate;
+    }
+
+    public void SetAutoRotate(bool autoRotate)
+    {
+        if (autoRotate && !_autoRotate) {
+            _autoRotate = true;
+            autoplayRoutine = StartCoroutine(AutoPlayRoutine());
+        } else if (!autoRotate && _autoRotate) {
+            _autoRotate = false;
+            StopCoroutine(autoplayRoutine);
+        }
+    }
+
     public static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360F)
@@ -282,6 +313,7 @@ public class CameraController : MonoBehaviour
         _orbitY = angles.x;
 
         UpdateTargetAlpha();
+        ResetCameraTarget();
     }
 
     IEnumerator AutoPlayRoutine()
@@ -410,31 +442,31 @@ public class CameraController : MonoBehaviour
 
         if(forwardToCameraAngle >-45f && forwardToCameraAngle <= 45f)
         {
-            wVector = Vector3.forward;
-            aVector = Vector3.left;
-            sVector = Vector3.back;
-            dVector = Vector3.right;
+            _translationInputToVectorMap[TranslationInput.Forward] = Vector3.forward;
+            _translationInputToVectorMap[TranslationInput.Left] = Vector3.left;
+            _translationInputToVectorMap[TranslationInput.Back] = Vector3.back;
+            _translationInputToVectorMap[TranslationInput.Right] = Vector3.right;
         }
         else if(forwardToCameraAngle > 45f && forwardToCameraAngle <= 135f)
         {
-            wVector = Vector3.left;
-            aVector = Vector3.back;
-            sVector = Vector3.right;
-            dVector = Vector3.forward;
+            _translationInputToVectorMap[TranslationInput.Forward] = Vector3.left;
+            _translationInputToVectorMap[TranslationInput.Left] = Vector3.back;
+            _translationInputToVectorMap[TranslationInput.Back] = Vector3.right;
+            _translationInputToVectorMap[TranslationInput.Right] = Vector3.forward;
         }
         else if(forwardToCameraAngle > 135f || forwardToCameraAngle <= -135f)
         {
-            wVector = Vector3.back;
-            aVector = Vector3.right;
-            sVector = Vector3.forward;
-            dVector = Vector3.left;
+            _translationInputToVectorMap[TranslationInput.Forward] = Vector3.back;
+            _translationInputToVectorMap[TranslationInput.Left] = Vector3.right;
+            _translationInputToVectorMap[TranslationInput.Back] = Vector3.forward;
+            _translationInputToVectorMap[TranslationInput.Right] = Vector3.left;
         }
         else if(forwardToCameraAngle > -135f && forwardToCameraAngle <= -45f)
         {
-            wVector = Vector3.right;
-            aVector = Vector3.forward;
-            sVector = Vector3.left;
-            dVector = Vector3.back;
+            _translationInputToVectorMap[TranslationInput.Forward] = Vector3.right;
+            _translationInputToVectorMap[TranslationInput.Left] = Vector3.forward;
+            _translationInputToVectorMap[TranslationInput.Back] = Vector3.left;
+            _translationInputToVectorMap[TranslationInput.Right] = Vector3.back;
         }
 
     }
@@ -448,110 +480,10 @@ public class CameraController : MonoBehaviour
         Down
     }
 
-
-
     public void TranslateCamera(TranslationInput input) {
         UpdateDirectionVectors();
         target.Translate(_translationInputToVectorMap[input] * Time.unscaledDeltaTime * _cameraSpeed);
         UpdateCamPosition(_orbitX, _orbitY);
-    }
-
-    void HandleLockableInput()
-    {
-
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            _cameraSpeed = _cameraSpeedMax;
-        }
-        else
-        {
-            _cameraSpeed = _cameraSpeedNormal;
-        }
-        
-        
-    }
-
-    void HandleNonLockableInput()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            autoRotate = !autoRotate;
-            if (autoRotate)
-            {
-                autoplayRoutine = StartCoroutine(AutoPlayRoutine());
-            }
-            else
-            {
-                StopCoroutine( autoplayRoutine );
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            // ORIGIN
-            transform.position = new Vector3(0, 20, -20);
-            SetCameraRotation(Quaternion.Euler(24f, -0.5f, 0));
-            Camera.main.fieldOfView = 45f;
-            ResetCameraTarget();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            transform.position = new Vector3(0, 30, -20);
-            SetCameraRotation(Quaternion.Euler(36.6f, -0.5f, 0));
-            Camera.main.fieldOfView = 60f;
-            ResetCameraTarget();
-
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                fourPos.position = transform.position;
-                fourPos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = fourPos.position;
-                SetCameraRotation(fourPos.rotation);
-                ResetCameraTarget();
-            }
-            
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                fivePos.position = transform.position;
-                fivePos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = fivePos.position;
-                SetCameraRotation(fivePos.rotation);
-                ResetCameraTarget();
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                sixPos.position = transform.position;
-                sixPos.rotation = transform.rotation;
-            }
-            else
-            {
-                transform.position = sixPos.position;
-                SetCameraRotation(sixPos.rotation);
-                ResetCameraTarget();
-            }
-        }
-
-
     }
 
 }
