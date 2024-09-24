@@ -1,0 +1,99 @@
+{
+  "timeScale": 1,
+  "missile_swarm_configs": [
+    {
+      "num_agents": 1,
+      "agent_config": {
+        "missile_type": "HYDRA_70",
+        "target_type": "DRONE",
+        "initial_state": {
+          "position": { "x": 0, "y": 20, "z": 0 },
+          "rotation": { "x": -45, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 10, "z": 10 }
+        },
+        "standard_deviation": {
+          "position": { "x": 10, "y": 0, "z": 10 },
+          "velocity": { "x": 5, "y": 0, "z": 1 }
+        },
+        "dynamic_config": {
+          "launch_config": { "launch_time": 0 },
+          "sensor_config": {
+            "type": "IDEAL",
+            "frequency": 100
+          }
+        },
+        "submunitions_config": {
+          "num_submunitions": 7,
+          "launch_config": { "launch_time": 4 },
+          "agent_config": {
+            "missile_type": "MICROMISSILE",
+            "initial_state": {
+              "position": { "x": 0, "y": 0, "z": 0 },
+              "rotation": { "x": 0, "y": 0, "z": 0 },
+              "velocity": { "x": 0, "y": 0, "z": 0 }
+            },
+            "standard_deviation": {
+              "position": { "x": 5, "y": 5, "z": 5 },
+              "velocity": { "x": 0, "y": 0, "z": 0 }
+            },
+            "dynamic_config": {
+              "launch_config": { "launch_time": 0 },
+              "sensor_config": {
+                "type": "IDEAL",
+                "frequency": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "target_swarm_configs": [
+    {
+      "num_agents": 7,
+      "agent_config": {
+        "missile_type": "HYDRA_70",
+        "target_type": "DRONE",
+        "initial_state": {
+          "position": { "x": 0, "y": 600, "z": 6000 },
+          "rotation": { "x": 90, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 0, "z": -50 }
+        },
+        "standard_deviation": {
+          "position": { "x": 1000, "y": 200, "z": 100 },
+          "velocity": { "x": 0, "y": 0, "z": 25 }
+        },
+        "dynamic_config": {
+          "launch_config": { "launch_time": 0 },
+          "sensor_config": {
+            "type": "IDEAL",
+            "frequency": 0
+          }
+        },
+        "submunitions_config": {
+          "num_submunitions": 0,
+          "launch_config": { "launch_time": 0 },
+          "agent_config": {
+            "missile_type": "HYDRA_70",
+            "initial_state": {
+              "position": { "x": 0, "y": 0, "z": 0 },
+              "rotation": { "x": 0, "y": 0, "z": 0 },
+              "velocity": { "x": 0, "y": 0, "z": 0 }
+            },
+            "standard_deviation": {
+              "position": { "x": 0, "y": 0, "z": 0 },
+              "velocity": { "x": 0, "y": 0, "z": 0 }
+            },
+            "dynamic_config": {
+              "launch_config": { "launch_time": 0 },
+              "sensor_config": {
+                "type": "IDEAL",
+                "frequency": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

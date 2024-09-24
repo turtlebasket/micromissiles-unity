@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package SimulationConfigProto;
+
+message ProtobufConfig {
+    double step_time = 1;
+    repeated MissileConfigProto missile_configs = 2;
+    repeated TargetConfigProto target_configs = 3;
+}
+
+enum MissileTypeProto { 
+    HYDRA_70 = 0; 
+    MICROMISSILE = 1; 
+}
+
+enum TargetTypeProto { 
+    DRONE = 0; 
+    MISSILE = 1; 
+}
+
+enum ConfigColorProto { 
+    BLUE = 0; 
+    GREEN = 1; 
+    RED = 2; 
+}
+
+enum LineStyleProto { 
+    DOTTED = 0; 
+    SOLID = 1; 
+}
+
+enum MarkerProto { 
+    TRIANGLE_UP = 0; 
+    TRIANGLE_DOWN = 1; 
+    SQUARE = 2; 
+}
+
+enum SensorTypeProto { 
+    IDEAL = 0; 
+}
+
+message Vector3Proto {
+    double x = 1;
+    double y = 2;
+    double z = 3;
+}
+
+message InitialStateProto {
+    Vector3Proto position = 1;
+    Vector3Proto velocity = 2;
+}
+
+message LaunchConfigProto {
+    double launch_time = 1;
+}
+
+message SensorConfigProto {
+    SensorTypeProto type = 1;
+    double frequency = 2;
+}
+
+message DynamicConfigProto {
+    LaunchConfigProto launch_config = 1;
+    SensorConfigProto sensor_config = 2;
+}
+
+message PlottingConfigProto {
+    ConfigColorProto color = 1;
+    LineStyleProto linestyle = 2;
+    MarkerProto marker = 3;
+}
+
+message SubmunitionAgentConfigProto {
+    MissileTypeProto missile_type = 1;
+    InitialStateProto initial_state = 2;
+    DynamicConfigProto dynamic_config = 3;
+    PlottingConfigProto plotting_config = 4;
+}
+
+message SubmunitionsConfigProto {
+    int32 num_submunitions = 1;
+    LaunchConfigProto launch_config = 2;
+    SubmunitionAgentConfigProto agent_config = 3;
+}
+
+message MissileConfigProto {
+    MissileTypeProto missile_type = 1;
+    InitialStateProto initial_state = 2;
+    DynamicConfigProto dynamic_config = 3;
+    PlottingConfigProto plotting_config = 4;
+    SubmunitionsConfigProto submunitions_config = 5;
+}
+
+message TargetConfigProto {
+    TargetTypeProto target_type = 1;
+    InitialStateProto initial_state = 2;
+    PlottingConfigProto plotting_config = 3;
+}

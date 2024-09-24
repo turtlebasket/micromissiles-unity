@@ -61,6 +61,8 @@ public class SimManager : MonoBehaviour {
     } else {
       Destroy(gameObject);
     }
+    simulationConfig = ConfigLoader.LoadSimulationConfig("seven_missiles_seven_drone_targets.json");
+    Debug.Log(simulationConfig);
   }
 
   void Start() {
