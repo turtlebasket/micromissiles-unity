@@ -38,8 +38,51 @@ The simulation configurations are defined in JSON files that specify the initial
 This is a basic configuration featuring a single salvo with one missile type (`HYDRA_70`) and seven target drones.
 
 ```json:Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json
-startLine: 1
-endLine: 51
+{
+  "timeScale": 1,
+  "missile_swarm_configs": [
+    {
+      "num_agents": 1,
+      "agent_config": {
+        "missile_type": "HYDRA_70",
+        "initial_state": {
+          "position": { "x": 0, "y": 20, "z": 0 },
+          "rotation": { "x": -45, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 10, "z": 10 }
+        },
+        "dynamic_config": {
+          "launch_config": { "launch_time": 0 },
+          "sensor_config": {
+            "type": "IDEAL",
+            "frequency": 100
+          }
+        },
+        "submunitions_config": {
+          "num_submunitions": 7,
+          "launch_config": { "launch_time": 4 },
+          "agent_config": {
+            "missile_type": "MICROMISSILE",
+            // Submunition configuration...
+          }
+        }
+      }
+    }
+  ],
+  "target_swarm_configs": [
+    {
+      "num_agents": 7,
+      "agent_config": {
+        "target_type": "DRONE",
+        "initial_state": {
+          "position": { "x": 0, "y": 600, "z": 6000 },
+          "rotation": { "x": 90, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 0, "z": -50 }
+        },
+        // Other target configurations...
+      }
+    }
+  ]
+}
 ```
 
 #### `3_salvo_10_hydra_200_drones.json`
@@ -47,8 +90,52 @@ endLine: 51
 This configuration demonstrates a more complex scenario with three salvos, each launching ten `HYDRA_70` missiles at different times against 200 target drones. This results in a total of 210 missiles (including submunitions) engaging 200 targets.
 
 ```json:Assets/StreamingAssets/Configs/3_salvo_10_hydra_200_drones.json
-startLine: 1
-endLine: 100
+{
+  "timeScale": 1,
+  "missile_swarm_configs": [
+    {
+      "num_agents": 10,
+      "agent_config": {
+        "missile_type": "HYDRA_70",
+        "initial_state": {
+          "position": { "x": 0, "y": 20, "z": 0 },
+          "rotation": { "x": -45, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 10, "z": 10 }
+        },
+        "dynamic_config": {
+          "launch_config": { "launch_time": 0 },
+          "sensor_config": {
+            "type": "IDEAL",
+            "frequency": 100
+          }
+        },
+        "submunitions_config": {
+          "num_submunitions": 7,
+          "launch_config": { "launch_time": 4 },
+          "agent_config": {
+            "missile_type": "MICROMISSILE",
+            // Submunition configuration...
+          }
+        }
+      }
+    },
+    // Two more similar missile_swarm_configs with different launch times...
+  ],
+  "target_swarm_configs": [
+    {
+      "num_agents": 200,
+      "agent_config": {
+        "target_type": "DRONE",
+        "initial_state": {
+          "position": { "x": 0, "y": 600, "z": 6000 },
+          "rotation": { "x": 90, "y": 0, "z": 0 },
+          "velocity": { "x": 0, "y": 0, "z": -50 }
+        },
+        // Other target configurations...
+      }
+    }
+  ]
+}
 ```
 
 **Key Differences Between the Examples**:
@@ -127,8 +214,22 @@ These JSON files serve as templates and can be tweaked to modify the behavior of
 This file defines parameters for the micromissile model.
 
 ```json:Assets/StreamingAssets/Configs/Models/micromissile.json
-startLine: 1
-endLine: 25
+{
+  "accelerationConfig": {
+    "maxReferenceAcceleration": 300,
+    "referenceSpeed": 1000
+  },
+  "boostConfig": {
+    "boostTime": 0.3,
+    "boostAcceleration": 350
+  },
+  "liftDragConfig": {
+    "liftCoefficient": 0.2,
+    "dragCoefficient": 0.7,
+    "liftDragRatio": 5
+  },
+  // Other configurations...
+}
 ```
 
 **Configurable Parameters**:
@@ -185,8 +286,37 @@ endLine: 112
 To add new missile or target types, update the enums accordingly:
 
 ```csharp:Assets/Scripts/Config/SimulationConfig.cs
-startLine: 127
-endLine: 129
+[Serializable]
+public class SimulationConfig {
+    public float timeScale = 0.05f;
+    public List<SwarmConfig> missile_swarm_configs = new List<SwarmConfig>();
+    public List<SwarmConfig> target_swarm_configs = new List<SwarmConfig>();
+}
+
+[Serializable]
+public class SwarmConfig {
+    public int num_agents;
+    public AgentConfig agent_config;
+}
+
+[Serializable]
+public class AgentConfig {
+    public MissileType missile_type;
+    public TargetType target_type;
+    public InitialState initial_state;
+    public StandardDeviation standard_deviation;
+    public DynamicConfig dynamic_config;
+    public SubmunitionsConfig submunitions_config;
+    // Other properties...
+}
+
+// Enums
+[JsonConverter(typeof(StringEnumConverter))]
+public enum MissileType { HYDRA_70, MICROMISSILE }
+[JsonConverter(typeof(StringEnumConverter))]
+public enum TargetType { DRONE, MISSILE }
+[JsonConverter(typeof(StringEnumConverter))]
+public enum SensorType { IDEAL }
 ```
 
 ### `StaticConfig.cs`
@@ -194,8 +324,35 @@ endLine: 129
 This script defines the classes corresponding to the model configuration JSON structure.
 
 ```csharp:Assets/Scripts/Config/StaticConfig.cs
-startLine: 1
-endLine: 181
+[Serializable]
+public class StaticConfig {
+  [Serializable]
+  public class AccelerationConfig {
+    public float maxReferenceAcceleration = 300f;
+    public float referenceSpeed = 1000f;
+  }
+
+  [Serializable]
+  public class BoostConfig {
+    public float boostTime = 0.3f;
+    public float boostAcceleration = 350f;
+  }
+
+  [Serializable]
+  public class LiftDragConfig {
+    public float liftCoefficient = 0.2f;
+    public float dragCoefficient = 0.7f;
+    public float liftDragRatio = 5f;
+  }
+
+  // Other configuration classes...
+
+  public AccelerationConfig accelerationConfig;
+  public BoostConfig boostConfig;
+  public LiftDragConfig liftDragConfig;
+  public BodyConfig bodyConfig;
+  public HitConfig hitConfig;
+}
 ```
 
 **Updating Classes**:
