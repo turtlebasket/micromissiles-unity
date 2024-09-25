@@ -14,7 +14,7 @@ The main configuration files you will work with are located in the `Assets/Strea
 - **Model Configurations** (found in `Assets/StreamingAssets/Configs/Models/`):
   - **`micromissile.json`**
   - **`hydra70.json`**
-  - **`drone_target.json`**
+  - **`drone.json`**
   - **C# Script**: [`StaticConfig.cs`](Assets/Scripts/Config/StaticConfig.cs)
 
 ### File Locations
@@ -202,7 +202,7 @@ The `Models` directory contains the following default model configurations:
 
 - **`micromissile.json`**
 - **`hydra70.json`**
-- **`drone_target.json`**
+- **`drone.json`**
 
 These JSON files serve as templates and can be tweaked to modify the behavior of the corresponding models.
 
