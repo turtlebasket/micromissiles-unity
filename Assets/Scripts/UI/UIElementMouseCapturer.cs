@@ -22,7 +22,6 @@ public class UIElementMouseCapturer : EventTrigger
 
     public void OnDisable()
     {
-        Debug.Log("UIElementMouseCapturer OnDisable");
         OnPointerExit(null);
     }
 
