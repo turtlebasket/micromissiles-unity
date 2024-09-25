@@ -224,9 +224,9 @@ public class SimManager : MonoBehaviour {
   /// <param name="config">Configuration settings for the threat.</param>
   /// <returns>The created Threat instance, or null if creation failed.</returns>
   private Threat CreateThreat(AgentConfig config) {
-    string prefabName = config.target_type switch {
+    string prefabName = config.threat_type switch {
       ThreatType.DRONE => "Drone", ThreatType.ANTISHIP_MISSILE => "AntishipMissile",
-      _ => throw new System.ArgumentException($"Unsupported threat type: {config.target_type}")
+      _ => throw new System.ArgumentException($"Unsupported threat type: {config.threat_type}")
     };
     GameObject threatObject = CreateAgent(config, prefabName);
     if (threatObject == null)
@@ -238,7 +238,7 @@ public class SimManager : MonoBehaviour {
 
     // Assign a unique and simple ID
     int targetId = _threats.Count;
-    threatObject.name = $"{config.target_type}_Target_{targetId}";
+    threatObject.name = $"{config.threat_type}_Target_{targetId}";
     return threatObject.GetComponent<Threat>();
   }
 

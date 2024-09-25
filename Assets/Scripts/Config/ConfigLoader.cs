@@ -66,7 +66,7 @@ public static class ConfigLoader {
     {
         Debug.Log("  Agent Configuration:");
         Debug.Log($"    Interceptor Type: {agentConfig.interceptor_type}");
-        Debug.Log($"    Threat Type: {agentConfig.target_type}");
+        Debug.Log($"    Threat Type: {agentConfig.threat_type}");
         PrintInitialState(agentConfig.initial_state);
         PrintStandardDeviation(agentConfig.standard_deviation);
         PrintDynamicConfig(agentConfig.dynamic_config);

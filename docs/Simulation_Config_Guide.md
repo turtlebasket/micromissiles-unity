@@ -72,7 +72,7 @@ This is a basic configuration featuring a single salvo with one interceptor type
     {
       "num_agents": 7,
       "agent_config": {
-        "target_type": "DRONE",
+        "threat_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 600, "z": 6000 },
           "rotation": { "x": 90, "y": 0, "z": 0 },
@@ -125,7 +125,7 @@ This configuration demonstrates a more complex scenario with three salvos, each 
     {
       "num_agents": 200,
       "agent_config": {
-        "target_type": "DRONE",
+        "threat_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 600, "z": 6000 },
           "rotation": { "x": 90, "y": 0, "z": 0 },
@@ -160,7 +160,7 @@ Multiple salvos are achieved by:
 - **`num_agents`**: Number of agents (missiles or targets) in the swarm.
 - **`agent_config`**: Settings for each agent, including:
 
-  - **`interceptor_type`** / **`target_type`**: Defines the type of interceptor or threat.
+  - **`interceptor_type`** / **`threat_type`**: Defines the type of interceptor or threat.
   - **`initial_state`**: Sets the starting position, rotation, and velocity.
   - **`standard_deviation`**: Adds random noise to initial states for variability.
   - **`dynamic_config`**: Time-dependent settings like `launch_time` and sensor configurations.

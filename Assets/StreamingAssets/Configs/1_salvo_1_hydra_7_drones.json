@@ -5,7 +5,7 @@
       "num_agents": 1,
       "agent_config": {
         "interceptor_type": "HYDRA_70",
-        "target_type": "DRONE",
+        "threat_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 20, "z": 0 },
           "rotation": { "x": -45, "y": 0, "z": 0 },
@@ -53,7 +53,7 @@
       "num_agents": 7,
       "agent_config": {
         "interceptor_type": "HYDRA_70",
-        "target_type": "DRONE",
+        "threat_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 600, "z": 6000 },
           "rotation": { "x": 90, "y": 0, "z": 0 },
@@ -71,27 +71,7 @@
           }
         },
         "submunitions_config": {
-          "num_submunitions": 0,
-          "launch_config": { "launch_time": 0 },
-          "agent_config": {
-            "interceptor_type": "HYDRA_70",
-            "initial_state": {
-              "position": { "x": 0, "y": 0, "z": 0 },
-              "rotation": { "x": 0, "y": 0, "z": 0 },
-              "velocity": { "x": 0, "y": 0, "z": 0 }
-            },
-            "standard_deviation": {
-              "position": { "x": 0, "y": 0, "z": 0 },
-              "velocity": { "x": 0, "y": 0, "z": 0 }
-            },
-            "dynamic_config": {
-              "launch_config": { "launch_time": 0 },
-              "sensor_config": {
-                "type": "IDEAL",
-                "frequency": 0
-              }
-            }
-          }
+          "num_submunitions": 0
         }
       }
     }

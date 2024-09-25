@@ -32,7 +32,7 @@ public class SwarmConfig {
 [Serializable]
 public class AgentConfig {
     public InterceptorType interceptor_type;
-    public ThreatType target_type;
+    public ThreatType threat_type;
     public InitialState initial_state;
     public StandardDeviation standard_deviation;
     public DynamicConfig dynamic_config;
@@ -47,7 +47,7 @@ public class AgentConfig {
             dynamic_config = submunitionConfig.dynamic_config,
             plotting_config = submunitionConfig.plotting_config,
             // Set other fields as needed, using default values if not present in SubmunitionAgentConfig
-            target_type = ThreatType.DRONE,  // Or another default value
+            threat_type = ThreatType.DRONE,  // Or another default value
             submunitions_config = null       // Or a default value if needed
         };
     }
@@ -102,7 +102,7 @@ public class SensorConfig {
 
 [Serializable]
 public class TargetConfig {
-    public ThreatType target_type;
+    public ThreatType threat_type;
     public InitialState initial_state;
     public PlottingConfig plotting_config;
     public string prefabName;
