@@ -1,6 +1,6 @@
 # Keybinds and Controls
 
-Welcome to the simulation! This guide will help you navigate and interact with the environment using your mouse and keyboard. Below are the keybindings organized into easy-to-read tables, along with detailed descriptions to enhance your experience.
+This guide will help you navigate and interact with the environment using your mouse and keyboard. Below are the keybindings organized into easy-to-read tables, along with detailed descriptions to enhance your experience.
 
 ## Table of Contents
 - [Mouse Controls](#mouse-controls)

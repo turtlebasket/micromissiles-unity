@@ -17,7 +17,7 @@ This guide will help you set up and run the project in development mode. You'll 
 
 ## Prerequisites
 
-- A computer with internet access.
+- A computer with internet access ;)
 - Administrative privileges to install software.
 - [Git](https://git-scm.com/downloads) installed on your system (optional, for cloning the repository).
 
@@ -43,6 +43,8 @@ git clone https://github.com/PisterLab/micromissiles-unity.git
 Alternatively, you can download the repository as a ZIP file and extract it to a preferred location.
 
 ### 3. Launch the Project via Unity Hub
+
+![Unity Hub](docs/images/unity_hub.png)
 
 1. **Open Unity Hub**.
 
