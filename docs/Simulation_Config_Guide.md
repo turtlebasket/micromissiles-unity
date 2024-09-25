@@ -1,6 +1,6 @@
 # Simulation Configuration Guide
 
-This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize missile and target behaviors, simulation parameters, and more to suit your research needs.
+This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize missile and target behaviors, simulation parameters, and more to suit your needs.
 
 ## Configuration Files
 
@@ -140,8 +140,7 @@ This configuration demonstrates a more complex scenario with three salvos, each 
 
 **Key Differences Between the Examples**:
 
-- **Number of Salvos**: The `3_salvo_10_hydra_200_drones.json` file includes multiple salvos by adding multiple entries in the `missile_swarm_configs` array, each with its own `launch_time`.
-- **Scale of Engagement**: The second example scales up both the number of missiles and targets, demonstrating how to configure large-scale simulations.
+The key difference between the examples is that the **Number of Salvos** in `3_salvo_10_hydra_200_drones.json` file includes multiple salvos by adding multiple entries in the `missile_swarm_configs` array, each with its own `launch_time`.
 
 **Achieving Multiple Salvos**:
 
@@ -266,10 +265,7 @@ To define a new missile or target model:
 
 This script defines the data structures used to interpret the JSON simulation configuration files.
 
-```csharp:Assets/Scripts/Config/SimulationConfig.cs
-startLine: 1
-endLine: 112
-```
+[Assets/Scripts/Config/SimulationConfig.cs](../../Assets/Scripts/Config/SimulationConfig.cs)
 
 **Classes**:
 
@@ -281,48 +277,13 @@ endLine: 112
 
 - `MissileType`, `TargetType`, and `SensorType` define available types.
 
-#### Editing Enums
-
-To add new missile or target types, update the enums accordingly:
-
-```csharp:Assets/Scripts/Config/SimulationConfig.cs
-[Serializable]
-public class SimulationConfig {
-    public float timeScale = 0.05f;
-    public List<SwarmConfig> missile_swarm_configs = new List<SwarmConfig>();
-    public List<SwarmConfig> target_swarm_configs = new List<SwarmConfig>();
-}
-
-[Serializable]
-public class SwarmConfig {
-    public int num_agents;
-    public AgentConfig agent_config;
-}
-
-[Serializable]
-public class AgentConfig {
-    public MissileType missile_type;
-    public TargetType target_type;
-    public InitialState initial_state;
-    public StandardDeviation standard_deviation;
-    public DynamicConfig dynamic_config;
-    public SubmunitionsConfig submunitions_config;
-    // Other properties...
-}
-
-// Enums
-[JsonConverter(typeof(StringEnumConverter))]
-public enum MissileType { HYDRA_70, MICROMISSILE }
-[JsonConverter(typeof(StringEnumConverter))]
-public enum TargetType { DRONE, MISSILE }
-[JsonConverter(typeof(StringEnumConverter))]
-public enum SensorType { IDEAL }
-```
-
 ### `StaticConfig.cs`
 
 This script defines the classes corresponding to the model configuration JSON structure.
 
+[Assets/Scripts/Config/StaticConfig.cs](../../Assets/Scripts/Config/StaticConfig.cs)
+
+For example:
 ```csharp:Assets/Scripts/Config/StaticConfig.cs
 [Serializable]
 public class StaticConfig {
@@ -365,6 +326,8 @@ When using the deployment build:
 
 - **Include Required Configuration Files**: Ensure all necessary JSON configuration files are present in the `StreamingAssets/Configs/` directory.
 - **Adjust Simulations Without Rebuilding**: Modify the JSON files to change simulation parameters without needing to rebuild the application.
+
+While the simulation is running, you can load a new Simulation Configuration JSON file at runtime by opening the panel with 'L'.
 
 ---
 
