@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f09133e0e18241045a6efe65c0415cae, type: 2}
+  - {fileID: 2100000, guid: 2d2f8bec7684ad248b99398392482be0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -161,7 +161,7 @@ TrailRenderer:
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -321,10 +321,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _flightPhase: 0
+  _velocity: {x: 0, y: 0, z: 0}
+  _acceleration: {x: 0, y: 0, z: 0}
+  _dragAcceleration: {x: 0, y: 0, z: 0}
   _target: {fileID: 0}
   staticConfigFile: hydra70.json
   _showDebugVectors: 1
-  _boostAcceleration: {x: 0, y: 0, z: 0}
 --- !u!54 &3328180170527195603
 Rigidbody:
   m_ObjectHideFlags: 0

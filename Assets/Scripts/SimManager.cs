@@ -72,7 +72,9 @@ public class SimManager : MonoBehaviour {
     // Slow down time by simulationConfig.timeScale
     if (Instance == this) {
       StartSimulation();
+      ResumeSimulation();
     }
+
   }
 
   public void SetTimeScale(float timeScale) {
@@ -83,7 +85,6 @@ public class SimManager : MonoBehaviour {
 
   public void StartSimulation() {
     InitializeSimulation();
-    simulationRunning = true;
     OnSimulationStarted?.Invoke();
   }
 
@@ -286,7 +287,7 @@ public class SimManager : MonoBehaviour {
     Debug.Log("Simulation ended");
     // Reset simulation time
     _elapsedSimulationTime = 0f;
-    simulationRunning = true;
+    simulationRunning = IsSimulationRunning();
 
     // Clear existing missiles and targets
     foreach (var interceptor in _interceptors) {

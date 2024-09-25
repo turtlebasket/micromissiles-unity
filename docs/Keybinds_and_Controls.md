@@ -85,4 +85,4 @@ Quickly switch to predefined camera angles for different perspectives:
 - **Pausing for Adjustments**: Use the **Spacebar** to pause the simulation, allowing you to adjust camera angles or settings without interruption.
 - **Exploring Views**: Utilize the preset views to quickly jump to different perspectives, making it easier to explore various aspects of the simulation.
 
-We hope this guide enhances your experience. Happy simming!
+Happy simming!
