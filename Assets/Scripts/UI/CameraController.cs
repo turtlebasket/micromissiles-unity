@@ -112,7 +112,8 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Maximum distance for orbit.
     /// </summary>
-    private float _orbitDistanceMax = 10000f;
+    [SerializeField]
+    private float _orbitDistanceMax = 20000f;
 
     /// <summary>
     /// Current horizontal orbit angle.

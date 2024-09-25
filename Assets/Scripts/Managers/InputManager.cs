@@ -79,7 +79,11 @@ public class InputManager : MonoBehaviour
     void HandleLockableInput()
     {
 
-        HandleMouseInput();
+        if(mouseActive)
+        {
+            HandleMouseInput();
+        }
+
         if (Input.GetKey(KeyCode.LeftShift))
         {
             CameraController.Instance.SetCameraSpeed(CameraController.Instance.GetCameraSpeedMax());
@@ -129,6 +133,16 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
 
+        }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            SimManager.Instance.RestartSimulation();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))  // 'L' for Load
+    {
+            UIManager.Instance.ToggleConfigSelectorPanel();
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

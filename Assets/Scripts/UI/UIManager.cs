@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using TMPro;
 
 public class UIManager : MonoBehaviour
@@ -10,8 +10,14 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Instance { get; private set; }
 
-    public GameObject botPanel;
+
+    [SerializeField]
+    private GameObject _agentStatusPanel;
+    [SerializeField]
+    private GameObject _configSelectorPanel;
+    private TMP_Dropdown _configDropdown;
     public TextMeshProUGUI agentPanelText;
+    public TextMeshProUGUI simTimeText;
 
     public TMP_FontAsset Font;
 
@@ -26,13 +32,49 @@ public class UIManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
-            Destroy(gameObject);    
+            Destroy(gameObject); 
+        
     }
 
     void Start()
     {
+        _configSelectorPanel.SetActive(false);
+        SetupConfigSelectorPanel();
         //inputManager = InputManager.Instance;
         //worldManager = WorldManager.Instance;
+    }
+
+    public void ToggleConfigSelectorPanel(){
+        _configSelectorPanel.SetActive(!_configSelectorPanel.activeSelf);
+    }
+
+    private void SetupConfigSelectorPanel(){
+        _configSelectorPanel.GetComponentInChildren<Button>().onClick.AddListener(delegate {
+            LoadSelectedConfig();
+        });
+        _configDropdown = _configSelectorPanel.GetComponentInChildren<TMP_Dropdown>();
+        PopulateConfigDropdown();
+    }
+
+    private void PopulateConfigDropdown(){
+        _configDropdown.ClearOptions();
+        string configPath = Path.Combine(Application.streamingAssetsPath, "Configs");
+        string[] configFiles = Directory.GetFiles(configPath, "*.json");
+        
+        List<string> configFileNames = new List<string>();
+        foreach (string configFile in configFiles)
+        {
+            configFileNames.Add(Path.GetFileName(configFile));
+        }
+        _configDropdown.AddOptions(configFileNames);
+    }
+    private void LoadSelectedConfig(){
+        string selectedConfig = _configDropdown.options[_configDropdown.value].text;
+        SimManager.Instance.LoadNewConfig(selectedConfig);
+        _configSelectorPanel.SetActive(false);
+        //if(!InputManager.Instance.mouseActive){
+        //    InputManager.Instance.mouseActive = true;
+        //}
     }
 
     public void SetUIMode(UIMode mode){
@@ -65,12 +107,15 @@ public class UIManager : MonoBehaviour
         SetAgentPanelText(agentPanelText);
     }
 
-
+    private void UpdateSimTimeText()
+    {
+        simTimeText.text = "Elapsed Sim Time: " + SimManager.Instance.GetElapsedSimulationTime().ToString("F2");
+    }
     // Update is called once per frame
     void Update()
     {
-        UpdateAgentPanel();
-
+        //UpdateAgentPanel();
+        UpdateSimTimeText();
     }
 }
 

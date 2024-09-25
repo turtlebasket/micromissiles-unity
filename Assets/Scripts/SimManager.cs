@@ -30,8 +30,9 @@ public class SimManager : MonoBehaviour {
 
   private IAssignment _assignmentScheme;
 
-  public delegate void SimulationEndedHandler();
-  public event SimulationEndedHandler OnSimulationEnded;
+  public delegate void SimulationEventHandler();
+  public event SimulationEventHandler OnSimulationEnded;
+  public event SimulationEventHandler OnSimulationStarted;
 
   /// <summary>
   /// Gets the elapsed simulation time.
@@ -61,15 +62,14 @@ public class SimManager : MonoBehaviour {
     } else {
       Destroy(gameObject);
     }
-    simulationConfig = ConfigLoader.LoadSimulationConfig("seven_missiles_seven_drone_targets.json");
+    simulationConfig = ConfigLoader.LoadSimulationConfig("1_salvo_1_hydra_7_drones.json");
     Debug.Log(simulationConfig);
   }
 
   void Start() {
     // Slow down time by simulationConfig.timeScale
     if (Instance == this) {
-      InitializeSimulation();
-      simulationRunning = true;
+      StartSimulation();
     }
   }
 
@@ -77,6 +77,12 @@ public class SimManager : MonoBehaviour {
     Time.timeScale = timeScale;
     Time.fixedDeltaTime = Time.timeScale * 0.02f;
     Time.maximumDeltaTime = Time.timeScale * 0.15f;
+  }
+
+  public void StartSimulation() {
+    InitializeSimulation();
+    simulationRunning = true;
+    OnSimulationStarted?.Invoke();
   }
 
   public void PauseSimulation() {
@@ -115,6 +121,7 @@ public class SimManager : MonoBehaviour {
     }
 
     _assignmentScheme = new ThreatAssignment();
+    OnSimulationStarted?.Invoke();
   }
   
   public void AssignMissilesToTargets() {
@@ -259,6 +266,20 @@ public class SimManager : MonoBehaviour {
     return agentObject;
   }
 
+  public void LoadNewConfig(string configFileName)
+  {
+      simulationConfig = ConfigLoader.LoadSimulationConfig(configFileName);
+      if (simulationConfig != null)
+      {
+          Debug.Log($"Loaded new configuration: {configFileName}");
+          RestartSimulation();
+      }
+      else
+      {
+          Debug.LogError($"Failed to load configuration: {configFileName}");
+    }
+  }
+
 
   public void RestartSimulation() {
     OnSimulationEnded?.Invoke();
@@ -284,7 +305,7 @@ public class SimManager : MonoBehaviour {
     _targets.Clear();
     _unassignedTargets.Clear();
 
-    InitializeSimulation();
+    StartSimulation();
   }
 
   void Update() {
