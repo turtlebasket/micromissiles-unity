@@ -16,14 +16,14 @@ public class ThreatAssignment : IAssignment {
       return assignments;
     }
 
-    List<int> activeTargetIndices = IAssignment.GetActiveTargetIndices(targets);
-    if (activeTargetIndices.Count == 0) {
+    List<int> activeThreatIndices = IAssignment.GetActiveThreatIndices(targets);
+    if (activeThreatIndices.Count == 0) {
       return assignments;
     }
 
     Vector3 positionToDefend = Vector3.zero;
     List<ThreatInfo> threatInfos =
-        CalculateThreatLevels(targets, activeTargetIndices, positionToDefend);
+        CalculateThreatLevels(targets, activeThreatIndices, positionToDefend);
 
     foreach (int missileIndex in assignableMissileIndices) {
       if (missiles[missileIndex].HasAssignedTarget())
@@ -54,11 +54,11 @@ public class ThreatAssignment : IAssignment {
     return assignments;
   }
 
-  private List<ThreatInfo> CalculateThreatLevels(List<Agent> targets, List<int> activeTargetIndices,
+  private List<ThreatInfo> CalculateThreatLevels(List<Agent> targets, List<int> activeThreatIndices,
                                                  Vector3 missilesMeanPosition) {
     List<ThreatInfo> threatInfos = new List<ThreatInfo>();
 
-    foreach (int targetIndex in activeTargetIndices) {
+    foreach (int targetIndex in activeThreatIndices) {
       Agent target = targets[targetIndex];
       float distanceToMean = Vector3.Distance(target.transform.position, missilesMeanPosition);
       float velocityMagnitude = target.GetVelocity().magnitude;

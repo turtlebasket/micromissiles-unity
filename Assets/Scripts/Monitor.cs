@@ -41,14 +41,14 @@ public class SimMonitor : MonoBehaviour
     private void ExportTelemetry()
     {
         float time = (float)SimManager.Instance.GetElapsedSimulationTime();
-        foreach (var agent in SimManager.Instance.GetActiveTargets().Cast<Agent>().Concat(SimManager.Instance.GetActiveMissiles().Cast<Agent>()))
+        foreach (var agent in SimManager.Instance.GetActiveThreats().Cast<Agent>().Concat(SimManager.Instance.GetActiveMissiles().Cast<Agent>()))
         {
             Vector3 pos = agent.transform.position;
             if(pos == Vector3.zero) {
                 continue;
             }
             Vector3 vel = agent.GetComponent<Rigidbody>().velocity;
-            string type = agent is Target ? "T" : "M";
+            string type = agent is Threat ? "T" : "M";
             writer.WriteLine($"{time:F2},{agent.name},{pos.x:F2},{pos.y:F2},{pos.z:F2},{vel.x:F2},{vel.y:F2},{vel.z:F2},{(int)agent.GetFlightPhase()},{type}");
         }
 

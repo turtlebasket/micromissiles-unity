@@ -13,7 +13,7 @@ public class SimulationConfig {
     [Header("Missile Swarm Configurations")]
     public List<SwarmConfig> missile_swarm_configs = new List<SwarmConfig>();
 
-    [Header("Target Swarm Configurations")]
+    [Header("Threat Swarm Configurations")]
     public List<SwarmConfig> target_swarm_configs = new List<SwarmConfig>();
 }
 
@@ -32,7 +32,7 @@ public class SwarmConfig {
 [Serializable]
 public class AgentConfig {
     public MissileType missile_type;
-    public TargetType target_type;
+    public ThreatType target_type;
     public InitialState initial_state;
     public StandardDeviation standard_deviation;
     public DynamicConfig dynamic_config;
@@ -47,7 +47,7 @@ public class AgentConfig {
             dynamic_config = submunitionConfig.dynamic_config,
             plotting_config = submunitionConfig.plotting_config,
             // Set other fields as needed, using default values if not present in SubmunitionAgentConfig
-            target_type = TargetType.DRONE,  // Or another default value
+            target_type = ThreatType.DRONE,  // Or another default value
             submunitions_config = null       // Or a default value if needed
         };
     }
@@ -102,7 +102,7 @@ public class SensorConfig {
 
 [Serializable]
 public class TargetConfig {
-    public TargetType target_type;
+    public ThreatType target_type;
     public InitialState initial_state;
     public PlottingConfig plotting_config;
     public string prefabName;
@@ -112,7 +112,7 @@ public class TargetConfig {
 [JsonConverter(typeof(StringEnumConverter))]
 public enum MissileType { HYDRA_70, MICROMISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
-public enum TargetType { DRONE, MISSILE }
+public enum ThreatType { DRONE, MISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ConfigColor { BLUE, GREEN, RED }
 [JsonConverter(typeof(StringEnumConverter))]

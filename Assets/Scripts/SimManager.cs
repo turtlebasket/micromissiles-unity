@@ -21,9 +21,9 @@ public class SimManager : MonoBehaviour {
 
   private List<Missile> _missiles = new List<Missile>();
   private List<Missile> _activeMissiles = new List<Missile>();
-  private List<Target> _unassignedTargets = new List<Target>();
-  private List<Target> _targets = new List<Target>();
-  private List<Target> _activeTargets = new List<Target>();
+  private List<Threat> _unassignedThreats = new List<Threat>();
+  private List<Threat> _threats = new List<Threat>();
+  private List<Threat> _activeThreats = new List<Threat>();
   private float _elapsedSimulationTime = 0f;
   private float endTime = 100f;  // Set an appropriate end time
   private bool simulationRunning = false;
@@ -46,13 +46,13 @@ public class SimManager : MonoBehaviour {
     return _activeMissiles;
   }
 
-  public List<Target> GetActiveTargets() {
-    return _activeTargets;
+  public List<Threat> GetActiveThreats() {
+    return _activeThreats;
   }
 
   public List<Agent> GetActiveAgents() {
     return _activeMissiles.ConvertAll(missile => missile as Agent)
-        .Concat(_activeTargets.ConvertAll(target => target as Agent))
+        .Concat(_activeThreats.ConvertAll(threat => threat as Agent))
         .ToList();
   }
 
@@ -112,22 +112,25 @@ public class SimManager : MonoBehaviour {
       }
     }
 
-    List<Target> targets = new List<Target>();
+    List<Threat> targets = new List<Threat>();
     // Create targets based on config
     foreach (var swarmConfig in simulationConfig.target_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
-        var target = CreateTarget(swarmConfig.agent_config);
-        target.OnAgentHit += RegisterTargetHit;
-        target.OnAgentMiss += RegisterTargetMiss;
+        var threat = CreateThreat(swarmConfig.agent_config);
+        threat.OnAgentHit += RegisterThreatHit;
+        threat.OnAgentMiss += RegisterThreatMiss;
       }
     }
 
     _assignmentScheme = new ThreatAssignment();
+
+    // Invoke the simulation started event to let listeners
+    // know to invoke their own handler behavior
     OnSimulationStarted?.Invoke();
   }
 
-  public void AssignMissilesToTargets() {
-    AssignMissilesToTargets(_missiles);
+  public void AssignMissilesToThreats() {
+    AssignMissilesToThreats(_missiles);
   }
 
   public void RegisterMissileHit(Agent missile) {
@@ -142,15 +145,15 @@ public class SimManager : MonoBehaviour {
     }
   }
 
-  public void RegisterTargetHit(Agent target) {
-    if (target is Target targetComponent) {
-      _activeTargets.Remove(targetComponent);
+  public void RegisterThreatHit(Agent threat) {
+    if (threat is Threat targetComponent) {
+      _activeThreats.Remove(targetComponent);
     }
   }
 
-  public void RegisterTargetMiss(Agent target) {
-    if (target is Target targetComponent) {
-      _unassignedTargets.Add(targetComponent);
+  public void RegisterThreatMiss(Agent threat) {
+    if (threat is Threat targetComponent) {
+      _unassignedThreats.Add(targetComponent);
     }
   }
 
@@ -158,11 +161,11 @@ public class SimManager : MonoBehaviour {
   /// Assigns the specified list of missiles to available targets based on the assignment scheme.
   /// </summary>
   /// <param name="missilesToAssign">The list of missiles to assign.</param>
-  public void AssignMissilesToTargets(List<Missile> missilesToAssign) {
-    // Convert Missile and Target lists to Agent lists
+  public void AssignMissilesToThreats(List<Missile> missilesToAssign) {
+    // Convert Missile and Threat lists to Agent lists
     List<Agent> missileAgents = new List<Agent>(missilesToAssign.ConvertAll(m => m as Agent));
-    // Convert Target list to Agent list, excluding already assigned targets
-    List<Agent> targetAgents = _unassignedTargets.ToList<Agent>();
+    // Convert Threat list to Agent list, excluding already assigned targets
+    List<Agent> targetAgents = _unassignedThreats.ToList<Agent>();
 
     // Perform the assignment
     IEnumerable<IAssignment.AssignmentItem> assignments =
@@ -172,14 +175,14 @@ public class SimManager : MonoBehaviour {
     foreach (var assignment in assignments) {
       if (assignment.MissileIndex < missilesToAssign.Count) {
         Missile missile = missilesToAssign[assignment.MissileIndex];
-        Target target = _unassignedTargets[assignment.TargetIndex];
-        missile.AssignTarget(target);
-        Debug.Log($"Missile {missile.name} assigned to target {target.name}");
+        Threat threat = _unassignedThreats[assignment.ThreatIndex];
+        missile.AssignTarget(threat);
+        Debug.Log($"Missile {missile.name} assigned to threat {threat.name}");
       }
     }
     // TODO this whole function should be optimized
-    _unassignedTargets.RemoveAll(
-        target => missilesToAssign.Any(missile => missile.GetAssignedTarget() == target));
+    _unassignedThreats.RemoveAll(
+        threat => missilesToAssign.Any(missile => missile.GetAssignedTarget() == threat));
   }
 
   /// <summary>
@@ -209,38 +212,38 @@ public class SimManager : MonoBehaviour {
     _missiles.Add(missileObject.GetComponent<Missile>());
     _activeMissiles.Add(missileObject.GetComponent<Missile>());
 
-    // Assign a unique and simple target ID
+    // Assign a unique and simple ID
     int missileId = _missiles.Count;
     missileObject.name = $"{config.missile_type}_Missile_{missileId}";
     return missileObject.GetComponent<Missile>();
   }
 
   /// <summary>
-  /// Creates a target based on the provided configuration.
+  /// Creates a threat based on the provided configuration.
   /// </summary>
-  /// <param name="config">Configuration settings for the target.</param>
-  /// <returns>The created Target instance, or null if creation failed.</returns>
-  private Target CreateTarget(AgentConfig config) {
+  /// <param name="config">Configuration settings for the threat.</param>
+  /// <returns>The created Threat instance, or null if creation failed.</returns>
+  private Threat CreateThreat(AgentConfig config) {
     string prefabName = config.target_type switch {
-      TargetType.DRONE => "DroneTarget", TargetType.MISSILE => "MissileTarget",
-      _ => throw new System.ArgumentException($"Unsupported target type: {config.target_type}")
+      ThreatType.DRONE => "DroneTarget", ThreatType.MISSILE => "MissileTarget",
+      _ => throw new System.ArgumentException($"Unsupported threat type: {config.target_type}")
     };
-    GameObject targetObject = CreateAgent(config, prefabName);
-    if (targetObject == null)
+    GameObject threatObject = CreateAgent(config, prefabName);
+    if (threatObject == null)
       return null;
 
-    _targets.Add(targetObject.GetComponent<Target>());
-    _activeTargets.Add(targetObject.GetComponent<Target>());
-    _unassignedTargets.Add(targetObject.GetComponent<Target>());
+    _threats.Add(threatObject.GetComponent<Threat>());
+    _activeThreats.Add(threatObject.GetComponent<Threat>());
+    _unassignedThreats.Add(threatObject.GetComponent<Threat>());
 
-    // Assign a unique and simple target ID
-    int targetId = _targets.Count;
-    targetObject.name = $"{config.target_type}_Target_{targetId}";
-    return targetObject.GetComponent<Target>();
+    // Assign a unique and simple ID
+    int targetId = _threats.Count;
+    threatObject.name = $"{config.target_type}_Target_{targetId}";
+    return threatObject.GetComponent<Threat>();
   }
 
   /// <summary>
-  /// Creates an agent (missile or target) based on the provided configuration and prefab name.
+  /// Creates an agent (missile or threat) based on the provided configuration and prefab name.
   /// </summary>
   /// <param name="config">Configuration settings for the agent.</param>
   /// <param name="prefabName">Name of the prefab to instantiate.</param>
@@ -292,15 +295,15 @@ public class SimManager : MonoBehaviour {
       }
     }
 
-    foreach (var target in _targets) {
-      if (target != null) {
-        Destroy(target.gameObject);
+    foreach (var threat in _threats) {
+      if (threat != null) {
+        Destroy(threat.gameObject);
       }
     }
 
     _missiles.Clear();
-    _targets.Clear();
-    _unassignedTargets.Clear();
+    _threats.Clear();
+    _unassignedThreats.Clear();
 
     StartSimulation();
   }

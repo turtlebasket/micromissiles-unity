@@ -48,10 +48,10 @@ public static class ConfigLoader {
             PrintSwarmConfig(config.missile_swarm_configs[i], $"Missile Swarm {i + 1}");
         }
 
-        Debug.Log("Target Swarm Configurations:");
+        Debug.Log("Threat Swarm Configurations:");
         for (int i = 0; i < config.target_swarm_configs.Count; i++)
         {
-            PrintSwarmConfig(config.target_swarm_configs[i], $"Target Swarm {i + 1}");
+            PrintSwarmConfig(config.target_swarm_configs[i], $"Threat Swarm {i + 1}");
         }
     }
 
@@ -66,7 +66,7 @@ public static class ConfigLoader {
     {
         Debug.Log("  Agent Configuration:");
         Debug.Log($"    Missile Type: {agentConfig.missile_type}");
-        Debug.Log($"    Target Type: {agentConfig.target_type}");
+        Debug.Log($"    Threat Type: {agentConfig.target_type}");
         PrintInitialState(agentConfig.initial_state);
         PrintStandardDeviation(agentConfig.standard_deviation);
         PrintDynamicConfig(agentConfig.dynamic_config);

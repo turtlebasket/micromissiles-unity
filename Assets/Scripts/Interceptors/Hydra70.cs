@@ -48,6 +48,6 @@ public class Hydra70 : Missile {
         }
         break;
     }
-    SimManager.Instance.AssignMissilesToTargets(submunitions);
+    SimManager.Instance.AssignMissilesToThreats(submunitions);
   }
 }

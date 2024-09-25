@@ -2,18 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// The assignment class is an interface for assigning a target to each missile.
+// The assignment class is an interface for assigning a threat to each missile.
 public interface IAssignment {
   // Assignment item type.
   // The first element corresponds to the missile index, and the second element
-  // corresponds to the target index.
+  // corresponds to the threat index.
   public struct AssignmentItem {
     public int MissileIndex;
-    public int TargetIndex;
+    public int ThreatIndex;
 
-    public AssignmentItem(int missileIndex, int targetIndex) {
+    public AssignmentItem(int missileIndex, int threatIndex) {
       MissileIndex = missileIndex;
-      TargetIndex = targetIndex;
+      ThreatIndex = threatIndex;
     }
   }
 
@@ -34,13 +34,13 @@ public interface IAssignment {
   }
 
   // Get the list of active target indices.
-  protected static List<int> GetActiveTargetIndices(List<Agent> targets) {
-    List<int> activeTargetIndices = new List<int>();
-    for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++) {
-      if (!targets[targetIndex].IsHit()) {
-        activeTargetIndices.Add(targetIndex);
+  protected static List<int> GetActiveThreatIndices(List<Agent> threats) {
+    List<int> activeThreatIndices = new List<int>();
+    for (int threatIndex = 0; threatIndex < threats.Count; threatIndex++) {
+      if (!threats[threatIndex].IsHit()) {
+        activeThreatIndices.Add(threatIndex);
       }
     }
-    return activeTargetIndices;
+    return activeThreatIndices;
   }
 }

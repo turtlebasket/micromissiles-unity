@@ -19,7 +19,7 @@ public class BotStatusDialog : UIDialog
         submunitions.SetIsSelectable(false);
 
         UISelectableEntry targets = CreateSelectableEntry();
-        targets.SetTextContent(new List<string>(new string[] { "Targets" }));
+        targets.SetTextContent(new List<string>(new string[] { "Threats" }));
         targets.SetIsSelectable(false);
 
         SetDialogEntries(new List<UISelectableEntry>(new UISelectableEntry[] { missiles, submunitions, targets }));

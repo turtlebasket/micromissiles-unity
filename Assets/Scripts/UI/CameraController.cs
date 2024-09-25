@@ -70,7 +70,7 @@ public class CameraController : MonoBehaviour
     public bool _autoRotate = false;
 
     /// <summary>
-    /// Target transform for orbit rotation.
+    /// Threat transform for orbit rotation.
     /// </summary>
     public Transform target;
 

@@ -7,24 +7,24 @@ using System;
 public class IADS : MonoBehaviour {
   public enum TargetStatus { UNASSIGNED, ASSIGNED, HIT, DEGRADED, DESTROYED }
 
-  // Look up target status by unique target ID
+  // Look up threat status by unique threat ID
   public Dictionary<string, TargetStatus> _targetStatusDictionary;
 
-  private List<Target> _targets;
+  private List<Threat> _threats;
 
   private List<Missile> _missiles;
 
   private List<Vessel> _vessels;
 
-  public delegate void RegisterNewTargetDelegate(Target target);
+  public delegate void RegisterNewTargetDelegate(Threat threat);
   public event RegisterNewTargetDelegate OnRegisterNewTarget;
 
   void Start() {
-    _targets = new List<Target>();
+    _threats = new List<Threat>();
   }
 
-  public void RegisterNewTarget(Target target) {
-    _targets.Add(target);
-    OnRegisterNewTarget?.Invoke(target);
+  public void RegisterNewTarget(Threat threat) {
+    _threats.Add(threat);
+    OnRegisterNewTarget?.Invoke(threat);
   }
 }

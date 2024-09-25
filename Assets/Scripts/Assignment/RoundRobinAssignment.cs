@@ -17,19 +17,19 @@ public class RoundRobinAssignment : IAssignment {
       return assignments;
     }
 
-    List<int> activeTargetIndices = IAssignment.GetActiveTargetIndices(targets);
-    if (activeTargetIndices.Count == 0) {
+    List<int> activeThreatIndices = IAssignment.GetActiveThreatIndices(targets);
+    if (activeThreatIndices.Count == 0) {
       return assignments;
     }
 
     foreach (int missileIndex in assignableMissileIndices) {
-      int nextActiveTargetIndex = activeTargetIndices.FindIndex(index => index > prevTargetIndex);
+      int nextActiveTargetIndex = activeThreatIndices.FindIndex(index => index > prevTargetIndex);
 
       if (nextActiveTargetIndex == -1) {
         nextActiveTargetIndex = 0;
       }
 
-      int nextTargetIndex = activeTargetIndices[nextActiveTargetIndex];
+      int nextTargetIndex = activeThreatIndices[nextActiveTargetIndex];
       assignments.Add(new IAssignment.AssignmentItem(missileIndex, nextTargetIndex));
       prevTargetIndex = nextTargetIndex;
     }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Target : Agent {
+public abstract class Threat : Agent {
   public override bool IsAssignable() {
     return false;
   }

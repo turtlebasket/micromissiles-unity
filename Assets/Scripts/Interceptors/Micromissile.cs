@@ -13,19 +13,19 @@ public class Micromissile : Missile {
     _elapsedTime += deltaTime;
     Vector3 accelerationInput = Vector3.zero;
     if (HasAssignedTarget()) {
-      // Update the target model (assuming we have a target model)
-      // TODO: Implement target model update logic
+      // Update the threat model (assuming we have a threat model)
+      // TODO: Implement threat model update logic
 
-      // Correct the state of the target model at the sensor frequency
+      // Correct the state of the threat model at the sensor frequency
       float sensorUpdatePeriod = 1f / _agentConfig.dynamic_config.sensor_config.frequency;
       if (_elapsedTime >= sensorUpdatePeriod) {
         // TODO: Implement guidance filter to estimate state from sensor output
-        // For now, we'll use the target's actual state
+        // For now, we'll use the threat's actual state
         _sensorOutput = GetComponent<Sensor>().Sense(_target);
         _elapsedTime = 0;
       }
 
-      // Check whether the target should be considered a miss
+      // Check whether the threat should be considered a miss
       SensorOutput sensorOutput = GetComponent<Sensor>().Sense(_target);
       if (sensorOutput.velocity.range > 1000f) {
         this.MarkAsMiss();

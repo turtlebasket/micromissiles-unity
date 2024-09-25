@@ -1,6 +1,6 @@
 # Simulation Configuration Guide
 
-This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize missile and target behaviors, simulation parameters, and more to suit your needs.
+This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize missile and threat behaviors, simulation parameters, and more to suit your needs.
 
 ## Configuration Files
 
@@ -35,7 +35,7 @@ The simulation configurations are defined in JSON files that specify the initial
 
 #### `1_salvo_1_hydra_7_drones.json`
 
-This is a basic configuration featuring a single salvo with one missile type (`HYDRA_70`) and seven target drones.
+This is a basic configuration featuring a single salvo with one missile type (`HYDRA_70`) and seven threat drones.
 
 ```json:Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json
 {
@@ -78,7 +78,7 @@ This is a basic configuration featuring a single salvo with one missile type (`H
           "rotation": { "x": 90, "y": 0, "z": 0 },
           "velocity": { "x": 0, "y": 0, "z": -50 }
         },
-        // Other target configurations...
+        // Other threat configurations...
       }
     }
   ]
@@ -87,7 +87,7 @@ This is a basic configuration featuring a single salvo with one missile type (`H
 
 #### `3_salvo_10_hydra_200_drones.json`
 
-This configuration demonstrates a more complex scenario with three salvos, each launching ten `HYDRA_70` missiles at different times against 200 target drones. This results in a total of 210 missiles (including submunitions) engaging 200 targets.
+This configuration demonstrates a more complex scenario with three salvos, each launching ten `HYDRA_70` missiles at different times against 200 threat drones. This results in a total of 210 missiles (including submunitions) engaging 200 targets.
 
 ```json:Assets/StreamingAssets/Configs/3_salvo_10_hydra_200_drones.json
 {
@@ -131,7 +131,7 @@ This configuration demonstrates a more complex scenario with three salvos, each 
           "rotation": { "x": 90, "y": 0, "z": 0 },
           "velocity": { "x": 0, "y": 0, "z": -50 }
         },
-        // Other target configurations...
+        // Other threat configurations...
       }
     }
   ]
@@ -153,14 +153,14 @@ Multiple salvos are achieved by:
 
 - **`timeScale`**: Adjusts the speed of the simulation.
 - **`missile_swarm_configs`**: Contains settings for missile swarms. Each entry represents a salvo.
-- **`target_swarm_configs`**: Contains settings for target swarms.
+- **`target_swarm_configs`**: Contains settings for threat swarms.
 
 #### Within Each Swarm Configuration
 
 - **`num_agents`**: Number of agents (missiles or targets) in the swarm.
 - **`agent_config`**: Settings for each agent, including:
 
-  - **`missile_type`** / **`target_type`**: Defines the type of missile or target.
+  - **`missile_type`** / **`target_type`**: Defines the type of missile or threat.
   - **`initial_state`**: Sets the starting position, rotation, and velocity.
   - **`standard_deviation`**: Adds random noise to initial states for variability.
   - **`dynamic_config`**: Time-dependent settings like `launch_time` and sensor configurations.
@@ -170,7 +170,7 @@ Multiple salvos are achieved by:
 
 1. **Add a New Swarm Configuration**:
 
-   To introduce a new missile or target swarm (or an additional salvo), create a new entry in `missile_swarm_configs` or `target_swarm_configs`.
+   To introduce a new missile or threat swarm (or an additional salvo), create a new entry in `missile_swarm_configs` or `target_swarm_configs`.
 
    ```json
    {
@@ -194,7 +194,7 @@ Multiple salvos are achieved by:
 
 ## Model Configurations
 
-The model configurations define the physical and performance characteristics of missile and target models. The default models provided can be customized to suit your research needs.
+The model configurations define the physical and performance characteristics of missile and threat models. The default models provided can be customized to suit your research needs.
 
 ### Available Models
 
@@ -249,7 +249,7 @@ You can tweak the parameters in these model files to adjust performance. For exa
 
 ### Adding New Models
 
-To define a new missile or target model:
+To define a new missile or threat model:
 
 1. **Create a New JSON File** in `Assets/StreamingAssets/Configs/Models/`.
 
@@ -275,7 +275,7 @@ This script defines the data structures used to interpret the JSON simulation co
 
 **Enums**:
 
-- `MissileType`, `TargetType`, and `SensorType` define available types.
+- `MissileType`, `ThreatType`, and `SensorType` define available types.
 
 ### `StaticConfig.cs`
 

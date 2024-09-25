@@ -78,7 +78,7 @@ public class Missile : Agent {
     }
     // Check if the collision is with another Agent
     Agent otherAgent = other.gameObject.GetComponentInParent<Agent>();
-    if (otherAgent != null && otherAgent.GetComponent<Target>() != null) {
+    if (otherAgent != null && otherAgent.GetComponent<Threat>() != null) {
       // Check kill probability before marking as hit
       float killProbability = _staticConfig.hitConfig.killProbability;
       GameObject markerObject = Instantiate(Resources.Load<GameObject>("Prefabs/HitMarkerPrefab"),
