@@ -2605,9 +2605,9 @@ MonoBehaviour:
   targetRenderer: {fileID: 1255004940}
   floorRenderer: {fileID: 320210796}
   matAlpha: 0
-  autoplayCamSpeed: 2
-  xAutoRotateTime: 5
-  yAutoRotateTime: 5
+  autoplayCamSpeed: 0.05
+  xAutoRotateTime: 40
+  yAutoRotateTime: 0
   forwardToCameraAngle: 0
 --- !u!1 &981874228
 GameObject:

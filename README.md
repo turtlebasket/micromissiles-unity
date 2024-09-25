@@ -1,5 +1,7 @@
 # micromissiles-unity
 
+![Sim Salvo Animation](docs/images/sim_salvo_animation.gif)
+
 # Getting started **developing** micromissiles-unity 
 
 This guide will help you set up and run the project in development mode. You'll learn how to install Unity Hub, open the project, and navigate the main scene.
