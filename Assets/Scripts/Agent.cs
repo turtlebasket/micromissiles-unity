@@ -9,6 +9,15 @@ public abstract class Agent : MonoBehaviour {
   private FlightPhase _flightPhase = FlightPhase.INITIALIZED;
 
   [SerializeField]
+  protected Vector3 _velocity;
+
+  [SerializeField]
+  protected Vector3 _acceleration;
+
+  [SerializeField]
+  protected Vector3 _dragAcceleration;
+
+  [SerializeField]
   protected Agent _target;
   protected bool _isHit = false;
   protected bool _isMiss = false;
@@ -131,6 +140,7 @@ public abstract class Agent : MonoBehaviour {
 
   protected virtual void Awake() {
     _staticConfig = ConfigLoader.LoadStaticConfig(staticConfigFile);
+    GetComponent<Rigidbody>().mass = _staticConfig.bodyConfig.mass;
   }
 
   // Start is called before the first frame update
@@ -174,7 +184,12 @@ public abstract class Agent : MonoBehaviour {
       case FlightPhase.TERMINATED:
         break;
     }
+
+    _velocity = GetComponent<Rigidbody>().velocity;
+    _acceleration =
+        GetComponent<Rigidbody>().GetAccumulatedForce() / GetComponent<Rigidbody>().mass;
   }
+
   protected virtual void AlignWithVelocity() {
     Vector3 velocity = GetVelocity();
     if (velocity.magnitude > 0.1f)  // Only align if we have significant velocity

@@ -6,8 +6,6 @@ public class Missile : Agent {
   [SerializeField]
   protected bool _showDebugVectors = true;
 
-  [SerializeField]
-  private Vector3 _boostAcceleration;
   // Return whether a target can be assigned to the missile.
   public override bool IsAssignable() {
     bool assignable = !HasLaunched() && !HasAssignedTarget();
@@ -22,7 +20,7 @@ public class Missile : Agent {
   // Unassign the target from the missile.
   public override void UnassignTarget() {
     base.UnassignTarget();
-  }  
+  }
 
   protected override void UpdateReady(double deltaTime) {
     Vector3 accelerationInput = Vector3.zero;
@@ -51,8 +49,8 @@ public class Missile : Agent {
 
     // Apply the acceleration force
     GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
-    _boostAcceleration = acceleration;
   }
+
   protected override void UpdateMidCourse(double deltaTime) {}
 
   protected Vector3 CalculateAcceleration(Vector3 accelerationInput,
@@ -69,6 +67,7 @@ public class Missile : Agent {
 
     // Project the drag acceleration onto the forward direction
     Vector3 dragAccelerationAlongRoll = dragAcceleration * transform.forward;
+    _dragAcceleration = dragAccelerationAlongRoll;
 
     return accelerationInput + gravity + dragAccelerationAlongRoll;
   }

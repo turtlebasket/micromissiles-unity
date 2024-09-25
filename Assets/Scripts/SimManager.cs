@@ -51,7 +51,9 @@ public class SimManager : MonoBehaviour {
   }
 
   public List<Agent> GetActiveAgents() {
-    return _activeMissiles.ConvertAll(missile => missile as Agent).Concat(_activeTargets.ConvertAll(target => target as Agent)).ToList();
+    return _activeMissiles.ConvertAll(missile => missile as Agent)
+        .Concat(_activeTargets.ConvertAll(target => target as Agent))
+        .ToList();
   }
 
   void Awake() {
@@ -123,7 +125,7 @@ public class SimManager : MonoBehaviour {
     _assignmentScheme = new ThreatAssignment();
     OnSimulationStarted?.Invoke();
   }
-  
+
   public void AssignMissilesToTargets() {
     AssignMissilesToTargets(_missiles);
   }
@@ -266,20 +268,15 @@ public class SimManager : MonoBehaviour {
     return agentObject;
   }
 
-  public void LoadNewConfig(string configFileName)
-  {
-      simulationConfig = ConfigLoader.LoadSimulationConfig(configFileName);
-      if (simulationConfig != null)
-      {
-          Debug.Log($"Loaded new configuration: {configFileName}");
-          RestartSimulation();
-      }
-      else
-      {
-          Debug.LogError($"Failed to load configuration: {configFileName}");
+  public void LoadNewConfig(string configFileName) {
+    simulationConfig = ConfigLoader.LoadSimulationConfig(configFileName);
+    if (simulationConfig != null) {
+      Debug.Log($"Loaded new configuration: {configFileName}");
+      RestartSimulation();
+    } else {
+      Debug.LogError($"Failed to load configuration: {configFileName}");
     }
   }
-
 
   public void RestartSimulation() {
     OnSimulationEnded?.Invoke();

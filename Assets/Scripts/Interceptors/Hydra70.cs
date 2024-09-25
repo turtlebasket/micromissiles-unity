@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using UnityEngine;
 
 public class Hydra70 : Missile {
-  private Vector3 _acceleration;
   private bool _submunitionsLaunched = false;
 
   protected override void FixedUpdate() {
@@ -25,7 +24,6 @@ public class Hydra70 : Missile {
     // Calculate and set the total acceleration
     Vector3 acceleration = CalculateAcceleration(accelerationInput);
     GetComponent<Rigidbody>().AddForce(acceleration, ForceMode.Acceleration);
-    _acceleration = acceleration;
   }
 
   protected override void DrawDebugVectors() {
