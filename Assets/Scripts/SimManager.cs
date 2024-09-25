@@ -19,8 +19,8 @@ public class SimManager : MonoBehaviour {
   [SerializeField]
   public SimulationConfig simulationConfig;
 
-  private List<Missile> _missiles = new List<Missile>();
-  private List<Missile> _activeMissiles = new List<Missile>();
+  private List<Interceptor> _interceptors = new List<Interceptor>();
+  private List<Interceptor> _activeInterceptors = new List<Interceptor>();
   private List<Threat> _unassignedThreats = new List<Threat>();
   private List<Threat> _threats = new List<Threat>();
   private List<Threat> _activeThreats = new List<Threat>();
@@ -42,8 +42,8 @@ public class SimManager : MonoBehaviour {
     return _elapsedSimulationTime;
   }
 
-  public List<Missile> GetActiveMissiles() {
-    return _activeMissiles;
+  public List<Interceptor> GetActiveInterceptors() {
+    return _activeInterceptors;
   }
 
   public List<Threat> GetActiveThreats() {
@@ -51,7 +51,7 @@ public class SimManager : MonoBehaviour {
   }
 
   public List<Agent> GetActiveAgents() {
-    return _activeMissiles.ConvertAll(missile => missile as Agent)
+    return _activeInterceptors.ConvertAll(interceptor => interceptor as Agent)
         .Concat(_activeThreats.ConvertAll(threat => threat as Agent))
         .ToList();
   }
@@ -102,19 +102,19 @@ public class SimManager : MonoBehaviour {
   }
 
   private void InitializeSimulation() {
-    List<Missile> missiles = new List<Missile>();
+    List<Interceptor> missiles = new List<Interceptor>();
     // Create missiles based on config
-    foreach (var swarmConfig in simulationConfig.missile_swarm_configs) {
+    foreach (var swarmConfig in simulationConfig.interceptor_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
-        var missile = CreateMissile(swarmConfig.agent_config);
-        missile.OnAgentHit += RegisterMissileHit;
-        missile.OnAgentMiss += RegisterMissileMiss;
+        var interceptor = CreateInterceptor(swarmConfig.agent_config);
+        interceptor.OnAgentHit += RegisterInterceptorHit;
+        interceptor.OnAgentMiss += RegisterInterceptorMiss;
       }
     }
 
     List<Threat> targets = new List<Threat>();
     // Create targets based on config
-    foreach (var swarmConfig in simulationConfig.target_swarm_configs) {
+    foreach (var swarmConfig in simulationConfig.threat_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var threat = CreateThreat(swarmConfig.agent_config);
         threat.OnAgentHit += RegisterThreatHit;
@@ -129,19 +129,19 @@ public class SimManager : MonoBehaviour {
     OnSimulationStarted?.Invoke();
   }
 
-  public void AssignMissilesToThreats() {
-    AssignMissilesToThreats(_missiles);
+  public void AssignInterceptorsToThreats() {
+    AssignInterceptorsToThreats(_interceptors);
   }
 
-  public void RegisterMissileHit(Agent missile) {
-    if (missile is Missile missileComponent) {
-      _activeMissiles.Remove(missileComponent);
+  public void RegisterInterceptorHit(Agent interceptor) {
+    if (interceptor is Interceptor missileComponent) {
+      _activeInterceptors.Remove(missileComponent);
     }
   }
 
-  public void RegisterMissileMiss(Agent missile) {
-    if (missile is Missile missileComponent) {
-      _activeMissiles.Remove(missileComponent);
+  public void RegisterInterceptorMiss(Agent interceptor) {
+    if (interceptor is Interceptor missileComponent) {
+      _activeInterceptors.Remove(missileComponent);
     }
   }
 
@@ -161,8 +161,8 @@ public class SimManager : MonoBehaviour {
   /// Assigns the specified list of missiles to available targets based on the assignment scheme.
   /// </summary>
   /// <param name="missilesToAssign">The list of missiles to assign.</param>
-  public void AssignMissilesToThreats(List<Missile> missilesToAssign) {
-    // Convert Missile and Threat lists to Agent lists
+  public void AssignInterceptorsToThreats(List<Interceptor> missilesToAssign) {
+    // Convert Interceptor and Threat lists to Agent lists
     List<Agent> missileAgents = new List<Agent>(missilesToAssign.ConvertAll(m => m as Agent));
     // Convert Threat list to Agent list, excluding already assigned targets
     List<Agent> targetAgents = _unassignedThreats.ToList<Agent>();
@@ -173,33 +173,33 @@ public class SimManager : MonoBehaviour {
 
     // Apply the assignments to the missiles
     foreach (var assignment in assignments) {
-      if (assignment.MissileIndex < missilesToAssign.Count) {
-        Missile missile = missilesToAssign[assignment.MissileIndex];
+      if (assignment.InterceptorIndex < missilesToAssign.Count) {
+        Interceptor interceptor = missilesToAssign[assignment.InterceptorIndex];
         Threat threat = _unassignedThreats[assignment.ThreatIndex];
-        missile.AssignTarget(threat);
-        Debug.Log($"Missile {missile.name} assigned to threat {threat.name}");
+        interceptor.AssignTarget(threat);
+        Debug.Log($"Interceptor {interceptor.name} assigned to threat {threat.name}");
       }
     }
     // TODO this whole function should be optimized
     _unassignedThreats.RemoveAll(
-        threat => missilesToAssign.Any(missile => missile.GetAssignedTarget() == threat));
+        threat => missilesToAssign.Any(interceptor => interceptor.GetAssignedTarget() == threat));
   }
 
   /// <summary>
-  /// Creates a missile based on the provided configuration.
+  /// Creates a interceptor based on the provided configuration.
   /// </summary>
-  /// <param name="config">Configuration settings for the missile.</param>
-  /// <returns>The created Missile instance, or null if creation failed.</returns>
-  public Missile CreateMissile(AgentConfig config) {
-    string prefabName = config.missile_type switch { MissileType.HYDRA_70 => "Hydra70",
-                                                     MissileType.MICROMISSILE => "Micromissile",
+  /// <param name="config">Configuration settings for the interceptor.</param>
+  /// <returns>The created Interceptor instance, or null if creation failed.</returns>
+  public Interceptor CreateInterceptor(AgentConfig config) {
+    string prefabName = config.interceptor_type switch { InterceptorType.HYDRA_70 => "Hydra70",
+                                                     InterceptorType.MICROMISSILE => "Micromissile",
                                                      _ => "Hydra70" };
 
     GameObject missileObject = CreateAgent(config, prefabName);
     if (missileObject == null)
       return null;
 
-    // Missile-specific logic
+    // Interceptor-specific logic
     switch (config.dynamic_config.sensor_config.type) {
       case SensorType.IDEAL:
         missileObject.AddComponent<IdealSensor>();
@@ -209,13 +209,13 @@ public class SimManager : MonoBehaviour {
         break;
     }
 
-    _missiles.Add(missileObject.GetComponent<Missile>());
-    _activeMissiles.Add(missileObject.GetComponent<Missile>());
+    _interceptors.Add(missileObject.GetComponent<Interceptor>());
+    _activeInterceptors.Add(missileObject.GetComponent<Interceptor>());
 
     // Assign a unique and simple ID
-    int missileId = _missiles.Count;
-    missileObject.name = $"{config.missile_type}_Missile_{missileId}";
-    return missileObject.GetComponent<Missile>();
+    int missileId = _interceptors.Count;
+    missileObject.name = $"{config.interceptor_type}_Interceptor_{missileId}";
+    return missileObject.GetComponent<Interceptor>();
   }
 
   /// <summary>
@@ -225,7 +225,7 @@ public class SimManager : MonoBehaviour {
   /// <returns>The created Threat instance, or null if creation failed.</returns>
   private Threat CreateThreat(AgentConfig config) {
     string prefabName = config.target_type switch {
-      ThreatType.DRONE => "DroneTarget", ThreatType.MISSILE => "MissileTarget",
+      ThreatType.DRONE => "Drone", ThreatType.ANTISHIP_MISSILE => "AntishipMissile",
       _ => throw new System.ArgumentException($"Unsupported threat type: {config.target_type}")
     };
     GameObject threatObject = CreateAgent(config, prefabName);
@@ -243,7 +243,7 @@ public class SimManager : MonoBehaviour {
   }
 
   /// <summary>
-  /// Creates an agent (missile or threat) based on the provided configuration and prefab name.
+  /// Creates an agent (interceptor or threat) based on the provided configuration and prefab name.
   /// </summary>
   /// <param name="config">Configuration settings for the agent.</param>
   /// <param name="prefabName">Name of the prefab to instantiate.</param>
@@ -289,9 +289,9 @@ public class SimManager : MonoBehaviour {
     simulationRunning = true;
 
     // Clear existing missiles and targets
-    foreach (var missile in _missiles) {
-      if (missile != null) {
-        Destroy(missile.gameObject);
+    foreach (var interceptor in _interceptors) {
+      if (interceptor != null) {
+        Destroy(interceptor.gameObject);
       }
     }
 
@@ -301,7 +301,7 @@ public class SimManager : MonoBehaviour {
       }
     }
 
-    _missiles.Clear();
+    _interceptors.Clear();
     _threats.Clear();
     _unassignedThreats.Clear();
 
@@ -310,15 +310,15 @@ public class SimManager : MonoBehaviour {
 
   void Update() {
     // Check if all missiles have terminated
-    bool allMissilesTerminated = true;
-    foreach (var missile in _missiles) {
-      if (missile != null && !missile.IsHit() && !missile.IsMiss()) {
-        allMissilesTerminated = false;
+    bool allInterceptorsTerminated = true;
+    foreach (var interceptor in _interceptors) {
+      if (interceptor != null && !interceptor.IsHit() && !interceptor.IsMiss()) {
+        allInterceptorsTerminated = false;
         break;
       }
     }
     // If all missiles have terminated, restart the simulation
-    if (allMissilesTerminated) {
+    if (allInterceptorsTerminated) {
       RestartSimulation();
     }
 

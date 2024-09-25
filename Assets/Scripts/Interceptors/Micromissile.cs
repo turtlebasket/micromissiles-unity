@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Micromissile : Missile {
+public class Micromissile : Interceptor {
   [SerializeField]
   private float _navigationGain = 3f;  // Typically 3-5
 
@@ -57,7 +57,7 @@ public class Micromissile : Missile {
     float acc_az = N * closing_velocity * los_rate_az;
     float acc_el = N * closing_velocity * los_rate_el;
 
-    // Convert acceleration commands to missile body frame
+    // Convert acceleration commands to craft body frame
     accelerationCommand = transform.right * acc_az + transform.up * acc_el;
 
     // Clamp the acceleration command to the maximum acceleration

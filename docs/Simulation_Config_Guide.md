@@ -1,6 +1,6 @@
 # Simulation Configuration Guide
 
-This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize missile and threat behaviors, simulation parameters, and more to suit your needs.
+This guide provides instructions on how to configure the simulation by editing the configuration files. You can customize interceptor and threat behaviors, simulation parameters, and more to suit your needs.
 
 ## Configuration Files
 
@@ -35,16 +35,16 @@ The simulation configurations are defined in JSON files that specify the initial
 
 #### `1_salvo_1_hydra_7_drones.json`
 
-This is a basic configuration featuring a single salvo with one missile type (`HYDRA_70`) and seven threat drones.
+This is a basic configuration featuring a single salvo with one interceptor type (`HYDRA_70`) and seven threat drones.
 
 ```json:Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json
 {
   "timeScale": 1,
-  "missile_swarm_configs": [
+  "interceptor_swarm_configs": [
     {
       "num_agents": 1,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "initial_state": {
           "position": { "x": 0, "y": 20, "z": 0 },
           "rotation": { "x": -45, "y": 0, "z": 0 },
@@ -61,14 +61,14 @@ This is a basic configuration featuring a single salvo with one missile type (`H
           "num_submunitions": 7,
           "launch_config": { "launch_time": 4 },
           "agent_config": {
-            "missile_type": "MICROMISSILE",
+            "interceptor_type": "MICROMISSILE",
             // Submunition configuration...
           }
         }
       }
     }
   ],
-  "target_swarm_configs": [
+  "threat_swarm_configs": [
     {
       "num_agents": 7,
       "agent_config": {
@@ -92,11 +92,11 @@ This configuration demonstrates a more complex scenario with three salvos, each 
 ```json:Assets/StreamingAssets/Configs/3_salvo_10_hydra_200_drones.json
 {
   "timeScale": 1,
-  "missile_swarm_configs": [
+  "interceptor_swarm_configs": [
     {
       "num_agents": 10,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "initial_state": {
           "position": { "x": 0, "y": 20, "z": 0 },
           "rotation": { "x": -45, "y": 0, "z": 0 },
@@ -113,15 +113,15 @@ This configuration demonstrates a more complex scenario with three salvos, each 
           "num_submunitions": 7,
           "launch_config": { "launch_time": 4 },
           "agent_config": {
-            "missile_type": "MICROMISSILE",
+            "interceptor_type": "MICROMISSILE",
             // Submunition configuration...
           }
         }
       }
     },
-    // Two more similar missile_swarm_configs with different launch times...
+    // Two more similar interceptor_swarm_configs with different launch times...
   ],
-  "target_swarm_configs": [
+  "threat_swarm_configs": [
     {
       "num_agents": 200,
       "agent_config": {
@@ -140,43 +140,43 @@ This configuration demonstrates a more complex scenario with three salvos, each 
 
 **Key Differences Between the Examples**:
 
-The key difference between the examples is that the **Number of Salvos** in `3_salvo_10_hydra_200_drones.json` file includes multiple salvos by adding multiple entries in the `missile_swarm_configs` array, each with its own `launch_time`.
+The key difference between the examples is that the **Number of Salvos** in `3_salvo_10_hydra_200_drones.json` file includes multiple salvos by adding multiple entries in the `interceptor_swarm_configs` array, each with its own `launch_time`.
 
 **Achieving Multiple Salvos**:
 
 Multiple salvos are achieved by:
 
-- Adding multiple configurations in the `missile_swarm_configs` array.
+- Adding multiple configurations in the `interceptor_swarm_configs` array.
 - Specifying different `launch_time` values in the `dynamic_config` for each salvo to control when they launch.
 
 ### Key Configuration Parameters
 
 - **`timeScale`**: Adjusts the speed of the simulation.
-- **`missile_swarm_configs`**: Contains settings for missile swarms. Each entry represents a salvo.
-- **`target_swarm_configs`**: Contains settings for threat swarms.
+- **`interceptor_swarm_configs`**: Contains settings for interceptor swarms. Each entry represents a salvo.
+- **`threat_swarm_configs`**: Contains settings for threat swarms.
 
 #### Within Each Swarm Configuration
 
 - **`num_agents`**: Number of agents (missiles or targets) in the swarm.
 - **`agent_config`**: Settings for each agent, including:
 
-  - **`missile_type`** / **`target_type`**: Defines the type of missile or threat.
+  - **`interceptor_type`** / **`target_type`**: Defines the type of interceptor or threat.
   - **`initial_state`**: Sets the starting position, rotation, and velocity.
   - **`standard_deviation`**: Adds random noise to initial states for variability.
   - **`dynamic_config`**: Time-dependent settings like `launch_time` and sensor configurations.
-  - **`submunitions_config`**: Details for any submunitions (e.g., micromissiles deployed by a larger missile).
+  - **`submunitions_config`**: Details for any submunitions (e.g., micromissiles deployed by a larger interceptor).
 
 ### Adding or Modifying Agents
 
 1. **Add a New Swarm Configuration**:
 
-   To introduce a new missile or threat swarm (or an additional salvo), create a new entry in `missile_swarm_configs` or `target_swarm_configs`.
+   To introduce a new interceptor or threat swarm (or an additional salvo), create a new entry in `interceptor_swarm_configs` or `threat_swarm_configs`.
 
    ```json
    {
      "num_agents": 5,
      "agent_config": {
-       "missile_type": "MICROMISSILE",
+       "interceptor_type": "MICROMISSILE",
        // Additional configurations...
        "dynamic_config": {
          "launch_config": { "launch_time": 15 },
@@ -194,7 +194,7 @@ Multiple salvos are achieved by:
 
 ## Model Configurations
 
-The model configurations define the physical and performance characteristics of missile and threat models. The default models provided can be customized to suit your research needs.
+The model configurations define the physical and performance characteristics of interceptor and threat models. The default models provided can be customized to suit your research needs.
 
 ### Available Models
 
@@ -234,7 +234,7 @@ This file defines parameters for the micromissile model.
 **Configurable Parameters**:
 
 - **`accelerationConfig`**: Controls acceleration characteristics.
-- **`boostConfig`**: Settings for the boost phase of the missile.
+- **`boostConfig`**: Settings for the boost phase of the craft.
 - **`liftDragConfig`**: Aerodynamic properties.
 - **`bodyConfig`**: Physical attributes like mass and area.
 - **`hitConfig`**: Collision detection and damage properties.
@@ -249,7 +249,7 @@ You can tweak the parameters in these model files to adjust performance. For exa
 
 ### Adding New Models
 
-To define a new missile or threat model:
+To define a new inte or threat model:
 
 1. **Create a New JSON File** in `Assets/StreamingAssets/Configs/Models/`.
 
@@ -275,7 +275,7 @@ This script defines the data structures used to interpret the JSON simulation co
 
 **Enums**:
 
-- `MissileType`, `ThreatType`, and `SensorType` define available types.
+- `InterceptorType`, `ThreatType`, and `SensorType` define available types.
 
 ### `StaticConfig.cs`
 

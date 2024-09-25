@@ -12,19 +12,19 @@ public class IADS : MonoBehaviour {
 
   private List<Threat> _threats;
 
-  private List<Missile> _missiles;
+  private List<Interceptor> _interceptors;
 
   private List<Vessel> _vessels;
 
-  public delegate void RegisterNewTargetDelegate(Threat threat);
-  public event RegisterNewTargetDelegate OnRegisterNewTarget;
+  public delegate void RegisterNewThreatDelegate(Threat threat);
+  public event RegisterNewThreatDelegate OnRegisterNewThreat;
 
   void Start() {
     _threats = new List<Threat>();
   }
 
-  public void RegisterNewTarget(Threat threat) {
+  public void RegisterNewThreat(Threat threat) {
     _threats.Add(threat);
-    OnRegisterNewTarget?.Invoke(threat);
+    OnRegisterNewThreat?.Invoke(threat);
   }
 }

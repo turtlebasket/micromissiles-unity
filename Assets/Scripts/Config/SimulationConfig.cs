@@ -10,11 +10,11 @@ public class SimulationConfig {
     [Header("Simulation Settings")]
     public float timeScale = 0.05f;
 
-    [Header("Missile Swarm Configurations")]
-    public List<SwarmConfig> missile_swarm_configs = new List<SwarmConfig>();
+    [Header("Interceptor Swarm Configurations")]
+    public List<SwarmConfig> interceptor_swarm_configs = new List<SwarmConfig>();
 
     [Header("Threat Swarm Configurations")]
-    public List<SwarmConfig> target_swarm_configs = new List<SwarmConfig>();
+    public List<SwarmConfig> threat_swarm_configs = new List<SwarmConfig>();
 }
 
 [Serializable]
@@ -31,7 +31,7 @@ public class SwarmConfig {
 
 [Serializable]
 public class AgentConfig {
-    public MissileType missile_type;
+    public InterceptorType interceptor_type;
     public ThreatType target_type;
     public InitialState initial_state;
     public StandardDeviation standard_deviation;
@@ -41,7 +41,7 @@ public class AgentConfig {
 
     public static AgentConfig FromSubmunitionAgentConfig(SubmunitionAgentConfig submunitionConfig) {
         return new AgentConfig {
-            missile_type = submunitionConfig.missile_type,
+            interceptor_type = submunitionConfig.interceptor_type,
             initial_state = submunitionConfig.initial_state,
             standard_deviation = submunitionConfig.standard_deviation,
             dynamic_config = submunitionConfig.dynamic_config,
@@ -87,7 +87,7 @@ public class SubmunitionsConfig {
 
 [Serializable]
 public class SubmunitionAgentConfig {
-    public MissileType missile_type;
+    public InterceptorType interceptor_type;
     public InitialState initial_state;
     public StandardDeviation standard_deviation;
     public DynamicConfig dynamic_config;
@@ -110,9 +110,9 @@ public class TargetConfig {
 
 // Enums
 [JsonConverter(typeof(StringEnumConverter))]
-public enum MissileType { HYDRA_70, MICROMISSILE }
+public enum InterceptorType { HYDRA_70, MICROMISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
-public enum ThreatType { DRONE, MISSILE }
+public enum ThreatType { DRONE, ANTISHIP_MISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ConfigColor { BLUE, GREEN, RED }
 [JsonConverter(typeof(StringEnumConverter))]

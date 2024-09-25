@@ -1,10 +1,10 @@
 {
   "timeScale": 1,
-  "missile_swarm_configs": [
+  "interceptor_swarm_configs": [
     {
       "num_agents": 10,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "target_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 20, "z": 0 },
@@ -26,7 +26,7 @@
           "num_submunitions": 7,
           "launch_config": { "launch_time": 4 },
           "agent_config": {
-            "missile_type": "MICROMISSILE",
+            "interceptor_type": "MICROMISSILE",
             "initial_state": {
               "position": { "x": -171.3253, "y": 683.85236, "z": 846.74677 },
               "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -50,7 +50,7 @@
     {
       "num_agents": 10,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "target_type": "DRONE",
         "initial_state": {
           "position": { "x": 200, "y": 20, "z": 0 },
@@ -72,7 +72,7 @@
           "num_submunitions": 7,
           "launch_config": { "launch_time": 12 },
           "agent_config": {
-            "missile_type": "MICROMISSILE",
+            "interceptor_type": "MICROMISSILE",
             "initial_state": {
               "position": { "x": -3.2042065, "y": 781.2401, "z": 1043.2384 },
               "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -96,7 +96,7 @@
     {
       "num_agents": 10,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "target_type": "DRONE",
         "initial_state": {
           "position": { "x": -100, "y": 20, "z": 0 },
@@ -118,7 +118,7 @@
           "num_submunitions": 7,
           "launch_config": { "launch_time": 23 },
           "agent_config": {
-            "missile_type": "MICROMISSILE",
+            "interceptor_type": "MICROMISSILE",
             "initial_state": {
               "position": { "x": -246.4463, "y": 976.02924, "z": 1081.1262 },
               "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -140,11 +140,11 @@
       }
     }
   ],
-  "target_swarm_configs": [
+  "threat_swarm_configs": [
     {
       "num_agents": 200,
       "agent_config": {
-        "missile_type": "HYDRA_70",
+        "interceptor_type": "HYDRA_70",
         "target_type": "DRONE",
         "initial_state": {
           "position": { "x": 0, "y": 600, "z": 6000 },
@@ -166,7 +166,7 @@
           "num_submunitions": 0,
           "launch_config": { "launch_time": 0 },
           "agent_config": {
-            "missile_type": "HYDRA_70",
+            "interceptor_type": "HYDRA_70",
             "initial_state": {
               "position": { "x": 0, "y": 0, "z": 0 },
               "rotation": { "x": 0, "y": 0, "z": 0 },

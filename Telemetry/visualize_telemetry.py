@@ -61,7 +61,7 @@ def plot_telemetry(file_path):
     plt.title('Agents Trajectories (X: Right, Z: Forward, Y: Up)')
     legend = [
         plt.Line2D([0], [0], color='red', lw=2, label='Threat'),
-        plt.Line2D([0], [0], color='blue', lw=2, label='Missile')
+        plt.Line2D([0], [0], color='blue', lw=2, label='Interceptor')
     ]
     plt.legend(handles=legend)
     plt.tight_layout()

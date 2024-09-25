@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class Hydra70 : Missile {
+public class Hydra70 : Interceptor {
   private bool _submunitionsLaunched = false;
 
   protected override void FixedUpdate() {
@@ -34,20 +34,20 @@ public class Hydra70 : Missile {
   }
 
   public void SpawnSubmunitions() {
-    List<Missile> submunitions = new List<Missile>();
-    switch (_agentConfig.submunitions_config.agent_config.missile_type) {
-      case MissileType.MICROMISSILE:
+    List<Interceptor> submunitions = new List<Interceptor>();
+    switch (_agentConfig.submunitions_config.agent_config.interceptor_type) {
+      case InterceptorType.MICROMISSILE:
         for (int i = 0; i < _agentConfig.submunitions_config.num_submunitions; i++) {
           AgentConfig convertedConfig =
               AgentConfig.FromSubmunitionAgentConfig(_agentConfig.submunitions_config.agent_config);
 
           convertedConfig.initial_state.position = transform.position;
           convertedConfig.initial_state.velocity = GetComponent<Rigidbody>().velocity;
-          Missile submunition = SimManager.Instance.CreateMissile(convertedConfig);
+          Interceptor submunition = SimManager.Instance.CreateInterceptor(convertedConfig);
           submunitions.Add(submunition);
         }
         break;
     }
-    SimManager.Instance.AssignMissilesToThreats(submunitions);
+    SimManager.Instance.AssignInterceptorsToThreats(submunitions);
   }
 }

@@ -42,16 +42,16 @@ public static class ConfigLoader {
         Debug.Log("SimulationConfig:");
         Debug.Log($"Time Scale: {config.timeScale}");
 
-        Debug.Log("Missile Swarm Configurations:");
-        for (int i = 0; i < config.missile_swarm_configs.Count; i++)
+        Debug.Log("Interceptor Swarm Configurations:");
+        for (int i = 0; i < config.interceptor_swarm_configs.Count; i++)
         {
-            PrintSwarmConfig(config.missile_swarm_configs[i], $"Missile Swarm {i + 1}");
+            PrintSwarmConfig(config.interceptor_swarm_configs[i], $"Interceptor Swarm {i + 1}");
         }
 
         Debug.Log("Threat Swarm Configurations:");
-        for (int i = 0; i < config.target_swarm_configs.Count; i++)
+        for (int i = 0; i < config.threat_swarm_configs.Count; i++)
         {
-            PrintSwarmConfig(config.target_swarm_configs[i], $"Threat Swarm {i + 1}");
+            PrintSwarmConfig(config.threat_swarm_configs[i], $"Threat Swarm {i + 1}");
         }
     }
 
@@ -65,7 +65,7 @@ public static class ConfigLoader {
     private static void PrintAgentConfig(AgentConfig agentConfig)
     {
         Debug.Log("  Agent Configuration:");
-        Debug.Log($"    Missile Type: {agentConfig.missile_type}");
+        Debug.Log($"    Interceptor Type: {agentConfig.interceptor_type}");
         Debug.Log($"    Threat Type: {agentConfig.target_type}");
         PrintInitialState(agentConfig.initial_state);
         PrintStandardDeviation(agentConfig.standard_deviation);
@@ -122,7 +122,7 @@ public static class ConfigLoader {
     private static void PrintSubmunitionAgentConfig(SubmunitionAgentConfig agentConfig)
     {
         Debug.Log("      Submunition Agent Configuration:");
-        Debug.Log($"        Missile Type: {agentConfig.missile_type}");
+        Debug.Log($"        Interceptor Type: {agentConfig.interceptor_type}");
         PrintInitialState(agentConfig.initial_state);
         PrintStandardDeviation(agentConfig.standard_deviation);
         PrintDynamicConfig(agentConfig.dynamic_config);

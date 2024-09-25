@@ -2,22 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Missile : Agent {
+public class Interceptor : Agent {
   [SerializeField]
   protected bool _showDebugVectors = true;
 
-  // Return whether a target can be assigned to the missile.
+  // Return whether a target can be assigned to the interceptor.
   public override bool IsAssignable() {
     bool assignable = !HasLaunched() && !HasAssignedTarget();
     return assignable;
   }
 
-  // Assign the given target to the missile.
+  // Assign the given target to the interceptor.
   public override void AssignTarget(Agent target) {
     base.AssignTarget(target);
   }
 
-  // Unassign the target from the missile.
+  // Unassign the target from the interceptor.
   public override void UnassignTarget() {
     base.UnassignTarget();
   }
@@ -36,7 +36,7 @@ public class Missile : Agent {
   }
 
   protected override void UpdateBoost(double deltaTime) {
-    // The missile only accelerates along its roll axis (forward in Unity)
+    // The interceptor only accelerates along its roll axis (forward in Unity)
     Vector3 rollAxis = transform.forward;
 
     // Calculate boost acceleration

@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 public class Vessel : MonoBehaviour {
   [SerializeField]
-  private List<Missile> missileInventory = new List<Missile>();
+  private List<Interceptor> missileInventory = new List<Interceptor>();
 
-  public void AddMissile(Missile missile) {
-    if (missile != null) {
-      missileInventory.Add(missile);
+  public void AddInterceptor(Interceptor interceptor) {
+    if (interceptor != null) {
+      missileInventory.Add(interceptor);
     }
   }
 
-  public void RemoveMissile(Missile missile) {
-    missileInventory.Remove(missile);
+  public void RemoveInterceptor(Interceptor interceptor) {
+    missileInventory.Remove(interceptor);
   }
 
-  public List<Missile> GetMissileInventory() {
-    return new List<Missile>(missileInventory);
+  public List<Interceptor> GetInterceptorInventory() {
+    return new List<Interceptor>(missileInventory);
   }
 
-  public int GetMissileCount() {
+  public int GetInterceptorCount() {
     return missileInventory.Count;
   }
 

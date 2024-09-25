@@ -41,7 +41,7 @@ public class SimMonitor : MonoBehaviour
     private void ExportTelemetry()
     {
         float time = (float)SimManager.Instance.GetElapsedSimulationTime();
-        foreach (var agent in SimManager.Instance.GetActiveThreats().Cast<Agent>().Concat(SimManager.Instance.GetActiveMissiles().Cast<Agent>()))
+        foreach (var agent in SimManager.Instance.GetActiveThreats().Cast<Agent>().Concat(SimManager.Instance.GetActiveInterceptors().Cast<Agent>()))
         {
             Vector3 pos = agent.transform.position;
             if(pos == Vector3.zero) {

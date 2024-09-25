@@ -9,11 +9,11 @@ public class RoundRobinAssignment : IAssignment {
   // Previous target index that was assigned.
   private int prevTargetIndex = -1;
 
-  // Assign a target to each missile that has not been assigned a target yet.
+  // Assign a target to each interceptor that has not been assigned a target yet.
   public IEnumerable<IAssignment.AssignmentItem> Assign(List<Agent> missiles, List<Agent> targets) {
     List<IAssignment.AssignmentItem> assignments = new List<IAssignment.AssignmentItem>();
-    List<int> assignableMissileIndices = IAssignment.GetAssignableMissileIndices(missiles);
-    if (assignableMissileIndices.Count == 0) {
+    List<int> assignableInterceptorIndices = IAssignment.GetAssignableInterceptorIndices(missiles);
+    if (assignableInterceptorIndices.Count == 0) {
       return assignments;
     }
 
@@ -22,7 +22,7 @@ public class RoundRobinAssignment : IAssignment {
       return assignments;
     }
 
-    foreach (int missileIndex in assignableMissileIndices) {
+    foreach (int missileIndex in assignableInterceptorIndices) {
       int nextActiveTargetIndex = activeThreatIndices.FindIndex(index => index > prevTargetIndex);
 
       if (nextActiveTargetIndex == -1) {

@@ -7,12 +7,12 @@ using UnityEngine;
 // The threat assignment class assigns missiles to the targets based
 // on the threat level of the targets.
 public class ThreatAssignment : IAssignment {
-  // Assign a target to each missile that has not been assigned a target yet.
+  // Assign a target to each interceptor that has not been assigned a target yet.
   public IEnumerable<IAssignment.AssignmentItem> Assign(List<Agent> missiles, List<Agent> targets) {
     List<IAssignment.AssignmentItem> assignments = new List<IAssignment.AssignmentItem>();
 
-    List<int> assignableMissileIndices = IAssignment.GetAssignableMissileIndices(missiles);
-    if (assignableMissileIndices.Count == 0) {
+    List<int> assignableInterceptorIndices = IAssignment.GetAssignableInterceptorIndices(missiles);
+    if (assignableInterceptorIndices.Count == 0) {
       return assignments;
     }
 
@@ -25,13 +25,13 @@ public class ThreatAssignment : IAssignment {
     List<ThreatInfo> threatInfos =
         CalculateThreatLevels(targets, activeThreatIndices, positionToDefend);
 
-    foreach (int missileIndex in assignableMissileIndices) {
+    foreach (int missileIndex in assignableInterceptorIndices) {
       if (missiles[missileIndex].HasAssignedTarget())
         continue;
       if (threatInfos.Count == 0)
         break;
 
-      // Find the optimal target for this missile based on distance and threat
+      // Find the optimal target for this interceptor based on distance and threat
       ThreatInfo optimalTarget = null;
       float optimalScore = float.MinValue;
 
