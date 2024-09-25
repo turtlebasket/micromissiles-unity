@@ -4,72 +4,87 @@ This guide provides instructions on how to configure the simulation by editing t
 
 ## Configuration Files
 
-The main configuration files you will work with are:
+The main configuration files you will work with are located in the `Assets/StreamingAssets/Configs/` directory. In a deployment context, these files are located in the `micromissiles_Data/StreamingAssets/Configs/` directory.
 
 - **Simulation Configurations**:
-  - JSON File: [`1_salvo_1_hydra_7_drones.json`](Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json)
-  - C# Script: [`SimulationConfig.cs`](Assets/Scripts/Config/SimulationConfig.cs)
+  - **`1_salvo_1_hydra_7_drones.json`**: A simple, barebones example of a simulation configuration featuring a single salvo in a 7-on-7 scenario.
+  - **`3_salvo_10_hydra_200_drones.json`**: A more complex example with three salvos, illustrating a 210-on-200 scenario. This demonstrates how to set up multiple salvos within the simulation.
+  - **C# Script**: [`SimulationConfig.cs`](Assets/Scripts/Config/SimulationConfig.cs)
 
-- **Model Configurations**:
-  - JSON File: [`micromissile.json`](Assets/StreamingAssets/Configs/Models/micromissile.json)
-  - C# Script: [`StaticConfig.cs`](Assets/Scripts/Config/StaticConfig.cs)
+- **Model Configurations** (found in `Assets/StreamingAssets/Configs/Models/`):
+  - **`micromissile.json`**
+  - **`hydra70.json`**
+  - **`drone_target.json`**
+  - **C# Script**: [`StaticConfig.cs`](Assets/Scripts/Config/StaticConfig.cs)
 
 ### File Locations
 
-- **Simulation Configurations** are found in `Assets/StreamingAssets/Configs/`.
-- **Model Configurations** are located in `Assets/StreamingAssets/Configs/Models/`.
+Development context:
+- **Simulation Configurations**: `Assets/StreamingAssets/Configs/`
+- **Model Configurations**: `Assets/StreamingAssets/Configs/Models/`
 
-## Simulation Configurations
+Deployment context:
+- **Simulation Configurations**: `micromissiles_Data/StreamingAssets/Configs/`
+- **Model Configurations**: `micromissiles_Data/StreamingAssets/Configs/Models/`
 
-### Editing Simulation Configurations
+## Overview of Simulation Configurations
+
+### Simulation Configuration Examples
+
+The simulation configurations are defined in JSON files that specify the initial setup for missiles and targets.
 
 #### `1_salvo_1_hydra_7_drones.json`
 
-This JSON file outlines the initial setup for missiles and targets.
+This is a basic configuration featuring a single salvo with one missile type (`HYDRA_70`) and seven target drones.
 
 ```json:Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json
-{
-  "timeScale": 1,
-  "missile_swarm_configs": [
-    {
-      "num_agents": 1,
-      "agent_config": {
-        "missile_type": "HYDRA_70",
-        // Additional configurations...
-      }
-    }
-  ],
-  "target_swarm_configs": [
-    {
-      "num_agents": 7,
-      "agent_config": {
-        "target_type": "DRONE",
-        // Additional configurations...
-      }
-    }
-  ]
-}
+startLine: 1
+endLine: 51
 ```
 
+#### `3_salvo_10_hydra_200_drones.json`
+
+This configuration demonstrates a more complex scenario with three salvos, each launching ten `HYDRA_70` missiles at different times against 200 target drones. This results in a total of 210 missiles (including submunitions) engaging 200 targets.
+
+```json:Assets/StreamingAssets/Configs/3_salvo_10_hydra_200_drones.json
+startLine: 1
+endLine: 100
+```
+
+**Key Differences Between the Examples**:
+
+- **Number of Salvos**: The `3_salvo_10_hydra_200_drones.json` file includes multiple salvos by adding multiple entries in the `missile_swarm_configs` array, each with its own `launch_time`.
+- **Scale of Engagement**: The second example scales up both the number of missiles and targets, demonstrating how to configure large-scale simulations.
+
+**Achieving Multiple Salvos**:
+
+Multiple salvos are achieved by:
+
+- Adding multiple configurations in the `missile_swarm_configs` array.
+- Specifying different `launch_time` values in the `dynamic_config` for each salvo to control when they launch.
+
+### Key Configuration Parameters
+
 - **`timeScale`**: Adjusts the speed of the simulation.
-- **`missile_swarm_configs`**: Contains settings for missile swarms.
+- **`missile_swarm_configs`**: Contains settings for missile swarms. Each entry represents a salvo.
 - **`target_swarm_configs`**: Contains settings for target swarms.
 
-#### Key Configuration Parameters
+#### Within Each Swarm Configuration
 
-- **`num_agents`**: Specifies how many agents (missiles or targets) are involved.
-- **`agent_config`**: Contains settings for each agent, including:
+- **`num_agents`**: Number of agents (missiles or targets) in the swarm.
+- **`agent_config`**: Settings for each agent, including:
+
   - **`missile_type`** / **`target_type`**: Defines the type of missile or target.
   - **`initial_state`**: Sets the starting position, rotation, and velocity.
-  - **`standard_deviation`**: Adds random noise to initial states.
-  - **`dynamic_config`**: Includes time-dependent settings like launch times and sensor configurations.
-  - **`submunitions_config`**: Details for any submunitions used.
+  - **`standard_deviation`**: Adds random noise to initial states for variability.
+  - **`dynamic_config`**: Time-dependent settings like `launch_time` and sensor configurations.
+  - **`submunitions_config`**: Details for any submunitions (e.g., micromissiles deployed by a larger missile).
 
 ### Adding or Modifying Agents
 
 1. **Add a New Swarm Configuration**:
 
-   To introduce a new missile or target swarm, create a new entry in `missile_swarm_configs` or `target_swarm_configs`.
+   To introduce a new missile or target swarm (or an additional salvo), create a new entry in `missile_swarm_configs` or `target_swarm_configs`.
 
    ```json
    {
@@ -77,121 +92,122 @@ This JSON file outlines the initial setup for missiles and targets.
      "agent_config": {
        "missile_type": "MICROMISSILE",
        // Additional configurations...
+       "dynamic_config": {
+         "launch_config": { "launch_time": 15 },
+         // Other dynamic settings...
+       }
      }
    }
    ```
 
+   - **`launch_time`** in `dynamic_config` controls when this swarm (or salvo) is deployed.
+
 2. **Modify Existing Configurations**:
 
-   Change parameters like `num_agents`, `initial_state`, or `dynamic_config` to adjust the behavior of existing agents.
-
-### `SimulationConfig.cs`
-
-This script defines the data structures used to interpret the JSON configuration files.
-
-```csharp:Assets/Scripts/Config/SimulationConfig.cs
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-[Serializable]
-public class SimulationConfig {
-    [Header("Simulation Settings")]
-    public float timeScale = 0.05f;
-
-    [Header("Missile Swarm Configurations")]
-    public List<SwarmConfig> missile_swarm_configs = new List<SwarmConfig>();
-
-    [Header("Target Swarm Configurations")]
-    public List<SwarmConfig> target_swarm_configs = new List<SwarmConfig>();
-}
-
-// Additional classes and enums...
-```
-
-- **Classes**:
-  - `SimulationConfig`: Contains all simulation settings.
-  - `SwarmConfig`: Represents a group of agents.
-  - `AgentConfig`: Configuration for individual agents.
-
-- **Enums**:
-  - `MissileType`, `TargetType`, and `SensorType` define available types.
-
-#### Editing Enums
-
-To add new missile or target types, update the enums accordingly.
-
-```csharp:Assets/Scripts/Config/SimulationConfig.cs
-[JsonConverter(typeof(StringEnumConverter))]
-public enum MissileType { HYDRA_70, MICROMISSILE, NEW_MISSILE_TYPE }
-```
+   Adjust parameters like `num_agents`, `initial_state`, or `dynamic_config` to change the behavior of existing agents or salvos.
 
 ## Model Configurations
 
+The model configurations define the physical and performance characteristics of missile and target models. The default models provided can be customized to suit your research needs.
+
+### Available Models
+
+The `Models` directory contains the following default model configurations:
+
+- **`micromissile.json`**
+- **`hydra70.json`**
+- **`drone_target.json`**
+
+These JSON files serve as templates and can be tweaked to modify the behavior of the corresponding models.
+
 ### Editing Model Configurations
 
-#### `micromissile.json`
+#### Example: `micromissile.json`
 
-This file defines the physical and performance characteristics of the missile models.
+This file defines parameters for the micromissile model.
 
 ```json:Assets/StreamingAssets/Configs/Models/micromissile.json
-{
-  "accelerationConfig": {
-    "maxReferenceAcceleration": 300,
-    "referenceSpeed": 1000
-  },
-  "boostConfig": {
-    "boostTime": 0.3,
-    "boostAcceleration": 350
-  },
-  // Additional configurations...
-}
+startLine: 1
+endLine: 25
 ```
 
-- **`accelerationConfig`**: Parameters for acceleration.
-- **`boostConfig`**: Settings for the boost phase.
+**Configurable Parameters**:
+
+- **`accelerationConfig`**: Controls acceleration characteristics.
+- **`boostConfig`**: Settings for the boost phase of the missile.
 - **`liftDragConfig`**: Aerodynamic properties.
-- **`bodyConfig`**: Physical properties like mass and area.
-- **`hitConfig`**: Collision and hit detection properties.
+- **`bodyConfig`**: Physical attributes like mass and area.
+- **`hitConfig`**: Collision detection and damage properties.
 
 ### Modifying Parameters
 
-Adjust values to change the missile's behavior, such as increasing acceleration or changing mass.
+You can tweak the parameters in these model files to adjust performance. For example:
+
+- **Increase Acceleration**: Modify `maxReferenceAcceleration` in `accelerationConfig`.
+- **Change Mass**: Adjust the `mass` value in `bodyConfig`.
+- **Alter Aerodynamics**: Tweak `liftCoefficient` and `dragCoefficient` in `liftDragConfig`.
 
 ### Adding New Models
 
 To define a new missile or target model:
 
 1. **Create a New JSON File** in `Assets/StreamingAssets/Configs/Models/`.
-2. **Define Model Parameters** similar to `micromissile.json`.
-3. **Update the Code** to recognize and load the new model.
+
+2. **Define Model Parameters** similar to the existing model files.
+
+3. **Update the Code** to recognize and load the new model if necessary.
+
+**Note**: Ensure that any new parameters added to the model configuration are reflected in the corresponding C# classes.
+
+## Relevant C# Scripts
+
+### `SimulationConfig.cs`
+
+This script defines the data structures used to interpret the JSON simulation configuration files.
+
+```csharp:Assets/Scripts/Config/SimulationConfig.cs
+startLine: 1
+endLine: 112
+```
+
+**Classes**:
+
+- `SimulationConfig`: Contains all simulation settings.
+- `SwarmConfig`: Represents a group of agents (missiles or targets).
+- `AgentConfig`: Configuration for individual agents.
+
+**Enums**:
+
+- `MissileType`, `TargetType`, and `SensorType` define available types.
+
+#### Editing Enums
+
+To add new missile or target types, update the enums accordingly:
+
+```csharp:Assets/Scripts/Config/SimulationConfig.cs
+startLine: 127
+endLine: 129
+```
 
 ### `StaticConfig.cs`
 
-This file defines classes corresponding to the model configuration JSON structure.
+This script defines the classes corresponding to the model configuration JSON structure.
 
 ```csharp:Assets/Scripts/Config/StaticConfig.cs
-using System;
-
-[Serializable]
-public class StaticConfig {
-  // Nested classes for configuration parameters...
-}
+startLine: 1
+endLine: 181
 ```
 
-#### Updating Classes
+**Updating Classes**:
 
-If you add new parameters to the JSON model files, ensure the corresponding classes in `StaticConfig.cs` are updated.
+If you add new parameters to the JSON model files, ensure the corresponding classes in `StaticConfig.cs` are updated to include these new fields.
 
 ## Using the Deployment Build
 
 When using the deployment build:
 
-- Ensure all required configuration files are included.
-- Place simulation configuration files in the appropriate directory (`StreamingAssets/Configs/`).
-- Modify the JSON files to adjust the simulation without needing to rebuild the application.
+- **Include Required Configuration Files**: Ensure all necessary JSON configuration files are present in the `StreamingAssets/Configs/` directory.
+- **Adjust Simulations Without Rebuilding**: Modify the JSON files to change simulation parameters without needing to rebuild the application.
 
 ---
 
@@ -205,3 +221,4 @@ For further assistance, refer to the comments and documentation within the code 
 ---
 
 *This guide aims to help you set up and customize the simulation project effectively. If you encounter any issues or have questions, please reach out to the project maintainers.*
+```
