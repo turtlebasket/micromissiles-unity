@@ -1,6 +1,12 @@
 name: Build project
 
-on: [push, pull_request]
+on:
+    push:
+      branches:
+        - release
+    pull_request:
+      branches:
+        - release
 
 jobs:
   buildForAllSupportedPlatforms:
@@ -30,6 +36,8 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          buildName: micromissiles-${{ github.run_number }}-${{ matrix.targetPlatform }}
+          versioning: Semantic
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v3
         with:

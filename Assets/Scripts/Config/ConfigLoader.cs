@@ -3,8 +3,17 @@ using UnityEngine;
 using Newtonsoft.Json;
 
 public static class ConfigLoader {
+    private static string NormalizePath(string path) {
+        if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.LinuxPlayer) {
+            if (!path.StartsWith("file://")) {
+                return "file://" + path;
+            }
+        }
+        return path;
+    }
+
     public static SimulationConfig LoadSimulationConfig(string configFileName) {
-        string configFilePath = Path.Combine(Application.streamingAssetsPath, "Configs", configFileName);
+        string configFilePath = NormalizePath(Path.Combine(Application.streamingAssetsPath, "Configs", configFileName));
         if (File.Exists(configFilePath)) {
             string json = File.ReadAllText(configFilePath);
             SimulationConfig config = JsonConvert.DeserializeObject<SimulationConfig>(json, new JsonSerializerSettings {
@@ -18,7 +27,7 @@ public static class ConfigLoader {
     }
 
     public static StaticConfig LoadStaticConfig(string configFileName) {
-        string configFilePath = Path.Combine(Application.streamingAssetsPath, "Configs/Models", configFileName);
+        string configFilePath = NormalizePath(Path.Combine(Application.streamingAssetsPath, "Configs/Models", configFileName));
         if (File.Exists(configFilePath)) {
             string json = File.ReadAllText(configFilePath);
             StaticConfig config = JsonConvert.DeserializeObject<StaticConfig>(json, new JsonSerializerSettings {
@@ -30,6 +39,7 @@ public static class ConfigLoader {
             return null;
         }
     }
+
 
     public static void PrintSimulationConfig(SimulationConfig config)
     {
