@@ -1,45 +1,72 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using Newtonsoft.Json;
 
 public static class ConfigLoader {
-    private static string NormalizePath(string path) {
-        if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.LinuxPlayer) {
-            if (!path.StartsWith("file://")) {
-                return "file://" + path;
-            }
-        }
-        return path;
-    }
 
-    public static SimulationConfig LoadSimulationConfig(string configFileName) {
-        string configFilePath = NormalizePath(Path.Combine(Application.streamingAssetsPath, "Configs", configFileName));
-        if (File.Exists(configFilePath)) {
-            string json = File.ReadAllText(configFilePath);
-            SimulationConfig config = JsonConvert.DeserializeObject<SimulationConfig>(json, new JsonSerializerSettings {
-                Converters = { new Newtonsoft.Json.Converters.StringEnumConverter() }
-            });
-            return config;
-        } else {
-            Debug.LogError($"Configuration file not found at path: {configFilePath}");
+    private static string LoadFromStreamingAssets(string relativePath)
+    {
+        string filePath = Path.Combine(Application.streamingAssetsPath, relativePath);
+
+        #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX || UNITY_IOS
+        if (!filePath.StartsWith("file://"))
+        {
+            filePath = "file://" + filePath;
+        }
+        #endif
+
+        UnityWebRequest www = UnityWebRequest.Get(filePath);
+        www.SendWebRequest();
+
+        // Wait for the request to complete
+        while (!www.isDone)
+        {
+            // You might want to yield return null here if this is called from a coroutine
+        }
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError($"Error loading file at {filePath}: {www.error}");
             return null;
         }
+
+        return www.downloadHandler.text;
     }
 
-    public static StaticConfig LoadStaticConfig(string configFileName) {
-        string configFilePath = NormalizePath(Path.Combine(Application.streamingAssetsPath, "Configs/Models", configFileName));
-        if (File.Exists(configFilePath)) {
-            string json = File.ReadAllText(configFilePath);
-            StaticConfig config = JsonConvert.DeserializeObject<StaticConfig>(json, new JsonSerializerSettings {
-                Converters = { new Newtonsoft.Json.Converters.StringEnumConverter() }
-            });
-            return config;
-        } else {
-            Debug.LogError($"Static configuration file not found at path: {configFilePath}");
+    public static SimulationConfig LoadSimulationConfig(string configFileName)
+    {
+        string relativePath = Path.Combine("Configs", configFileName);
+        string fileContent = LoadFromStreamingAssets(relativePath);
+
+        if (string.IsNullOrEmpty(fileContent))
+        {
+            Debug.LogError($"Failed to load SimulationConfig from {relativePath}");
             return null;
         }
+
+        return JsonConvert.DeserializeObject<SimulationConfig>(fileContent, new JsonSerializerSettings
+        {
+            Converters = { new Newtonsoft.Json.Converters.StringEnumConverter() }
+        });
     }
 
+    public static StaticConfig LoadStaticConfig(string configFileName)
+    {
+        string relativePath = Path.Combine("Configs/Models", configFileName);
+        string fileContent = LoadFromStreamingAssets(relativePath);
+
+        if (string.IsNullOrEmpty(fileContent))
+        {
+            Debug.LogError($"Failed to load StaticConfig from {relativePath}");
+            return null;
+        }
+
+        return JsonConvert.DeserializeObject<StaticConfig>(fileContent, new JsonSerializerSettings
+        {
+            Converters = { new Newtonsoft.Json.Converters.StringEnumConverter() }
+        });
+    }
 
     public static void PrintSimulationConfig(SimulationConfig config)
     {
