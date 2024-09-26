@@ -41,7 +41,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
       - name: Make build output readable and executable
         run: |
-          chmod -R +rx build/${{ matrix.targetPlatform }}
+          sudo chmod -R +rx build/${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
