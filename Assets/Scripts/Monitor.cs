@@ -21,7 +21,7 @@ public class SimMonitor : MonoBehaviour
     {
         string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string fileName = $"sim_telemetry_{timestamp}.csv";
-        string directory = "Telemetry/Logs/";
+        string directory = Application.persistentDataPath + "/Telemetry/Logs/";
         Directory.CreateDirectory(directory);
         string path = Path.Combine(directory, fileName);
         writer = new StreamWriter(path, false);
