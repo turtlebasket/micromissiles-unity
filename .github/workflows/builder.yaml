@@ -23,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: false
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
@@ -41,8 +41,8 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
       - name: Make build output readable and executable
         run: |
-          sudo chmod -R +rx build/${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+          sudo chmod -R 777 build/${{ matrix.targetPlatform }}
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
