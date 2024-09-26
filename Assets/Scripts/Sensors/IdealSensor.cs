@@ -45,7 +45,7 @@ public class IdealSensor : Sensor {
 
     // Calculate relative position and velocity
     Vector3 relativePosition = target.transform.position - transform.position;
-    Vector3 relativeVelocity = target.GetVelocity() - GetComponent<Rigidbody>().velocity;
+    Vector3 relativeVelocity = target.GetVelocity() - GetComponent<Rigidbody>().linearVelocity;
 
     // Calculate range rate (radial velocity)
     velocitySensorOutput.range = Vector3.Dot(relativeVelocity, relativePosition.normalized);

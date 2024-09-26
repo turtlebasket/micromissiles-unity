@@ -265,7 +265,7 @@ public class SimManager : MonoBehaviour {
     Rigidbody agentRigidbody = agentObject.GetComponent<Rigidbody>();
     Vector3 velocityNoise = Utilities.GenerateRandomNoise(config.standard_deviation.velocity);
     Vector3 noisyVelocity = config.initial_state.velocity + velocityNoise;
-    agentRigidbody.velocity = noisyVelocity;
+    agentRigidbody.linearVelocity = noisyVelocity;
 
     agentObject.GetComponent<Agent>().SetAgentConfig(config);
 

@@ -121,11 +121,11 @@ public abstract class Agent : MonoBehaviour {
   }
 
   public double GetSpeed() {
-    return GetComponent<Rigidbody>().velocity.magnitude;
+    return GetComponent<Rigidbody>().linearVelocity.magnitude;
   }
 
   public Vector3 GetVelocity() {
-    return GetComponent<Rigidbody>().velocity;
+    return GetComponent<Rigidbody>().linearVelocity;
   }
 
   public double GetDynamicPressure() {
@@ -185,7 +185,7 @@ public abstract class Agent : MonoBehaviour {
         break;
     }
 
-    _velocity = GetComponent<Rigidbody>().velocity;
+    _velocity = GetComponent<Rigidbody>().linearVelocity;
     _acceleration =
         GetComponent<Rigidbody>().GetAccumulatedForce() / GetComponent<Rigidbody>().mass;
   }

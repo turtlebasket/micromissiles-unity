@@ -103,7 +103,7 @@ public class Interceptor : Agent {
     float maxReferenceAcceleration =
         (float)(_staticConfig.accelerationConfig.maxReferenceAcceleration * Constants.kGravity);
     float referenceSpeed = _staticConfig.accelerationConfig.referenceSpeed;
-    return Mathf.Pow(GetComponent<Rigidbody>().velocity.magnitude / referenceSpeed, 2) *
+    return Mathf.Pow(GetComponent<Rigidbody>().linearVelocity.magnitude / referenceSpeed, 2) *
            maxReferenceAcceleration;
   }
   protected Vector3 CalculateGravityProjectionOnPitchAndYaw() {

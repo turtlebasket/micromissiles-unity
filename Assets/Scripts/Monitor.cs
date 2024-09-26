@@ -47,7 +47,7 @@ public class SimMonitor : MonoBehaviour
             if(pos == Vector3.zero) {
                 continue;
             }
-            Vector3 vel = agent.GetComponent<Rigidbody>().velocity;
+            Vector3 vel = agent.GetComponent<Rigidbody>().linearVelocity;
             string type = agent is Threat ? "T" : "M";
             writer.WriteLine($"{time:F2},{agent.name},{pos.x:F2},{pos.y:F2},{pos.z:F2},{vel.x:F2},{vel.y:F2},{vel.z:F2},{(int)agent.GetFlightPhase()},{type}");
         }

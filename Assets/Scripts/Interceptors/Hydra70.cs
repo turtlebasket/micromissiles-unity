@@ -42,7 +42,7 @@ public class Hydra70 : Interceptor {
               AgentConfig.FromSubmunitionAgentConfig(_agentConfig.submunitions_config.agent_config);
 
           convertedConfig.initial_state.position = transform.position;
-          convertedConfig.initial_state.velocity = GetComponent<Rigidbody>().velocity;
+          convertedConfig.initial_state.velocity = GetComponent<Rigidbody>().linearVelocity;
           Interceptor submunition = SimManager.Instance.CreateInterceptor(convertedConfig);
           submunitions.Add(submunition);
         }
