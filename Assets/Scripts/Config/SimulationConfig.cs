@@ -112,7 +112,7 @@ public class TargetConfig {
 [JsonConverter(typeof(StringEnumConverter))]
 public enum InterceptorType { HYDRA_70, MICROMISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
-public enum ThreatType { DRONE, ANTISHIP_MISSILE }
+public enum ThreatType { DRONE, MISSILE }
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ConfigColor { BLUE, GREEN, RED }
 [JsonConverter(typeof(StringEnumConverter))]

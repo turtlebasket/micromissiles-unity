@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,10 @@ public class SimManager : MonoBehaviour {
     foreach (var swarmConfig in simulationConfig.threat_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var threat = CreateThreat(swarmConfig.agent_config);
+        if (threat == null) {
+          Debug.LogError($"Failed to create threat: {swarmConfig.agent_config}");
+          continue;
+        }
         threat.OnAgentHit += RegisterThreatHit;
         threat.OnAgentMiss += RegisterThreatMiss;
       }
@@ -226,12 +231,14 @@ public class SimManager : MonoBehaviour {
   /// <returns>The created Threat instance, or null if creation failed.</returns>
   private Threat CreateThreat(AgentConfig config) {
     string prefabName = config.threat_type switch {
-      ThreatType.DRONE => "Drone", ThreatType.ANTISHIP_MISSILE => "AntishipMissile",
+      ThreatType.DRONE => "Drone", ThreatType.MISSILE => "MissileThreat",
       _ => throw new System.ArgumentException($"Unsupported threat type: {config.threat_type}")
     };
     GameObject threatObject = CreateAgent(config, prefabName);
-    if (threatObject == null)
+    if (threatObject == null) {
+      Debug.LogError($"Failed to create threat for {prefabName}.");
       return null;
+    }
 
     _threats.Add(threatObject.GetComponent<Threat>());
     _activeThreats.Add(threatObject.GetComponent<Threat>());

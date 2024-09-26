@@ -42,7 +42,7 @@ public abstract class Agent : MonoBehaviour {
 
   public void SetFlightPhase(FlightPhase flightPhase) {
     Debug.Log(
-        $"Setting flight phase to {flightPhase} at time {SimManager.Instance.GetElapsedSimulationTime()}");
+        $"Setting {name} flight phase to {flightPhase} at time {SimManager.Instance.GetElapsedSimulationTime()}");
     _timeInPhase = 0;
     _flightPhase = flightPhase;
   }
