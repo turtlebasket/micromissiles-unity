@@ -62,7 +62,7 @@ public class Interceptor : Agent {
     }
 
     float airDrag = CalculateDrag();
-    float liftInducedDrag = CalculateLiftInducedDrag(accelerationInput);
+    float liftInducedDrag = CalculateLiftInducedDrag(accelerationInput + gravity);
     float dragAcceleration = -(airDrag + liftInducedDrag);
 
     // Project the drag acceleration onto the forward direction
