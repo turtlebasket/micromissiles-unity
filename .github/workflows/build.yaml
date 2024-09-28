@@ -1,12 +1,14 @@
-name: Build project
+name: Build
 
 on:
-    push:
-      branches:
-        - release
-    pull_request:
-      branches:
-        - release
+  push:
+    branches:
+      - release
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    branches:
+      - release
 
 jobs:
   buildForAllSupportedPlatforms:
@@ -36,13 +38,20 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          buildName: micromissiles-${{ github.run_number }}-${{ matrix.targetPlatform }}
+          buildName: micromissiles-${{ github.ref_name }}-${{ matrix.targetPlatform }}
           versioning: Semantic
           targetPlatform: ${{ matrix.targetPlatform }}
-      - name: Make build output readable and executable
-        run: |
-          sudo chmod -R 777 build/${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v4
+      - if: matrix.targetPlatform == 'StandaloneWindows64'
+        run: cd build/${{ matrix.targetPlatform }} && sudo zip -r ../build-${{ matrix.targetPlatform }}.zip * && cd -
+      - if: matrix.targetPlatform == 'StandaloneWindows64'
+        uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
+          path: build/build-${{ matrix.targetPlatform }}.zip
+      - if: matrix.targetPlatform == 'StandaloneOSX'
+        run: sudo tar -czvf build/build-${{ matrix.targetPlatform }}.tar.gz -C build/${{ matrix.targetPlatform }} .
+      - if: matrix.targetPlatform == 'StandaloneOSX'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/build-${{ matrix.targetPlatform }}.tar.gz

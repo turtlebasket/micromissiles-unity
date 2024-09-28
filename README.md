@@ -2,7 +2,29 @@
 
 ![Sim Salvo Animation](docs/images/sim_salvo_animation.gif)
 
-# Getting started **developing** micromissiles-unity 
+# Quick Start
+
+We generate pre-built standalone binaries for Windows and Mac users from the `release` branch. These binaries are intended for non-development users who just want to run the application and modify a few configurations along the way.
+
+You can find the latest release [here](https://github.com/PisterLab/micromissiles-unity/releases/latest).
+
+## Windows
+
+1. Download the zip file for Windows: `micromissiles-<version>-windows_x86_64.zip`.
+2. Unzip the zip file. The zip file should contain a single directory called `micromissiles-<version>-windows_x86_64`.
+3. In the `micromissiles-<version>-windows_x86_64` directory, run `micromissiles-<version>-StandaloneWindows64.exe`.
+
+## Mac
+
+1. Download the tarball file for Darwin: `micromissiles-<version>-darwin.tar.gz`.
+2. Untar the tarball. The tarball should contain a single directory called `micromissiles-<version>-darwin`.
+3. In the `micromissiles-<version>-darwin` directory, run the app file.
+4. If you get a warning that Apple cannot check the application for malicious software:
+     * Open `System Preferences`.
+     * Navigate to `Privacy & Security`.
+     * Click on `Open Anyway` to bypass Apple's developer check.
+
+# Development
 
 This guide will help you set up and run the project in development mode. You'll learn how to install Unity Hub, open the project, and navigate the main scene.
 
@@ -19,7 +41,7 @@ This guide will help you set up and run the project in development mode. You'll 
 
 ## Prerequisites
 
-- A computer with internet access ;)
+- A computer with internet access.
 - Administrative privileges to install software.
 - [Git](https://git-scm.com/downloads) installed on your system (optional, for cloning the repository).
 
@@ -54,7 +76,7 @@ Alternatively, you can download the repository as a ZIP file and extract it to a
    - Navigate to the **"Projects"** tab.
    - Click on the **"ADD"** button.
    - Browse to the folder where you cloned or extracted the project.
-   - Select the folder containing the `Assets` folder and click **"Select Folder"**.
+   - Select the folder containing the `Assets` folder and click on **"Select Folder"**.
 
 3. **Install the Required Unity Version**:
    - Unity Hub will detect if the project requires a Unity version that is not currently installed.
@@ -64,7 +86,6 @@ Alternatively, you can download the repository as a ZIP file and extract it to a
 
 4. **Open the Project**:
    - Once the required Unity version is installed, click on the project name in Unity Hub to open it.
-
 
 ### 4. Open the Main Scene
 
