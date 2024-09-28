@@ -10,6 +10,10 @@ You can find the latest release [here](https://github.com/PisterLab/micromissile
 
 ## Windows
 
+1. Download the zip file for Windows: `micromissiles-<version>-windows_x86_64.zip`.
+2. Unzip the zip file. The zip file should contain a single directory called `micromissiles-<version>-windows_x86_64`.
+3. Run `micromissiles-<version>-StandaloneWindows64.exe`.
+
 ## Mac
 
 1. Download the zip file for Darwin: `micromissiles-<version>-darwin.zip`.
