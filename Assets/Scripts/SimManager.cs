@@ -75,7 +75,6 @@ public class SimManager : MonoBehaviour {
       StartSimulation();
       ResumeSimulation();
     }
-
   }
 
   public void SetTimeScale(float timeScale) {
@@ -197,9 +196,10 @@ public class SimManager : MonoBehaviour {
   /// <param name="config">Configuration settings for the interceptor.</param>
   /// <returns>The created Interceptor instance, or null if creation failed.</returns>
   public Interceptor CreateInterceptor(AgentConfig config) {
-    string prefabName = config.interceptor_type switch { InterceptorType.HYDRA_70 => "Hydra70",
-                                                     InterceptorType.MICROMISSILE => "Micromissile",
-                                                     _ => "Hydra70" };
+    string prefabName =
+        config.interceptor_type switch { InterceptorType.HYDRA_70 => "Hydra70",
+                                         InterceptorType.MICROMISSILE => "Micromissile",
+                                         _ => "Hydra70" };
 
     GameObject missileObject = CreateAgent(config, prefabName);
     if (missileObject == null)
@@ -231,7 +231,8 @@ public class SimManager : MonoBehaviour {
   /// <returns>The created Threat instance, or null if creation failed.</returns>
   private Threat CreateThreat(AgentConfig config) {
     string prefabName = config.threat_type switch {
-      ThreatType.DRONE => "Drone", ThreatType.MISSILE => "MissileThreat",
+      ThreatType.DRONE => "Drone", ThreatType.FIXED_WING_MISSILE => "FixedWingMissileThreat",
+      ThreatType.ROLL_STABILIZED_MISSILE => "RollStabilizedMissileThreat",
       _ => throw new System.ArgumentException($"Unsupported threat type: {config.threat_type}")
     };
     GameObject threatObject = CreateAgent(config, prefabName);

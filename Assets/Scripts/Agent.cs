@@ -128,6 +128,10 @@ public abstract class Agent : MonoBehaviour {
     return GetComponent<Rigidbody>().linearVelocity;
   }
 
+  public Vector3 GetAcceleration() {
+    return _acceleration;
+  }
+
   public double GetDynamicPressure() {
     var airDensity = Constants.CalculateAirDensityAtAltitude(transform.position.y);
     var flowSpeed = GetSpeed();

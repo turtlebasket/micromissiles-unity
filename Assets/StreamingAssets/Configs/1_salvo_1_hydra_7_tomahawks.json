@@ -5,7 +5,7 @@
       "num_agents": 1,
       "agent_config": {
         "interceptor_type": "HYDRA_70",
-        "threat_type": "DRONE",
+        "threat_type": "ROLL_STABILIZED_MISSILE",
         "initial_state": {
           "position": {
             "x": 0,
@@ -98,8 +98,7 @@
     {
       "num_agents": 7,
       "agent_config": {
-        "interceptor_type": "HYDRA_70",
-        "threat_type": "MISSILE",
+        "threat_type": "ROLL_STABILIZED_MISSILE",
         "initial_state": {
           "position": {
             "x": 0,
@@ -108,7 +107,7 @@
           },
           "rotation": {
             "x": 90,
-            "y": 0,
+            "y": 50,
             "z": 0
           },
           "velocity": {
@@ -137,9 +136,6 @@
             "type": "IDEAL",
             "frequency": 0
           }
-        },
-        "static_config": {
-
         },
         "submunitions_config": {
           "num_submunitions": 0
