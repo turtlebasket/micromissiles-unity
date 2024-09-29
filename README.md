@@ -12,18 +12,14 @@ You can find the latest release [here](https://github.com/PisterLab/micromissile
 
 1. Download the zip file for Windows: `micromissiles-<version>-windows_x86_64.zip`.
 2. Unzip the zip file. The zip file should contain a single directory called `micromissiles-<version>-windows_x86_64`.
-3. Run `micromissiles-<version>-StandaloneWindows64.exe`.
+3. In the `micromissiles-<version>-windows_x86_64` directory, run `micromissiles-<version>-StandaloneWindows64.exe`.
 
 ## Mac
 
-1. Download the zip file for Darwin: `micromissiles-<version>-darwin.zip`.
-2. Unzip the zip file. The zip file should contain a single app file.
-3. Change the permission of the app file recursively by running:
-   ```bash
-   chmod -R +x micromissiles-<version>-StandaloneOSX.app
-   ```
-4. Open the app file.
-5. If you get a warning that Apple cannot check the application for malicious software:
+1. Download the tarball file for Darwin: `micromissiles-<version>-darwin.tar.gz`.
+2. Untar the tarball. The tarball should contain a single directory called `micromissiles-<version>-darwin`.
+3. In the `micromissiles-<version>-darwin` directory, run the app file.
+4. If you get a warning that Apple cannot check the application for malicious software:
      * Open `System Preferences`.
      * Navigate to `Privacy & Security`.
      * Click on `Open Anyway` to bypass Apple's developer check.
