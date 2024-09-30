@@ -4,7 +4,7 @@ module.exports = async () => {
   return {
     title: 'Micromissiles Unity Project',
         description: 'Documentation for the Micromissiles Unity project',
-        base: './', themeConfig: {
+        base: './micromissiles-unity/', themeConfig: {
           navbar:
               [
                 {text: 'Home', link: '/'}, {
