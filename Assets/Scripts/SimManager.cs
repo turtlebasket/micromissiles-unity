@@ -19,11 +19,15 @@ public class SimManager : MonoBehaviour {
   [SerializeField]
   public SimulationConfig simulationConfig;
 
-  private List<Interceptor> _interceptors = new List<Interceptor>();
+  
   private List<Interceptor> _activeInterceptors = new List<Interceptor>();
-  private List<Threat> _unassignedThreats = new List<Threat>();
-  private List<Threat> _threats = new List<Threat>();
-  private List<Threat> _activeThreats = new List<Threat>();
+  [SerializeField]
+  private List<ThreatData> _threatTable = new List<ThreatData>();
+  private Dictionary<Threat, ThreatData> _threatDataMap = new Dictionary<Threat, ThreatData>();
+
+  private List<Interceptor> _interceptorObjects = new List<Interceptor>();
+  private List<Threat> _threatObjects = new List<Threat>();
+
   private float _elapsedSimulationTime = 0f;
   private float endTime = 100f;  // Set an appropriate end time
   private bool simulationRunning = false;
@@ -47,12 +51,12 @@ public class SimManager : MonoBehaviour {
   }
 
   public List<Threat> GetActiveThreats() {
-    return _activeThreats;
+    return _threatTable.Where(threat => threat.Status != ThreatStatus.DESTROYED).Select(threat => threat.Threat).ToList();
   }
 
   public List<Agent> GetActiveAgents() {
     return _activeInterceptors.ConvertAll(interceptor => interceptor as Agent)
-        .Concat(_activeThreats.ConvertAll(threat => threat as Agent))
+        .Concat(GetActiveThreats().ConvertAll(threat => threat as Agent))
         .ToList();
   }
 
@@ -108,8 +112,6 @@ public class SimManager : MonoBehaviour {
     foreach (var swarmConfig in simulationConfig.interceptor_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var interceptor = CreateInterceptor(swarmConfig.agent_config);
-        interceptor.OnAgentHit += RegisterInterceptorHit;
-        interceptor.OnAgentMiss += RegisterInterceptorMiss;
       }
     }
 
@@ -118,8 +120,6 @@ public class SimManager : MonoBehaviour {
     foreach (var swarmConfig in simulationConfig.threat_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
         var threat = CreateThreat(swarmConfig.agent_config);
-        threat.OnAgentHit += RegisterThreatHit;
-        threat.OnAgentMiss += RegisterThreatMiss;
       }
     }
 
@@ -131,31 +131,35 @@ public class SimManager : MonoBehaviour {
   }
 
   public void AssignInterceptorsToThreats() {
-    AssignInterceptorsToThreats(_interceptors);
+    AssignInterceptorsToThreats(_interceptorObjects);
   }
 
-  public void RegisterInterceptorHit(Agent interceptor) {
+  public void RegisterInterceptorHit(Interceptor interceptor, Threat threat) {
     if (interceptor is Interceptor missileComponent) {
       _activeInterceptors.Remove(missileComponent);
     }
   }
 
-  public void RegisterInterceptorMiss(Agent interceptor) {
+  public void RegisterInterceptorMiss(Interceptor interceptor, Threat threat) {
     if (interceptor is Interceptor missileComponent) {
       _activeInterceptors.Remove(missileComponent);
     }
+    // Remove the interceptor from the threat's assigned interceptors
+    _threatDataMap[threat].RemoveInterceptor(interceptor);
   }
 
-  public void RegisterThreatHit(Agent threat) {
-    if (threat is Threat targetComponent) {
-      _activeThreats.Remove(targetComponent);
+  public void RegisterThreatHit(Interceptor interceptor, Threat threat) {
+    ThreatData threatData = _threatDataMap[threat];
+    threatData.RemoveInterceptor(interceptor);
+    if (threatData != null) {
+      threatData.MarkDestroyed();
     }
   }
 
-  public void RegisterThreatMiss(Agent threat) {
-    if (threat is Threat targetComponent) {
-      _unassignedThreats.Add(targetComponent);
-    }
+  public void RegisterThreatMiss(Interceptor interceptor, Threat threat) {
+    Debug.Log($"RegisterThreatMiss: Interceptor {interceptor.name} missed threat {threat.name}");
+    ThreatData threatData = _threatDataMap[threat];
+    threatData.RemoveInterceptor(interceptor);
   }
 
   /// <summary>
@@ -163,27 +167,34 @@ public class SimManager : MonoBehaviour {
   /// </summary>
   /// <param name="missilesToAssign">The list of missiles to assign.</param>
   public void AssignInterceptorsToThreats(List<Interceptor> missilesToAssign) {
-    // Convert Interceptor and Threat lists to Agent lists
-    List<Agent> missileAgents = new List<Agent>(missilesToAssign.ConvertAll(m => m as Agent));
-    // Convert Threat list to Agent list, excluding already assigned targets
-    List<Agent> targetAgents = _unassignedThreats.ToList<Agent>();
-
     // Perform the assignment
     IEnumerable<IAssignment.AssignmentItem> assignments =
-        _assignmentScheme.Assign(missileAgents, targetAgents);
+        _assignmentScheme.Assign(missilesToAssign, _threatTable);
 
     // Apply the assignments to the missiles
     foreach (var assignment in assignments) {
-      if (assignment.InterceptorIndex < missilesToAssign.Count) {
-        Interceptor interceptor = missilesToAssign[assignment.InterceptorIndex];
-        Threat threat = _unassignedThreats[assignment.ThreatIndex];
-        interceptor.AssignTarget(threat);
-        Debug.Log($"Interceptor {interceptor.name} assigned to threat {threat.name}");
-      }
+        Debug.LogWarning($"Assigning interceptor {assignment.Interceptor} to threat {assignment.Threat}"); 
+        assignment.Interceptor.AssignTarget(assignment.Threat);
+        _threatDataMap[assignment.Threat].AssignInterceptor(assignment.Interceptor);
+        Debug.Log($"Interceptor {assignment.Interceptor.name} assigned to threat {assignment.Threat.name}");
     }
-    // TODO this whole function should be optimized
-    _unassignedThreats.RemoveAll(
-        threat => missilesToAssign.Any(interceptor => interceptor.GetAssignedTarget() == threat));
+
+    // Check if any interceptors were not assigned
+    List<Interceptor> unassignedInterceptors = missilesToAssign.Where(m => !m.HasAssignedTarget()).ToList();
+    
+    if (unassignedInterceptors.Count > 0)
+    {
+        string unassignedIds = string.Join(", ", unassignedInterceptors.Select(m => m.name));
+        int totalInterceptors = missilesToAssign.Count;
+        int assignedInterceptors = totalInterceptors - unassignedInterceptors.Count;
+        
+        Debug.LogWarning($"Warning: {unassignedInterceptors.Count} out of {totalInterceptors} interceptors were not assigned to any threat. " +
+                         $"Unassigned interceptor IDs: {unassignedIds}. " +
+                         $"Total interceptors: {totalInterceptors}, Assigned: {assignedInterceptors}, Unassigned: {unassignedInterceptors.Count}");
+
+        // Log information about the assignment scheme
+        Debug.Log($"Current Assignment Scheme: {_assignmentScheme.GetType().Name}");
+    }
   }
 
   /// <summary>
@@ -196,27 +207,32 @@ public class SimManager : MonoBehaviour {
                                                      InterceptorType.MICROMISSILE => "Micromissile",
                                                      _ => "Hydra70" };
 
-    GameObject missileObject = CreateAgent(config, prefabName);
-    if (missileObject == null)
+    GameObject interceptorObject = CreateAgent(config, prefabName);
+    if (interceptorObject == null)
       return null;
 
     // Interceptor-specific logic
     switch (config.dynamic_config.sensor_config.type) {
       case SensorType.IDEAL:
-        missileObject.AddComponent<IdealSensor>();
+        interceptorObject.AddComponent<IdealSensor>();
         break;
       default:
         Debug.LogError($"Sensor type '{config.dynamic_config.sensor_config.type}' not found.");
         break;
     }
 
-    _interceptors.Add(missileObject.GetComponent<Interceptor>());
-    _activeInterceptors.Add(missileObject.GetComponent<Interceptor>());
+    Interceptor interceptor = interceptorObject.GetComponent<Interceptor>();
+    _interceptorObjects.Add(interceptor);
+    _activeInterceptors.Add(interceptor);
+
+    // Subscribe events
+    interceptor.OnInterceptHit += RegisterInterceptorHit;
+    interceptor.OnInterceptMiss += RegisterInterceptorMiss;
 
     // Assign a unique and simple ID
-    int missileId = _interceptors.Count;
-    missileObject.name = $"{config.interceptor_type}_Interceptor_{missileId}";
-    return missileObject.GetComponent<Interceptor>();
+    int missileId = _interceptorObjects.Count;
+    interceptorObject.name = $"{config.interceptor_type}_Interceptor_{missileId}";
+    return interceptorObject.GetComponent<Interceptor>();
   }
 
   /// <summary>
@@ -233,13 +249,20 @@ public class SimManager : MonoBehaviour {
     if (threatObject == null)
       return null;
 
-    _threats.Add(threatObject.GetComponent<Threat>());
-    _activeThreats.Add(threatObject.GetComponent<Threat>());
-    _unassignedThreats.Add(threatObject.GetComponent<Threat>());
-
+    Threat threat = threatObject.GetComponent<Threat>();
     // Assign a unique and simple ID
-    int targetId = _threats.Count;
+    int targetId = _threatTable.Count;
     threatObject.name = $"{config.threat_type}_Target_{targetId}";
+
+    ThreatData threatData = new ThreatData(threat, threatObject.name);
+    _threatDataMap.Add(threat, threatData);
+    _threatTable.Add(threatData);
+    _threatObjects.Add(threat);
+
+    // Subscribe events
+    threat.OnInterceptHit += RegisterThreatHit;
+    threat.OnInterceptMiss += RegisterThreatMiss;
+
     return threatObject.GetComponent<Threat>();
   }
 
@@ -290,21 +313,24 @@ public class SimManager : MonoBehaviour {
     simulationRunning = IsSimulationRunning();
 
     // Clear existing missiles and targets
-    foreach (var interceptor in _interceptors) {
+    foreach (var interceptor in _interceptorObjects) {
       if (interceptor != null) {
         Destroy(interceptor.gameObject);
       }
     }
 
-    foreach (var threat in _threats) {
+    foreach (var threat in _threatObjects) {
       if (threat != null) {
         Destroy(threat.gameObject);
       }
     }
 
-    _interceptors.Clear();
-    _threats.Clear();
-    _unassignedThreats.Clear();
+    _interceptorObjects.Clear();
+    _activeInterceptors.Clear();
+    _threatObjects.Clear();
+    _threatTable.Clear();
+    
+
 
     StartSimulation();
   }
@@ -312,7 +338,7 @@ public class SimManager : MonoBehaviour {
   void Update() {
     // Check if all missiles have terminated
     bool allInterceptorsTerminated = true;
-    foreach (var interceptor in _interceptors) {
+    foreach (var interceptor in _interceptorObjects) {
       if (interceptor != null && !interceptor.IsHit() && !interceptor.IsMiss()) {
         allInterceptorsTerminated = false;
         break;

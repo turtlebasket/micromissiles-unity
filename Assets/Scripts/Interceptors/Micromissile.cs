@@ -28,7 +28,7 @@ public class Micromissile : Interceptor {
       // Check whether the threat should be considered a miss
       SensorOutput sensorOutput = GetComponent<Sensor>().Sense(_target);
       if (sensorOutput.velocity.range > 1000f) {
-        this.MarkAsMiss();
+        this.HandleInterceptMiss();
       }
 
       // Calculate the acceleration input

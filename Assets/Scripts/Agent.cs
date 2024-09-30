@@ -33,12 +33,12 @@ public abstract class Agent : MonoBehaviour {
   protected StaticConfig _staticConfig;
 
   // Define delegates
-  public delegate void AgentHitEventHandler(Agent agent);
-  public delegate void AgentMissEventHandler(Agent agent);
+  public delegate void InterceptHitEventHandler(Interceptor interceptor, Threat target);
+  public delegate void InterceptMissEventHandler(Interceptor interceptor, Threat target);
 
   // Define events
-  public event AgentHitEventHandler OnAgentHit;
-  public event AgentMissEventHandler OnAgentMiss;
+  public event InterceptHitEventHandler OnInterceptHit;
+  public event InterceptMissEventHandler OnInterceptMiss;
 
   public void SetFlightPhase(FlightPhase flightPhase) {
     Debug.Log(
@@ -105,16 +105,24 @@ public abstract class Agent : MonoBehaviour {
   }
 
   // Mark the agent as having hit the target or been hit.
-  public void MarkAsHit() {
+  public void HandleInterceptHit() {
     _isHit = true;
-    OnAgentHit?.Invoke(this);
+    if (this is Interceptor interceptor && _target is Threat threat) {
+      OnInterceptHit?.Invoke(interceptor, threat);
+    } else if (this is Threat threatAgent && _target is Interceptor interceptorTarget) {
+      OnInterceptHit?.Invoke(interceptorTarget, threatAgent);
+    }
     TerminateAgent();
   }
 
-  public void MarkAsMiss() {
+  public void HandleInterceptMiss() {
     _isMiss = true;
     if (_target != null) {
-      OnAgentMiss?.Invoke(this);
+      if (this is Interceptor interceptor && _target is Threat threat) {
+        OnInterceptMiss?.Invoke(interceptor, threat);
+      } else if (this is Threat threatAgent && _target is Interceptor interceptorTarget) {
+        OnInterceptMiss?.Invoke(interceptorTarget, threatAgent);
+      }
       _target = null;
     }
     TerminateAgent();

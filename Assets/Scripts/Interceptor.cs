@@ -74,7 +74,7 @@ public class Interceptor : Agent {
 
   private void OnTriggerEnter(Collider other) {
     if (other.gameObject.name == "Floor") {
-      this.MarkAsMiss();
+      this.HandleInterceptMiss();
     }
     // Check if the collision is with another Agent
     Agent otherAgent = other.gameObject.GetComponentInParent<Agent>();
@@ -87,13 +87,13 @@ public class Interceptor : Agent {
         // Set green for hit
         markerObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0, 0.15f);
         // Mark both this agent and the other agent as hit
-        this.MarkAsHit();
-        otherAgent.MarkAsHit();
+        this.HandleInterceptHit();
+        otherAgent.HandleInterceptHit();
 
       } else {
         // Set red for miss
         markerObject.GetComponent<Renderer>().material.color = new Color(1, 0, 0, 0.15f);
-        this.MarkAsMiss();
+        this.HandleInterceptMiss();
         // otherAgent.MarkAsMiss();
       }
     }
