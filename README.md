@@ -2,8 +2,9 @@
 
 ![Sim Salvo Animation](docs/images/sim_salvo_animation.gif)
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/build.yaml?link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Factions%2Fworkflows%2Fbuild.yaml)
- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/test.yaml?label=tests&link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Factions%2Fworkflows%2Ftest.yaml) ![GitHub Release](https://img.shields.io/github/v/release/PisterLab/micromissiles-unity?link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Freleases%2Flatest)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/build.yaml?link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Factions%2Fworkflows%2Fbuild.yaml)](https://github.com/PisterLab/micromissiles-unity/actions/workflows/build.yaml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/test.yaml?label=tests&link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Factions%2Fworkflows%2Ftest.yaml)](https://github.com/PisterLab/micromissiles-unity/actions/workflows/test.yaml)
+[![GitHub Release](https://img.shields.io/github/v/release/PisterLab/micromissiles-unity?link=https%3A%2F%2Fgithub.com%2FPisterLab%2Fmicromissiles-unity%2Freleases%2Flatest)](https://github.com/PisterLab/micromissiles-unity/releases/latest)
 
 
 
