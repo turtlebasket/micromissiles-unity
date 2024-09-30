@@ -51,26 +51,3 @@ jobs:
         with:
           name: Coverage results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.coveragePath }}
-  upload-coverage:
-    needs: testAllModes
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: coverage-results
-      - name: Display structure of downloaded files
-        run: ls -R coverage-results
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: coverage-results
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
