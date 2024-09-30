@@ -3,6 +3,7 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
 public class GenerateCone : EditorWindow {
   private int sides = 16;
   private float baseRadius = 1f;
@@ -140,3 +141,4 @@ public class GenerateCone : EditorWindow {
     return sum / vertices.Count;
   }
 }
+#endif
