@@ -1,10 +1,14 @@
+# .github/workflows/docs.yaml
 name: Deploy Documentation
 
 on:
-  workflow_run:
-    workflows: ["Test"]
-    types:
-      - completed
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:  # Allows manual triggering
 
 permissions:
   contents: read
@@ -14,7 +18,6 @@ permissions:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,52 +31,16 @@ jobs:
         run: npm install
         working-directory: './docs'
 
-      - name: Download coverage artifacts
-        uses: actions/github-script@v6
-        with:
-          script: |
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifacts = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name.startsWith("Coverage results for")
-            });
-            for (const artifact of matchArtifacts) {
-              var download = await github.rest.actions.downloadArtifact({
-                 owner: context.repo.owner,
-                 repo: context.repo.repo,
-                 artifact_id: artifact.id,
-                 archive_format: 'zip',
-              });
-              var fs = require('fs');
-              fs.writeFileSync(`${{github.workspace}}/${artifact.name}.zip`, Buffer.from(download.data));
-            }
-
-      - name: Extract coverage reports
-        run: |
-          mkdir -p ./docs/.vuepress/public/coverage
-          for file in Coverage*.zip; do
-            mode=$(echo $file | sed 's/Coverage results for \(.*\)\.zip/\1/')
-            unzip -o "$file" -d "./docs/.vuepress/public/coverage/$mode"
-          done
-
       - name: Build documentation
         run: npm run docs:build
         working-directory: './docs'
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+      - name: Deploy Documentation
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: 'docs/.vuepress/dist'
-
-  deploy:
-    needs: build-deploy
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.vuepress/dist
+          destination_dir: docs
+          allow_empty_commit: true
+          keep_files: true
+          force_orphan: false
