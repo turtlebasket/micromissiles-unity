@@ -173,7 +173,6 @@ public class SimManager : MonoBehaviour {
 
     // Apply the assignments to the missiles
     foreach (var assignment in assignments) {
-        Debug.LogWarning($"Assigning interceptor {assignment.Interceptor} to threat {assignment.Threat}"); 
         assignment.Interceptor.AssignTarget(assignment.Threat);
         _threatDataMap[assignment.Threat].AssignInterceptor(assignment.Interceptor);
         Debug.Log($"Interceptor {assignment.Interceptor.name} assigned to threat {assignment.Threat.name}");
