@@ -2,6 +2,11 @@
 
 ![Sim Salvo Animation](docs/images/sim_salvo_animation.gif)
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/build.yaml) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/PisterLab/micromissiles-unity/test.yaml?label=tests)
+ ![GitHub Release](https://img.shields.io/github/v/release/PisterLab/micromissiles-unity)
+
+
+
 # Quick Start
 
 We generate pre-built standalone binaries for Windows and Mac users from the `release` branch. These binaries are intended for non-development users who just want to run the application and modify a few configurations along the way.
