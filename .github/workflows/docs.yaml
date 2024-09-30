@@ -46,5 +46,5 @@ jobs:
           publish_dir: ./docs/.vuepress/dist
           destination_dir: docs
           allow_empty_commit: true
-          keep_files: true
-          force_orphan: false 
+          keep_files: false
+          force_orphan: true
