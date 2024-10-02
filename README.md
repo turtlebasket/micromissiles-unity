@@ -75,7 +75,7 @@ Alternatively, you can download the repository as a ZIP file and extract it to a
 
 ### 3. Launch the Project via Unity Hub
 
-![Unity Hub](docs/images/unity_hub.png)
+![Unity Hub](docs/public/images/unity_hub.png)
 
 1. **Open Unity Hub**.
 
