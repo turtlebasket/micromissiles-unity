@@ -31,6 +31,10 @@ export default defineConfig({
     ],
     search: {
       provider: 'local'
+    },
+    footer: {
+      message: 'Released under the <a href="https://github.com/PisterLab/micromissiles-unity/blob/main/LICENSE">BSD-3-Clause License</a>.',
+      copyright: 'Copyright © 2024-present, The Regents of the University of California (Regents). All Rights Reserved.'
     }
   }
 })
