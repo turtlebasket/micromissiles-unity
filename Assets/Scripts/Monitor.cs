@@ -168,8 +168,6 @@ public class SimMonitor : MonoBehaviour
         catch (IOException e)
         {
             Debug.LogWarning($"An IO error occurred while converting binary telemetry to CSV: {e.Message}");
-            //System.Threading.Thread.Sleep(1000);
-            //ConvertBinaryTelemetryToCsv(binaryFilePath, csvFilePath);
         }
     }
 

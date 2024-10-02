@@ -9,22 +9,21 @@ module.exports = async () => {
               [
                 {text: 'Home', link: '/'}, {
                   text: 'Keybinds and Controls',
-                  link: '/Keybinds_and_Controls.html'
+                  link: '/Keybinds_and_Controls/'
                 },
                 {
                   text: 'Simulation Configuration Guide',
-                  link: '/Simulation_Config_Guide.html'
+                  link: '/Simulation_Config_Guide/'
                 },
-                {text: 'Simulation Logging', link: '/Simulation_Logging.html'},
+                {text: 'Simulation Logging', link: '/Simulation_Logging/'},
                 {
                   text: 'Coverage Reports',
-                  link: '/coverage/'
+                  link: '/coverage/editmode/Report/'
                 },  // Link to coverage reports
               ],
           sidebar: 'auto',
         },
-        bundler: viteBundler(), public: '../images',
-        // Add this to ensure INDEX.md is used as the home page
+        bundler: viteBundler(), 
         patterns: ['INDEX.md', '**/*.md', '**/*.vue'],
   }
 }
