@@ -10,9 +10,9 @@ hero:
     - theme: brand
       text: Documentation
       link: /Keybinds_and_Controls
-    #- theme: alt
-    #  text: Simulation Configuration Guide
-    #  link: /Simulation_Config_Guide
+    - theme: alt
+      text: Development Guide
+      link: /Development_Guide
 
 ---
 

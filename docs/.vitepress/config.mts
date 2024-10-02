@@ -9,7 +9,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Documentation', link: '/Keybinds_and_Controls' }
+      { text: 'Documentation', link: '/Keybinds_and_Controls' },
+      { text: 'Development Guide', link: '/Development_Guide' }
     ],
 
     sidebar: [
@@ -19,7 +20,8 @@ export default defineConfig({
           { text: 'Keybinds and Controls', link: '/Keybinds_and_Controls' },
           { text: 'Simulation Configuration Guide', link: '/Simulation_Config_Guide' },
           { text: 'Simulation Logging', link: '/Simulation_Logging' },
-          { text: 'Coverage Reports', link: '/coverage/editmode/Report/' }
+          { text: 'Coverage Reports', link: '/coverage/editmode/Report/' },
+          { text: 'Development Guide', link: '/Development_Guide' }
         ]
       }
     ],
