@@ -4,7 +4,7 @@ This guide provides instructions on how to access and interpret the simulation l
 
 ## Overview
 
-![Python simulation log visualizer](images/sim_visualizer.png)
+![Python simulation log visualizer](./images/sim_visualizer.png)
 
 Simulation logs capture detailed telemetry and event data from each simulation run. These logs are essential for debugging, performance analysis, and understanding the behavior of agents within the simulation.
 

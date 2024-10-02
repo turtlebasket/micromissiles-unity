@@ -42,7 +42,7 @@ Alternatively, you can download the repository as a ZIP file and extract it to a
 
 ### 3. Launch the Project via Unity Hub
 
-![Unity Hub](images/unity_hub.png)
+![Unity Hub](./images/unity_hub.png)
 
 1. **Open Unity Hub**.
 
