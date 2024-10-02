@@ -41,7 +41,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/.vuepress/dist
+          publish_dir: ./docs/.vitepress/dist
           allow_empty_commit: true
-          keep_files: true
-          force_orphan: false
+          keep_files: false
+          force_orphan: true
