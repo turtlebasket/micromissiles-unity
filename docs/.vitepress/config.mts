@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "micromissiles-unity",
   description: "Swarm-on-swarm simulator using micromissiles for point defense",
+  base: '/micromissiles-unity/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
