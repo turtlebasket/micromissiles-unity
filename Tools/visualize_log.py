@@ -157,7 +157,7 @@ def print_summary(telemetry_file_path, event_file_path):
     else:
         print("\n'Time' column not found in event data.")
 
-    # Provide some insightful data about the hits and misses
+
     if 'Time' in event_df.columns:
         hits = event_df[event_df['Event'] == 'HIT']
         misses = event_df[event_df['Event'] == 'MISS']
@@ -180,7 +180,6 @@ def print_summary(telemetry_file_path, event_file_path):
 
 
 
-# Update the main function to pass both telemetry and event file paths
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Visualize telemetry data and events.')
     parser.add_argument('telemetry_file', nargs='?', default=None, help='Path to telemetry CSV file.')
