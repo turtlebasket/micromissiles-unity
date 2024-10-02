@@ -48,6 +48,6 @@ public class Hydra70 : Interceptor {
         }
         break;
     }
-    SimManager.Instance.AssignInterceptorsToThreats(submunitions);
+    IADS.Instance.RequestThreatAssignment(submunitions);
   }
 }

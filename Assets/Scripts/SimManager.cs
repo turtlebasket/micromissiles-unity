@@ -21,9 +21,7 @@ public class SimManager : MonoBehaviour {
 
   
   private List<Interceptor> _activeInterceptors = new List<Interceptor>();
-  [SerializeField]
-  private List<ThreatData> _threatTable = new List<ThreatData>();
-  private Dictionary<Threat, ThreatData> _threatDataMap = new Dictionary<Threat, ThreatData>();
+
 
   private List<Interceptor> _interceptorObjects = new List<Interceptor>();
   private List<Threat> _threatObjects = new List<Threat>();
@@ -32,11 +30,18 @@ public class SimManager : MonoBehaviour {
   private float endTime = 100f;  // Set an appropriate end time
   private bool simulationRunning = false;
 
-  private IAssignment _assignmentScheme;
+
 
   public delegate void SimulationEventHandler();
   public event SimulationEventHandler OnSimulationEnded;
   public event SimulationEventHandler OnSimulationStarted;
+
+  public delegate void NewThreatEventHandler(Threat threat);
+  public event NewThreatEventHandler OnNewThreat;
+
+
+  public delegate void NewInterceptorEventHandler(Interceptor interceptor);
+  public event NewInterceptorEventHandler OnNewInterceptor;
 
   /// <summary>
   /// Gets the elapsed simulation time.
@@ -51,7 +56,7 @@ public class SimManager : MonoBehaviour {
   }
 
   public List<Threat> GetActiveThreats() {
-    return _threatTable.Where(threat => threat.Status != ThreatStatus.DESTROYED).Select(threat => threat.Threat).ToList();
+    return _threatObjects.Where(threat => !threat.IsHit()).ToList();
   }
 
   public List<Agent> GetActiveAgents() {
@@ -111,7 +116,7 @@ public class SimManager : MonoBehaviour {
     // Create missiles based on config
     foreach (var swarmConfig in simulationConfig.interceptor_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
-        var interceptor = CreateInterceptor(swarmConfig.agent_config);
+        CreateInterceptor(swarmConfig.agent_config);
       }
     }
 
@@ -119,11 +124,10 @@ public class SimManager : MonoBehaviour {
     // Create targets based on config
     foreach (var swarmConfig in simulationConfig.threat_swarm_configs) {
       for (int i = 0; i < swarmConfig.num_agents; i++) {
-        var threat = CreateThreat(swarmConfig.agent_config);
+        CreateThreat(swarmConfig.agent_config);
       }
     }
 
-    _assignmentScheme = new ThreatAssignment();
 
     // Invoke the simulation started event to let listeners
     // know to invoke their own handler behavior
@@ -131,7 +135,7 @@ public class SimManager : MonoBehaviour {
   }
 
   public void AssignInterceptorsToThreats() {
-    AssignInterceptorsToThreats(_interceptorObjects);
+    IADS.Instance.AssignInterceptorsToThreats(_interceptorObjects);
   }
 
   public void RegisterInterceptorHit(Interceptor interceptor, Threat threat) {
@@ -144,57 +148,18 @@ public class SimManager : MonoBehaviour {
     if (interceptor is Interceptor missileComponent) {
       _activeInterceptors.Remove(missileComponent);
     }
-    // Remove the interceptor from the threat's assigned interceptors
-    _threatDataMap[threat].RemoveInterceptor(interceptor);
   }
 
   public void RegisterThreatHit(Interceptor interceptor, Threat threat) {
-    ThreatData threatData = _threatDataMap[threat];
-    threatData.RemoveInterceptor(interceptor);
-    if (threatData != null) {
-      threatData.MarkDestroyed();
-    }
+    // Placeholder
   }
 
   public void RegisterThreatMiss(Interceptor interceptor, Threat threat) {
     Debug.Log($"RegisterThreatMiss: Interceptor {interceptor.name} missed threat {threat.name}");
-    ThreatData threatData = _threatDataMap[threat];
-    threatData.RemoveInterceptor(interceptor);
+    // Placeholder
   }
 
-  /// <summary>
-  /// Assigns the specified list of missiles to available targets based on the assignment scheme.
-  /// </summary>
-  /// <param name="missilesToAssign">The list of missiles to assign.</param>
-  public void AssignInterceptorsToThreats(List<Interceptor> missilesToAssign) {
-    // Perform the assignment
-    IEnumerable<IAssignment.AssignmentItem> assignments =
-        _assignmentScheme.Assign(missilesToAssign, _threatTable);
-
-    // Apply the assignments to the missiles
-    foreach (var assignment in assignments) {
-        assignment.Interceptor.AssignTarget(assignment.Threat);
-        _threatDataMap[assignment.Threat].AssignInterceptor(assignment.Interceptor);
-        Debug.Log($"Interceptor {assignment.Interceptor.name} assigned to threat {assignment.Threat.name}");
-    }
-
-    // Check if any interceptors were not assigned
-    List<Interceptor> unassignedInterceptors = missilesToAssign.Where(m => !m.HasAssignedTarget()).ToList();
-    
-    if (unassignedInterceptors.Count > 0)
-    {
-        string unassignedIds = string.Join(", ", unassignedInterceptors.Select(m => m.name));
-        int totalInterceptors = missilesToAssign.Count;
-        int assignedInterceptors = totalInterceptors - unassignedInterceptors.Count;
-        
-        Debug.LogWarning($"Warning: {unassignedInterceptors.Count} out of {totalInterceptors} interceptors were not assigned to any threat. " +
-                         $"Unassigned interceptor IDs: {unassignedIds}. " +
-                         $"Total interceptors: {totalInterceptors}, Assigned: {assignedInterceptors}, Unassigned: {unassignedInterceptors.Count}");
-
-        // Log information about the assignment scheme
-        Debug.Log($"Current Assignment Scheme: {_assignmentScheme.GetType().Name}");
-    }
-  }
+  
 
   /// <summary>
   /// Creates a interceptor based on the provided configuration.
@@ -224,13 +189,18 @@ public class SimManager : MonoBehaviour {
     _interceptorObjects.Add(interceptor);
     _activeInterceptors.Add(interceptor);
 
+
     // Subscribe events
     interceptor.OnInterceptHit += RegisterInterceptorHit;
     interceptor.OnInterceptMiss += RegisterInterceptorMiss;
 
     // Assign a unique and simple ID
-    int missileId = _interceptorObjects.Count;
-    interceptorObject.name = $"{config.interceptor_type}_Interceptor_{missileId}";
+    int interceptorId = _interceptorObjects.Count;
+    interceptorObject.name = $"{config.interceptor_type}_Interceptor_{interceptorId}";
+
+    // Let listeners know a new interceptor has been created
+    OnNewInterceptor?.Invoke(interceptor);
+
     return interceptorObject.GetComponent<Interceptor>();
   }
 
@@ -250,17 +220,18 @@ public class SimManager : MonoBehaviour {
 
     Threat threat = threatObject.GetComponent<Threat>();
     // Assign a unique and simple ID
-    int targetId = _threatTable.Count;
+    int targetId = _threatObjects.Count;
     threatObject.name = $"{config.threat_type}_Target_{targetId}";
 
     ThreatData threatData = new ThreatData(threat, threatObject.name);
-    _threatDataMap.Add(threat, threatData);
-    _threatTable.Add(threatData);
     _threatObjects.Add(threat);
 
     // Subscribe events
     threat.OnInterceptHit += RegisterThreatHit;
     threat.OnInterceptMiss += RegisterThreatMiss;
+
+    // Let listeners know a new threat has been created
+    OnNewThreat?.Invoke(threat);
 
     return threatObject.GetComponent<Threat>();
   }
@@ -311,7 +282,7 @@ public class SimManager : MonoBehaviour {
     _elapsedSimulationTime = 0f;
     simulationRunning = IsSimulationRunning();
 
-    // Clear existing missiles and targets
+    // Clear existing interceptors and threats
     foreach (var interceptor in _interceptorObjects) {
       if (interceptor != null) {
         Destroy(interceptor.gameObject);
@@ -327,9 +298,6 @@ public class SimManager : MonoBehaviour {
     _interceptorObjects.Clear();
     _activeInterceptors.Clear();
     _threatObjects.Clear();
-    _threatTable.Clear();
-    
-
 
     StartSimulation();
   }
