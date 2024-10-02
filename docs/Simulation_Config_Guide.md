@@ -9,13 +9,13 @@ The main configuration files you will work with are located in the `Assets/Strea
 - **Simulation Configurations**:
   - **`1_salvo_1_hydra_7_drones.json`**: A simple, barebones example of a simulation configuration featuring a single salvo in a 7-on-7 scenario.
   - **`3_salvo_10_hydra_200_drones.json`**: A more complex example with three salvos, illustrating a 210-on-200 scenario. This demonstrates how to set up multiple salvos within the simulation.
-  - **C# Script**: [`SimulationConfig.cs`](Assets/Scripts/Config/SimulationConfig.cs)
+  - **C# Script**: [`SimulationConfig.cs`](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/Config/StaticConfig.cs)
 
 - **Model Configurations** (found in `Assets/StreamingAssets/Configs/Models/`):
   - **`micromissile.json`**
   - **`hydra70.json`**
   - **`drone.json`**
-  - **C# Script**: [`StaticConfig.cs`](Assets/Scripts/Config/StaticConfig.cs)
+  - **C# Script**: [`StaticConfig.cs`](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/Config/StaticConfig.cs)
 
 ### File Locations
 
@@ -37,7 +37,7 @@ The simulation configurations are defined in JSON files that specify the initial
 
 This is a basic configuration featuring a single salvo with one interceptor type (`HYDRA_70`) and seven threat drones.
 
-```json:Assets/StreamingAssets/Configs/1_salvo_1_hydra_7_drones.json
+```json
 {
   "timeScale": 1,
   "interceptor_swarm_configs": [
@@ -89,7 +89,7 @@ This is a basic configuration featuring a single salvo with one interceptor type
 
 This configuration demonstrates a more complex scenario with three salvos, each launching ten `HYDRA_70` missiles at different times against 200 threat drones. This results in a total of 210 missiles (including submunitions) engaging 200 targets.
 
-```json:Assets/StreamingAssets/Configs/3_salvo_10_hydra_200_drones.json
+```json
 {
   "timeScale": 1,
   "interceptor_swarm_configs": [
@@ -265,7 +265,7 @@ To define a new inte or threat model:
 
 This script defines the data structures used to interpret the JSON simulation configuration files.
 
-[Assets/Scripts/Config/SimulationConfig.cs](../../Assets/Scripts/Config/SimulationConfig.cs)
+[Assets/Scripts/Config/SimulationConfig.cs](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/Config/SimulationConfig.cs)
 
 **Classes**:
 
@@ -281,10 +281,10 @@ This script defines the data structures used to interpret the JSON simulation co
 
 This script defines the classes corresponding to the model configuration JSON structure.
 
-[Assets/Scripts/Config/StaticConfig.cs](../../Assets/Scripts/Config/StaticConfig.cs)
+[Assets/Scripts/Config/StaticConfig.cs](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/Config/StaticConfig.cs)
 
 For example:
-```csharp:Assets/Scripts/Config/StaticConfig.cs
+```csharp
 [Serializable]
 public class StaticConfig {
   [Serializable]
@@ -335,8 +335,8 @@ While the simulation is running, you can load a new Simulation Configuration JSO
 
 For further assistance, refer to the comments and documentation within the code files:
 
-- [`SimManager.cs`](Assets/Scripts/SimManager.cs): Manages simulation state and agent creation.
-- [`InputManager.cs`](Assets/Scripts/Managers/InputManager.cs): Handles user input and interactions.
+- [`SimManager.cs`](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/SimManager.cs): Manages simulation state and agent creation.
+- [`InputManager.cs`](https://github.com/PisterLab/micromissiles-unity/blob/master/Assets/Scripts/Managers/InputManager.cs): Handles user input and interactions.
 
 ---
 
