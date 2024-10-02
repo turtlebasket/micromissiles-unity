@@ -87,8 +87,8 @@ public class Interceptor : Agent {
         // Set green for hit
         markerObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0, 0.15f);
         // Mark both this agent and the other agent as hit
-        this.HandleInterceptHit();
-        otherAgent.HandleInterceptHit();
+        this.HandleInterceptHit(otherAgent);
+        otherAgent.HandleInterceptHit(otherAgent);
 
       } else {
         // Set red for miss

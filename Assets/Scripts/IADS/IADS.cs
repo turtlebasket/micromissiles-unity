@@ -19,7 +19,7 @@ public class IADS : MonoBehaviour {
   private List<ThreatData> _threatTable = new List<ThreatData>();
   private Dictionary<Threat, ThreatData> _threatDataMap = new Dictionary<Threat, ThreatData>();
 
-  private List<Interceptor> _assignentQueue = new List<Interceptor>();
+  private List<Interceptor> _assignmentQueue = new List<Interceptor>();
 
   private void Awake() {
     if (Instance == null) {
@@ -39,18 +39,18 @@ public class IADS : MonoBehaviour {
   }
 
   public void LateUpdate() {
-    if (_assignentQueue.Count > 0) {
-      AssignInterceptorsToThreats(_assignentQueue);
-      _assignentQueue.Clear();
+    if (_assignmentQueue.Count > 0) {
+      AssignInterceptorsToThreats(_assignmentQueue);
+      _assignmentQueue.Clear();
     }
   }
 
   public void RequestThreatAssignment(List<Interceptor> interceptors) {
-    _assignentQueue.AddRange(interceptors);
+    _assignmentQueue.AddRange(interceptors);
   }
 
   public void RequestThreatAssignment(Interceptor interceptor) {
-    _assignentQueue.Add(interceptor);
+    _assignmentQueue.Add(interceptor);
   }
 
 
@@ -140,7 +140,7 @@ public class IADS : MonoBehaviour {
   private void RegisterSimulationEnded() {
     _threatTable.Clear();
     _threatDataMap.Clear();
-    _assignentQueue.Clear();
+    _assignmentQueue.Clear();
   }
 
 }

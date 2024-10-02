@@ -94,10 +94,6 @@ public abstract class Agent : MonoBehaviour {
     return _isHit;
   }
 
-  public bool IsMiss() {
-    return _isMiss;
-  }
-
   public void TerminateAgent() {
     _flightPhase = FlightPhase.TERMINATED;
     transform.position = new Vector3(0, 0, 0);
@@ -105,18 +101,17 @@ public abstract class Agent : MonoBehaviour {
   }
 
   // Mark the agent as having hit the target or been hit.
-  public void HandleInterceptHit() {
+  public void HandleInterceptHit(Agent otherAgent) {
     _isHit = true;
-    if (this is Interceptor interceptor && _target is Threat threat) {
+    if (this is Interceptor interceptor && otherAgent is Threat threat) {
       OnInterceptHit?.Invoke(interceptor, threat);
-    } else if (this is Threat threatAgent && _target is Interceptor interceptorTarget) {
+    } else if (this is Threat threatAgent && otherAgent is Interceptor interceptorTarget) {
       OnInterceptHit?.Invoke(interceptorTarget, threatAgent);
     }
     TerminateAgent();
   }
 
   public void HandleInterceptMiss() {
-    _isMiss = true;
     if (_target != null) {
       if (this is Interceptor interceptor && _target is Threat threat) {
         OnInterceptMiss?.Invoke(interceptor, threat);

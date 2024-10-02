@@ -93,8 +93,9 @@ public class SimManager : MonoBehaviour {
   }
 
   public void StartSimulation() {
-    InitializeSimulation();
     OnSimulationStarted?.Invoke();
+    InitializeSimulation();
+    
   }
 
   public void PauseSimulation() {
@@ -112,6 +113,9 @@ public class SimManager : MonoBehaviour {
   }
 
   private void InitializeSimulation() {
+    // Invoke the simulation started event to let listeners
+    // know to invoke their own handler behavior
+    OnSimulationStarted?.Invoke();
     List<Interceptor> missiles = new List<Interceptor>();
     // Create missiles based on config
     foreach (var swarmConfig in simulationConfig.interceptor_swarm_configs) {
@@ -128,10 +132,6 @@ public class SimManager : MonoBehaviour {
       }
     }
 
-
-    // Invoke the simulation started event to let listeners
-    // know to invoke their own handler behavior
-    OnSimulationStarted?.Invoke();
   }
 
   public void AssignInterceptorsToThreats() {
@@ -306,7 +306,7 @@ public class SimManager : MonoBehaviour {
     // Check if all missiles have terminated
     bool allInterceptorsTerminated = true;
     foreach (var interceptor in _interceptorObjects) {
-      if (interceptor != null && !interceptor.IsHit() && !interceptor.IsMiss()) {
+      if (interceptor != null && interceptor.GetFlightPhase() != Agent.FlightPhase.TERMINATED) {
         allInterceptorsTerminated = false;
         break;
       }
