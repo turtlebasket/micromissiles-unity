@@ -9,6 +9,8 @@ on:
   pull_request:
     branches:
       - release
+  schedule:
+    - cron: '0 2 * * *'  # Run at 2 AM UTC every day
 
 jobs:
   buildForAllSupportedPlatforms:
@@ -41,6 +43,10 @@ jobs:
           buildName: micromissiles-${{ github.ref_name }}-${{ matrix.targetPlatform }}
           versioning: Semantic
           targetPlatform: ${{ matrix.targetPlatform }}
+      - name: Copy Tools Directory
+        run: |
+          mkdir -p build/${{ matrix.targetPlatform }}/Tools
+          cp -r Tools/ build/${{ matrix.targetPlatform }}/Tools/
       - if: matrix.targetPlatform == 'StandaloneWindows64'
         run: cd build/${{ matrix.targetPlatform }} && sudo zip -r ../build-${{ matrix.targetPlatform }}.zip * && cd -
       - if: matrix.targetPlatform == 'StandaloneWindows64'
